@@ -1,15 +1,30 @@
 /**
- * Removes the background from a clothing photo, then crops and centers
- * the subject on a square transparent-PNG canvas.
+ * Image Processing Pipeline
  *
- * Uses @imgly/background-removal (browser-side, no API key needed).
- * Model files are streamed from the jsDelivr CDN on first call and
- * cached by the browser thereafter.
+ * This module is the designated seam for clothing photo processing.
  *
- * NOTE: The library's resources.json ships empty, so the built-in
- * progress callback never fires with total > 0.  Callers should drive
- * their own progress UI (e.g. a simulated ramp) independently and treat
- * onProgress here as a best-effort supplement only.
+ * Current behaviour (v1):
+ *   encodeToPng(file) — re-encodes any camera JPEG or image file to a
+ *   normalised PNG.  This is the only function called by the upload flow.
+ *
+ * To re-enable AI background removal in a future update:
+ *   1. In QuickAddSheet.tsx → handleFile, replace:
+ *        const png = await encodeToPng(file);
+ *      with:
+ *        const png = await processClothingImage(file);
+ *      (pass an onProgress callback as the second arg when you restore
+ *       the progress UI)
+ *   2. Restore the "bg-removing" and "bg-failed" phases in QuickAddSheet.
+ *   3. The full pipeline below (removeBackground → cropAndCenterPng) is
+ *      already implemented and ready to use — no changes needed here.
+ *
+ * Background removal uses @imgly/background-removal (browser-side, no API
+ * key).  Model files (~5 MB, isnet_quint8) stream from jsDelivr on first
+ * call and are cached by the browser thereafter.
+ *
+ * NOTE: The library's resources.json ships empty, so the built-in progress
+ * callback never fires with total > 0.  Callers should drive their own
+ * progress UI (e.g. a decelerating ramp) independently.
  */
 import { removeBackground } from "@imgly/background-removal";
 
@@ -18,7 +33,7 @@ const PUBLIC_PATH = `https://cdn.jsdelivr.net/npm/@imgly/background-removal@${CD
 
 export type ProgressCallback = (percent: number) => void;
 
-/** Wraps a promise with a hard timeout; rejects with TimeoutError on expiry. */
+/** Rejects with TimeoutError when bg removal exceeds the allowed duration. */
 export class TimeoutError extends Error {
   constructor(ms: number) {
     super(`Background removal timed out after ${ms / 1000}s`);
@@ -37,8 +52,10 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
 }
 
 /**
- * Encode a File/Blob as a PNG via canvas (normalises camera JPEGs).
- * Returns a transparent-friendly PNG Blob.
+ * Encode a File/Blob to PNG via canvas.
+ *
+ * Used by the v1 upload flow to normalise camera JPEGs before storing.
+ * Preserves the original dimensions; does NOT remove the background.
  */
 export async function encodeToPng(input: File | Blob): Promise<Blob> {
   const url = URL.createObjectURL(input);
@@ -65,8 +82,12 @@ export async function encodeToPng(input: File | Blob): Promise<Blob> {
 }
 
 /**
- * Full pipeline: bg-removal → crop → pad to square transparent PNG.
- * Rejects with TimeoutError after `timeoutMs` (default 90 s).
+ * Full pipeline: bg removal → tight crop → square transparent PNG.
+ *
+ * Not called by the v1 upload flow.  Ready to be wired back in —
+ * see the module-level comment for instructions.
+ *
+ * Rejects with TimeoutError after `timeoutMs` milliseconds (default 90 s).
  */
 export async function processClothingImage(
   input: File | Blob,
@@ -74,13 +95,11 @@ export async function processClothingImage(
   timeoutMs = 90_000,
 ): Promise<Blob> {
   const run = async () => {
-    // Phase 1 – background removal
     const bgFree = await removeBackground(input, {
       publicPath: PUBLIC_PATH,
       model: "isnet_quint8",
       output: { format: "image/png", quality: 1 },
-      // progress fires with total=0 due to empty resources.json —
-      // we call onProgress anyway so callers can use it as a pulse.
+      // total is always 0 due to empty resources.json — treat as a pulse only
       progress: (_key: string, current: number, total: number) => {
         if (onProgress) {
           onProgress(total > 0 ? Math.min(80, Math.round((current / total) * 80)) : -1);
@@ -89,10 +108,7 @@ export async function processClothingImage(
     });
 
     onProgress?.(-1); // pulse: inference done, cropping next
-
-    // Phase 2 – crop + pad to square
-    const result = await cropAndCenterPng(bgFree);
-    return result;
+    return cropAndCenterPng(bgFree);
   };
 
   return withTimeout(run(), timeoutMs);
