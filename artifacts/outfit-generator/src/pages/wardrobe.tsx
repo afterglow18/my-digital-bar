@@ -61,13 +61,13 @@ const LM = {
   doorR: 0.890,
 
   // Per-row: y-centre of the "+ ADD" pill, then the RECTANGULAR placeholder box bounds.
-  // boxY  = fraction where the dotted box starts (BELOW the image's baked-in hanger graphic).
-  // boxBot = fraction where the dotted box ends.
+  // boxY  = fraction where the cream placeholder interior starts (pixel-exact from image scan).
+  // boxBot = fraction where the cream interior ends.
   // ClosetRow is placed at [boxY, boxBot]; no HTML hanger is rendered — image hangers show above.
   rows: [
-    { btnCY: 0.278, boxY: 0.304, boxBot: 0.445 }, // TOPS
-    { btnCY: 0.480, boxY: 0.513, boxBot: 0.651 }, // BOTTOMS
-    { btnCY: 0.685, boxY: 0.724, boxBot: 0.851 }, // SHOES
+    { btnCY: 0.278, boxY: 0.313, boxBot: 0.471 }, // TOPS     (image scan: cream y=578→872)
+    { btnCY: 0.480, boxY: 0.515, boxBot: 0.670 }, // BOTTOMS  (image scan: cream y=950→1235)
+    { btnCY: 0.685, boxY: 0.715, boxBot: 0.857 }, // SHOES    (image scan: cream y=1318→1580)
   ],
 
   // SAVE OUTFIT bar

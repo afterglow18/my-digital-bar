@@ -36,7 +36,8 @@ The PNG already has all visual UI baked in. HTML provides:
 
 Behaviour:
 - Divides its container into 3 equal slots (left / center / right), `overflow:hidden`
-- Card fills the FULL container height (= the rectangular dotted box, below the image's hanger)
+- Card fills the **FULL slot width** (`cardW = slotW`, `padX = 0`) for pixel-perfect horizontal alignment with the dotted boxes
+- Card fills the **full container height** (= the rectangular dotted box, below the image's hanger)
 - `borderRadius: "10px"` all corners — matches the placeholder box shape
 - Selected item: 4.5px blush-pink border + outer glow; unselected: 1.5px warm-gold hairline
 - Border/shadow always transition (0.24s ease) so the highlight glides to the new card on swipe
@@ -44,18 +45,27 @@ Behaviour:
 - Tracks last-notified item **ID** (not index) for accurate parent `centred` map
 - No `hangerH` prop — hanger concept was removed entirely
 
-## Landmark fractions (853×1844 PNG, all 0→1)
+**Why cardW = slotW (not * 0.88):** Using 88% width left ~5px side gaps that exposed the image's dotted border — didn't match the annotation requirement of zero side gap. Full slotW eliminates the gap without affecting swipe/snap logic (which is slot-based).
+
+## Landmark fractions (853×1844 PNG, pixel-scanned via ImageMagick)
 
 ```
 doorL:   0.110   // inner left edge of closet
 doorR:   0.890   // inner right edge of closet
 
-rows[0] TOPS:    { btnCY: 0.278, boxY: 0.304, boxBot: 0.445 }
-rows[1] BOTTOMS: { btnCY: 0.480, boxY: 0.513, boxBot: 0.651 }
-rows[2] SHOES:   { btnCY: 0.685, boxY: 0.724, boxBot: 0.851 }
+rows[0] TOPS:    { btnCY: 0.278, boxY: 0.313, boxBot: 0.471 }
+rows[1] BOTTOMS: { btnCY: 0.480, boxY: 0.515, boxBot: 0.670 }
+rows[2] SHOES:   { btnCY: 0.685, boxY: 0.715, boxBot: 0.857 }
 
-// boxY  = top of rectangular dotted box (BELOW the image's baked-in hanger graphic)
-// boxBot = bottom of dotted box
+// boxY  = fraction where the cream placeholder interior starts (below image hanger)
+//         determined by scanning for consistent cream pixels (r>240, g>215, b>195)
+//         across 5 sample x-positions spanning the inner closet width.
+// boxBot = fraction where cream interior ends (stops before the next section's rod).
+
+// Measured source values (image pixels → fractions):
+//   TOPS    cream y=578→872   = 0.313→0.473  (boxBot rounded to 0.471)
+//   BOTTOMS cream y=950→1235  = 0.515→0.670
+//   SHOES   cream y=1318→1580 = 0.715→0.857
 
 barY:     0.863
 barBot:   0.928
@@ -78,5 +88,7 @@ overflow: hidden
 ```
 
 **Why boxY not carY:** Original `carY` landed inside the hanger graphic area; adding a hangerH offset inside ClosetRow compounded the misalignment. The fix was to measure `boxY` = exact bottom of the hanger graphic, position ClosetRow there, and remove hangerH entirely.
+
+**How to re-calibrate if the image changes:** Run ImageMagick dense vertical scans at 5 sample x-positions spanning doorL→doorR (e.g. x=160,220,280,370,430). Find the y range where ≥4/5 sample points return r>240, g>215, b>195. The transition INTO that range = boxY; the transition OUT = boxBot. Convert y→fraction by dividing by image height (1844).
 
 **Why ClosetRow over SwipeRow:** SwipeRow overflows the closet bounds; ClosetRow is pinned to the 3-slot box with overflow:hidden.

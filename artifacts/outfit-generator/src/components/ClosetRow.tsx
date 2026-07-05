@@ -173,9 +173,10 @@ export const ClosetRow = forwardRef<ClosetRowHandle, ClosetRowProps>(
 
     const lo    = Math.max(0, centredIdx - 2);
     const hi    = Math.min(items.length - 1, centredIdx + 2);
-    // Card fills ~88% of each slot width; height = full container (no hanger offset)
-    const cardW = slotW > 0 ? Math.round(slotW * 0.88) : 0;
-    const padX  = (slotW - cardW) / 2;
+    // Card fills the EXACT slot width so it overlays the dotted placeholder box
+    // with pixel-perfect horizontal alignment — no side padding.
+    const cardW = slotW > 0 ? slotW : 0;
+    const padX  = 0;
 
     // Blush-pink selection indicator colours
     const PINK_BORDER = "rgba(225, 110, 155, 0.88)";
