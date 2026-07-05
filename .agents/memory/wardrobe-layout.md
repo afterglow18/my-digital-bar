@@ -53,19 +53,15 @@ Behaviour:
 doorL:   0.110   // inner left edge of closet
 doorR:   0.890   // inner right edge of closet
 
-rows[0] TOPS:    { btnCY: 0.278, boxY: 0.313, boxBot: 0.471 }
-rows[1] BOTTOMS: { btnCY: 0.480, boxY: 0.515, boxBot: 0.670 }
-rows[2] SHOES:   { btnCY: 0.685, boxY: 0.715, boxBot: 0.857 }
+rows[0] TOPS:    { btnCY: 0.278, boxY: 0.332, boxBot: 0.471 }
+rows[1] BOTTOMS: { btnCY: 0.480, boxY: 0.536, boxBot: 0.670 }
+rows[2] SHOES:   { btnCY: 0.685, boxY: 0.737, boxBot: 0.857 }
 
-// boxY  = fraction where the cream placeholder interior starts (below image hanger)
-//         determined by scanning for consistent cream pixels (r>240, g>215, b>195)
-//         across 5 sample x-positions spanning the inner closet width.
-// boxBot = fraction where cream interior ends (stops before the next section's rod).
-
-// Measured source values (image pixels → fractions):
-//   TOPS    cream y=578→872   = 0.313→0.473  (boxBot rounded to 0.471)
-//   BOTTOMS cream y=950→1235  = 0.515→0.670
-//   SHOES   cream y=1318→1580 = 0.715→0.857
+// boxY  = fraction where the ClosetRow card container starts — set BELOW each
+//         row's hanger-arm bottom so the hanger is fully visible above cards.
+//         Hanger bottoms (scanned): TOPS f=0.323, BOTTOMS f=0.529, SHOES f=0.730.
+//         Each boxY adds ~0.008 clearance above the hanger bottom.
+// boxBot = fraction where cream interior ends (unchanged from image scan).
 
 barY:     0.863
 barBot:   0.928
