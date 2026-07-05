@@ -5,69 +5,169 @@ import {
   useSaveOutfit,
   getListOutfitsQueryKey,
   ClothingItem,
+  ClothingItemCategory,
 } from "@workspace/api-client-react";
-import { Plus, Shirt, BookmarkPlus, Check, X } from "lucide-react";
+import { Plus, BookmarkPlus, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AddClothingSheet } from "@/components/clothing/AddClothingSheet";
 import { EditClothingSheet } from "@/components/clothing/EditClothingSheet";
 import { getImageUrl } from "@/lib/utils";
 import { useQueryClient } from "@tanstack/react-query";
 
-const CATEGORY_ORDER = ["tops", "bottoms", "shoes", "dresses", "outerwear", "accessories"] as const;
-type Category = (typeof CATEGORY_ORDER)[number];
+// The three outfit rows, in visual order (top → middle → bottom)
+const ROWS: { key: RowKey; label: string; addLabel: string }[] = [
+  { key: "tops", label: "Tops", addLabel: "+ Add Top" },
+  { key: "bottoms", label: "Bottoms", addLabel: "+ Add Bottom" },
+  { key: "shoes", label: "Shoes", addLabel: "+ Add Shoes" },
+];
 
-const CATEGORY_LABELS: Record<Category, string> = {
-  tops: "Tops",
-  bottoms: "Bottoms",
-  shoes: "Shoes",
-  dresses: "Dresses",
-  outerwear: "Outerwear",
-  accessories: "Accessories",
-};
+type RowKey = "tops" | "bottoms" | "shoes";
+
+// Card shown when a row is empty
+function EmptyRowCard({ label, onClick }: { label: string; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      data-testid={`empty-add-${label.toLowerCase().replace(/\s+/g, "-")}`}
+      className="flex-none w-24 h-[7.75rem] border-2 border-dashed border-black/40 rounded-xl flex flex-col items-center justify-center gap-1.5 bg-white/60 hover:border-black hover:bg-white transition-all active:scale-95"
+    >
+      <div className="w-8 h-8 rounded-full border-2 border-black/40 flex items-center justify-center">
+        <Plus className="w-4 h-4 text-black/50" />
+      </div>
+      <span className="text-[10px] font-bold uppercase tracking-wide text-black/50 text-center px-1 leading-tight">
+        {label}
+      </span>
+    </button>
+  );
+}
+
+// A single clothing card within a row
+function RowCard({
+  item,
+  selected,
+  onSelect,
+  onEdit,
+}: {
+  item: ClothingItem;
+  selected: boolean;
+  onSelect: () => void;
+  onEdit: () => void;
+}) {
+  return (
+    <motion.div
+      className="flex-none w-24 relative"
+      whileTap={{ scale: 0.93 }}
+    >
+      <button
+        onClick={onSelect}
+        data-testid={`clothing-item-${item.id}`}
+        className={`w-full flex flex-col border-2 rounded-xl overflow-hidden transition-all ${
+          selected
+            ? "border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] -translate-y-2"
+            : "border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+        } bg-white`}
+      >
+        {/* Photo */}
+        <div className="w-full h-24 bg-muted overflow-hidden relative">
+          {item.imageObjectPath ? (
+            <img
+              src={getImageUrl(item.imageObjectPath)!}
+              alt={item.name}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div
+              className={`w-full h-full flex items-center justify-center p-2 ${
+                selected ? "bg-primary" : "bg-secondary/30"
+              }`}
+            >
+              <span className="font-display font-bold text-center text-[9px] uppercase leading-tight">
+                {item.name}
+              </span>
+            </div>
+          )}
+
+          {/* Selected check badge */}
+          {selected && (
+            <div className="absolute top-1.5 right-1.5 w-5 h-5 bg-black rounded-full flex items-center justify-center">
+              <Check className="w-3 h-3 text-white" strokeWidth={3} />
+            </div>
+          )}
+        </div>
+
+        {/* Name strip */}
+        <div
+          className={`px-1.5 py-1 border-t-2 border-black ${
+            selected ? "bg-primary" : "bg-white"
+          }`}
+        >
+          <span className="font-bold text-[10px] uppercase tracking-tight line-clamp-1 block">
+            {item.name}
+          </span>
+        </div>
+      </button>
+
+      {/* Long-press hint → edit; we expose edit via a small dot button */}
+      <button
+        onClick={onEdit}
+        data-testid={`edit-item-${item.id}`}
+        className="absolute -top-1.5 -left-1.5 w-5 h-5 bg-white border-2 border-black rounded-full flex items-center justify-center shadow-sm opacity-0 group-hover:opacity-100 hover:opacity-100 focus:opacity-100 active:opacity-100 z-10"
+        title="Edit"
+      >
+        <span className="text-[8px] font-black">✎</span>
+      </button>
+    </motion.div>
+  );
+}
 
 export default function WardrobePage() {
-  const [isAddOpen, setIsAddOpen] = useState(false);
+  const [addCategory, setAddCategory] = useState<RowKey | null>(null);
   const [editingItemId, setEditingItemId] = useState<number | null>(null);
-  const [selectedItems, setSelectedItems] = useState<Partial<Record<Category, ClothingItem>>>({});
+  const [selected, setSelected] = useState<Partial<Record<RowKey, ClothingItem>>>({});
   const [isSaveMode, setIsSaveMode] = useState(false);
   const [saveName, setSaveName] = useState("");
 
-  const { data: clothes, isLoading } = useListClothing(undefined, {
-    query: { queryKey: getListClothingQueryKey() },
-  });
+  // Fetch all three rows (parallel queries keyed per category)
+  const { data: tops = [] } = useListClothing(
+    { category: "tops" },
+    { query: { queryKey: getListClothingQueryKey({ category: "tops" }) } }
+  );
+  const { data: bottoms = [] } = useListClothing(
+    { category: "bottoms" },
+    { query: { queryKey: getListClothingQueryKey({ category: "bottoms" }) } }
+  );
+  const { data: shoes = [] } = useListClothing(
+    { category: "shoes" },
+    { query: { queryKey: getListClothingQueryKey({ category: "shoes" }) } }
+  );
+
+  const rowData: Record<RowKey, ClothingItem[]> = { tops, bottoms, shoes };
 
   const saveOutfit = useSaveOutfit();
   const queryClient = useQueryClient();
 
-  const grouped = CATEGORY_ORDER.reduce<Record<Category, ClothingItem[]>>((acc, cat) => {
-    acc[cat] = (clothes ?? []).filter((item) => item.category === cat);
-    return acc;
-  }, {} as Record<Category, ClothingItem[]>);
+  const selectedCount = Object.values(selected).filter(Boolean).length;
 
-  const hasItems = !!clothes && clothes.length > 0;
-  const selectedCount = Object.keys(selectedItems).length;
-
-  const toggleItem = (item: ClothingItem) => {
-    const cat = item.category as Category;
-    setSelectedItems((prev) => {
-      if (prev[cat]?.id === item.id) {
+  const toggleItem = (key: RowKey, item: ClothingItem) => {
+    setSelected((prev) => {
+      if (prev[key]?.id === item.id) {
         const next = { ...prev };
-        delete next[cat];
+        delete next[key];
         return next;
       }
-      return { ...prev, [cat]: item };
+      return { ...prev, [key]: item };
     });
   };
 
   const clearSelection = () => {
-    setSelectedItems({});
+    setSelected({});
     setIsSaveMode(false);
     setSaveName("");
   };
 
   const handleSave = () => {
     if (!saveName.trim()) return;
-    const itemIds = Object.values(selectedItems).map((i) => i!.id);
+    const itemIds = (Object.values(selected) as ClothingItem[]).map((i) => i.id);
     saveOutfit.mutate(
       { data: { name: saveName.trim(), itemIds } },
       {
@@ -80,146 +180,82 @@ export default function WardrobePage() {
   };
 
   return (
-    <div className="min-h-full flex flex-col pt-8 px-4 pb-8 bg-background relative">
-      <header className="mb-6">
-        <h1 className="text-4xl font-display font-bold uppercase tracking-tighter mb-1">My Closet</h1>
+    <div className="min-h-full flex flex-col pt-8 pb-8 bg-background relative">
+      {/* Header */}
+      <header className="px-4 mb-5">
+        <h1 className="text-4xl font-display font-bold uppercase tracking-tighter mb-0.5">
+          My Closet
+        </h1>
         <p className="text-muted-foreground font-medium text-sm">
-          {hasItems ? "Tap items to build an outfit." : "Like, totally organized."}
+          Tap one from each row to build a look.
         </p>
       </header>
 
-      {isLoading ? (
-        <div className="flex flex-col gap-8">
-          {[1, 2, 3].map((i) => (
-            <div key={i}>
-              <div className="h-4 w-16 bg-muted animate-pulse rounded mb-3" />
-              <div className="flex gap-3">
-                {[1, 2, 3, 4].map((j) => (
-                  <div
-                    key={j}
-                    className="w-24 h-[7.5rem] flex-none bg-muted animate-pulse border-2 border-black/20 rounded-lg"
-                  />
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : hasItems ? (
-        <div className="flex flex-col gap-7">
-          {CATEGORY_ORDER.map((cat) => {
-            const items = grouped[cat];
-            if (!items || items.length === 0) return null;
-            return (
-              <div key={cat}>
-                {/* Row header */}
-                <div className="flex items-center gap-2 mb-3">
-                  <h2 className="font-display font-bold text-xs uppercase tracking-widest">
-                    {CATEGORY_LABELS[cat]}
-                  </h2>
-                  <span className="text-[10px] font-bold text-muted-foreground bg-muted px-1.5 py-0.5 border border-black/30 rounded">
-                    {items.length}
-                  </span>
-                </div>
+      {/* Three outfit rows */}
+      <div className="flex flex-col gap-6">
+        {ROWS.map(({ key, label, addLabel }) => {
+          const items = rowData[key];
+          const selectedItem = selected[key];
 
-                {/* Horizontal scroll row */}
-                <div className="flex gap-3 overflow-x-auto -mx-4 px-4 pb-1 no-scrollbar">
-                  {items.map((item) => {
-                    const isSelected = selectedItems[cat]?.id === item.id;
-                    return (
-                      <motion.button
-                        key={item.id}
-                        onClick={() => toggleItem(item)}
-                        whileTap={{ scale: 0.94 }}
-                        data-testid={`clothing-item-${item.id}`}
-                        className={`flex-none w-24 flex flex-col border-2 transition-all rounded-lg overflow-hidden relative ${
-                          isSelected
-                            ? "border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] -translate-y-1.5"
-                            : "border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
-                        } bg-white`}
-                      >
-                        {isSelected && (
-                          <div className="absolute top-1.5 right-1.5 w-5 h-5 bg-black rounded-full flex items-center justify-center z-10">
-                            <Check className="w-3 h-3 text-white" strokeWidth={3} />
-                          </div>
-                        )}
-                        <div className="w-full h-28 bg-muted relative overflow-hidden">
-                          {item.imageObjectPath ? (
-                            <img
-                              src={getImageUrl(item.imageObjectPath)!}
-                              alt={item.name}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <div
-                              className={`w-full h-full flex items-center justify-center p-2 ${
-                                isSelected ? "bg-primary" : "bg-secondary/30"
-                              }`}
-                            >
-                              <span className="font-display font-bold text-center text-[9px] uppercase leading-tight">
-                                {item.name}
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                        <div
-                          className={`px-1.5 py-1 border-t-2 border-black ${
-                            isSelected ? "bg-primary" : "bg-white"
-                          }`}
-                        >
-                          <span className="font-bold text-[10px] uppercase tracking-tight line-clamp-1 block">
-                            {item.name}
-                          </span>
-                        </div>
-                      </motion.button>
-                    );
-                  })}
-
-                  {/* Inline add button at end of each row */}
+          return (
+            <section key={key} data-testid={`row-${key}`}>
+              {/* Row label + add shortcut */}
+              <div className="flex items-center justify-between px-4 mb-2.5">
+                <h2 className="font-display font-bold text-xs uppercase tracking-widest text-black/70">
+                  {label}
+                </h2>
+                {items.length > 0 && (
                   <button
-                    onClick={() => setIsAddOpen(true)}
-                    className="flex-none w-14 h-[calc(7rem+1.875rem)] border-2 border-dashed border-black/25 rounded-lg flex items-center justify-center hover:border-black/50 transition-colors"
-                    data-testid="add-item-row-inline"
+                    onClick={() => setAddCategory(key)}
+                    className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-black/40 hover:text-black transition-colors"
+                    data-testid={`add-more-${key}`}
                   >
-                    <Plus className="w-4 h-4 text-black/30" />
+                    <Plus className="w-3 h-3" />
+                    Add
                   </button>
-                </div>
+                )}
               </div>
-            );
-          })}
-        </div>
-      ) : (
-        /* Empty state */
-        <div className="flex-1 flex flex-col items-center justify-center text-center p-8 bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-xl mt-8">
-          <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center border-2 border-black shadow-sm mb-4">
-            <Shirt className="w-8 h-8" />
-          </div>
-          <h3 className="font-display font-bold text-xl mb-2">Ugh, as if!</h3>
-          <p className="text-sm font-medium text-muted-foreground mb-6">
-            Your closet is empty. Time to go shopping or add some items.
-          </p>
-          <button
-            onClick={() => setIsAddOpen(true)}
-            className="btn-brutalist px-6 py-3 rounded-full flex items-center gap-2"
-            data-testid="button-add-first-item"
-          >
-            <Plus className="w-5 h-5" />
-            Add Item
-          </button>
-        </div>
-      )}
 
-      {/* Floating Add Button (when wardrobe has items) */}
-      {hasItems && selectedCount === 0 && (
-        <button
-          onClick={() => setIsAddOpen(true)}
-          data-testid="fab-add-item"
-          className="fixed bottom-24 right-4 w-12 h-12 bg-primary text-black border-2 border-black rounded-full shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center z-20 hover:-translate-y-1 active:translate-y-0 active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
-        >
-          <Plus className="w-6 h-6" />
-        </button>
-      )}
+              {/* Scroll row */}
+              <div className="flex gap-3 overflow-x-auto -mx-0 px-4 pb-1 no-scrollbar">
+                {items.length === 0 ? (
+                  <EmptyRowCard
+                    label={addLabel}
+                    onClick={() => setAddCategory(key)}
+                  />
+                ) : (
+                  <>
+                    {items.map((item) => (
+                      <RowCard
+                        key={item.id}
+                        item={item}
+                        selected={selectedItem?.id === item.id}
+                        onSelect={() => toggleItem(key, item)}
+                        onEdit={() => setEditingItemId(item.id)}
+                      />
+                    ))}
+                    {/* Inline add at end */}
+                    <button
+                      onClick={() => setAddCategory(key)}
+                      className="flex-none w-14 h-[7.75rem] border-2 border-dashed border-black/20 rounded-xl flex items-center justify-center hover:border-black/40 transition-colors"
+                      data-testid={`add-inline-${key}`}
+                    >
+                      <Plus className="w-4 h-4 text-black/25" />
+                    </button>
+                  </>
+                )}
+              </div>
 
-      {/* Save Outfit Bottom Bar */}
+              {/* Divider between rows */}
+              {key !== "shoes" && (
+                <div className="mx-4 mt-5 border-t border-black/8" />
+              )}
+            </section>
+          );
+        })}
+      </div>
+
+      {/* ── Save Outfit bar ── slides up when anything is selected */}
       <AnimatePresence>
         {selectedCount > 0 && (
           <motion.div
@@ -229,55 +265,63 @@ export default function WardrobePage() {
             transition={{ type: "spring", damping: 22, stiffness: 220 }}
             className="fixed bottom-[76px] left-1/2 -translate-x-1/2 w-full max-w-md px-4 z-30"
           >
-            <div className="bg-white border-2 border-black shadow-[0px_-4px_0px_0px_rgba(0,0,0,0.08),4px_4px_0px_0px_rgba(0,0,0,1)] rounded-2xl p-3 flex flex-col gap-2">
-              {/* Header row */}
-              <div className="flex items-center justify-between">
-                <span className="font-display font-bold text-sm uppercase tracking-wide">
-                  {selectedCount} item{selectedCount !== 1 ? "s" : ""} picked
-                </span>
-                <button
-                  onClick={clearSelection}
-                  className="w-6 h-6 flex items-center justify-center rounded-full border border-black/30 hover:border-black hover:bg-muted transition-colors"
-                  data-testid="button-clear-selection"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              </div>
-
-              {/* Mini preview strip */}
-              <div className="flex gap-1.5 overflow-x-auto no-scrollbar">
-                {CATEGORY_ORDER.map((cat) => {
-                  const item = selectedItems[cat];
-                  if (!item) return null;
-                  return (
-                    <div
-                      key={cat}
-                      className="flex-none flex flex-col items-center gap-0.5"
-                    >
-                      <div className="w-10 h-12 border-2 border-black overflow-hidden rounded bg-muted">
-                        {item.imageObjectPath ? (
-                          <img
-                            src={getImageUrl(item.imageObjectPath)!}
-                            alt={item.name}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-secondary/40 flex items-center justify-center">
-                            <span className="text-[7px] font-bold uppercase text-center p-0.5 leading-tight">
-                              {item.name}
-                            </span>
-                          </div>
-                        )}
+            <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-2xl p-3 flex flex-col gap-2.5">
+              {/* Preview strip */}
+              <div className="flex items-center gap-3">
+                <div className="flex gap-1.5">
+                  {ROWS.map(({ key, label }) => {
+                    const item = selected[key];
+                    return (
+                      <div key={key} className="flex flex-col items-center gap-0.5">
+                        <div
+                          className={`w-11 h-13 border-2 rounded overflow-hidden ${
+                            item ? "border-black" : "border-dashed border-black/20"
+                          }`}
+                          style={{ height: "3.25rem" }}
+                        >
+                          {item ? (
+                            item.imageObjectPath ? (
+                              <img
+                                src={getImageUrl(item.imageObjectPath)!}
+                                alt={item.name}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full bg-primary flex items-center justify-center p-0.5">
+                                <span className="text-[7px] font-bold uppercase text-center leading-tight">
+                                  {item.name}
+                                </span>
+                              </div>
+                            )
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <span className="text-[8px] text-black/20 font-bold">—</span>
+                            </div>
+                          )}
+                        </div>
+                        <span className="text-[8px] font-bold uppercase text-muted-foreground tracking-wide">
+                          {label.slice(0, 3)}
+                        </span>
                       </div>
-                      <span className="text-[8px] font-bold uppercase text-muted-foreground tracking-wide">
-                        {CATEGORY_LABELS[cat].slice(0, 3)}
-                      </span>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
+
+                <div className="flex-1 flex flex-col items-end gap-0.5">
+                  <span className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                    {selectedCount} of 3 picked
+                  </span>
+                  <button
+                    onClick={clearSelection}
+                    className="text-[10px] font-bold uppercase text-black/40 hover:text-black transition-colors"
+                    data-testid="button-clear-selection"
+                  >
+                    Clear
+                  </button>
+                </div>
               </div>
 
-              {/* Save action */}
+              {/* Name + save */}
               {isSaveMode ? (
                 <div className="flex gap-2">
                   <input
@@ -287,16 +331,16 @@ export default function WardrobePage() {
                     value={saveName}
                     onChange={(e) => setSaveName(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleSave()}
-                    className="flex-1 border-2 border-black rounded-lg px-3 py-2 text-sm font-bold uppercase tracking-wide placeholder:font-normal placeholder:normal-case placeholder:tracking-normal focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="flex-1 border-2 border-black rounded-lg px-3 py-2 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-primary placeholder:font-normal"
                     data-testid="input-outfit-name"
                   />
                   <button
                     onClick={handleSave}
                     disabled={!saveName.trim() || saveOutfit.isPending}
-                    className="btn-brutalist px-4 py-2 rounded-lg text-sm disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="btn-brutalist px-4 py-2 rounded-lg text-sm disabled:opacity-40"
                     data-testid="button-save-outfit-confirm"
                   >
-                    {saveOutfit.isPending ? "..." : "Save"}
+                    {saveOutfit.isPending ? "…" : "Save"}
                   </button>
                 </div>
               ) : (
@@ -306,7 +350,7 @@ export default function WardrobePage() {
                   data-testid="button-save-to-favorites"
                 >
                   <BookmarkPlus className="w-4 h-4" />
-                  Save to Favorites
+                  Save Outfit
                 </button>
               )}
             </div>
@@ -314,7 +358,12 @@ export default function WardrobePage() {
         )}
       </AnimatePresence>
 
-      <AddClothingSheet open={isAddOpen} onOpenChange={setIsAddOpen} />
+      {/* Modals */}
+      <AddClothingSheet
+        open={addCategory !== null}
+        onOpenChange={(open) => !open && setAddCategory(null)}
+        defaultCategory={addCategory ?? undefined}
+      />
       <EditClothingSheet
         itemId={editingItemId}
         open={editingItemId !== null}

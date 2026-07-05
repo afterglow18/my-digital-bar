@@ -7,9 +7,10 @@ import { useQueryClient } from "@tanstack/react-query";
 interface AddClothingSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  defaultCategory?: string;
 }
 
-export function AddClothingSheet({ open, onOpenChange }: AddClothingSheetProps) {
+export function AddClothingSheet({ open, onOpenChange, defaultCategory }: AddClothingSheetProps) {
   const createItem = useCreateClothingItem();
   const queryClient = useQueryClient();
 
@@ -25,12 +26,18 @@ export function AddClothingSheet({ open, onOpenChange }: AddClothingSheetProps) 
     );
   };
 
+  const title = defaultCategory
+    ? `Add ${defaultCategory.charAt(0).toUpperCase() + defaultCategory.slice(1, -1)}`
+    : "New Item";
+
   return (
-    <Sheet open={open} onOpenChange={onOpenChange} title="New Item">
-      <ClothingForm 
-        onSubmit={handleSubmit} 
+    <Sheet open={open} onOpenChange={onOpenChange} title={title}>
+      <ClothingForm
+        key={defaultCategory ?? "any"}
+        onSubmit={handleSubmit}
         isSubmitting={createItem.isPending}
         submitLabel="Add to Closet"
+        initialData={defaultCategory ? { category: defaultCategory as ClothingFormData["category"] } : undefined}
       />
     </Sheet>
   );
