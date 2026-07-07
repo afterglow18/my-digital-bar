@@ -40,11 +40,14 @@ interface ClosetRowProps {
   items: ClothingItem[];
   onCenteredItem: (item: ClothingItem | null) => void;
   onItemTap?: (item: ClothingItem) => void;
+  /** Hard ceiling on photo height in px — set by the parent so all rows
+   *  show cards at the same size regardless of available row height. */
+  maxPhotoH?: number;
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
 export const ClosetRow = forwardRef<ClosetRowHandle, ClosetRowProps>(
-  ({ items, onCenteredItem, onItemTap }, ref) => {
+  ({ items, onCenteredItem, onItemTap, maxPhotoH }, ref) => {
 
     // ── Container measurement ─────────────────────────────────────────────────
     const containerRef = useRef<HTMLDivElement>(null);
@@ -186,9 +189,9 @@ export const ClosetRow = forwardRef<ClosetRowHandle, ClosetRowProps>(
     const GAP    = slotW * 0.06;         // total horizontal gap per slot (~6%)
     const inset  = GAP / 2;             // equal margin each side
     const photoW = slotW - GAP;         // ~94% of slot width
-    // Clamp to available container height minus a 2 px bottom margin so photos
-    // are never clipped by the row container's overflow:hidden.
-    const photoH = Math.min(photoW * 1.5, containerH - 2);
+    // Use maxPhotoH (from parent) when provided so all rows show identical card
+    // sizes.  Fall back to containerH-based clamp for safety.
+    const photoH = Math.min(photoW * 1.5, maxPhotoH ?? (containerH - 2));
 
     // Center item gets a thin soft-pink outline; left/right items are borderless.
     const CENTER_BORDER = "1.5px solid #F7C6D8";

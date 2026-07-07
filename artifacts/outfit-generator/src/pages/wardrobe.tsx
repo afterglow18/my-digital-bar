@@ -329,11 +329,28 @@ export default function WardrobePage() {
             const tapH       = Math.max(36, pH(ir, 0.055));
             const rowTapTops = LM.rows.map(lm => pY(ir, lm.btnCY) - tapH / 2);
             const rowTapBots = rowTapTops.map(t => t + tapH);
+            const GAP_PX     = 2;
+
+            // Compute carTop/carH for every row first so we can derive a
+            // uniform maxPhotoH — the smallest available height across all rows.
+            const rowLayouts = LM.rows.map((lm, i) => {
+              const nextOverlayTop = i < LM.rows.length - 1
+                ? rowTapTops[i + 1]
+                : pY(ir, LM.barY);
+              const carTop = Math.max(pY(ir, lm.boxY), rowTapBots[i] + GAP_PX);
+              const carH   = Math.max(0, nextOverlayTop - carTop);
+              return { carTop, carH };
+            });
+
+            // All cards same height: constrained by the tightest row (tops/bottoms)
+            const minCarH    = Math.min(...rowLayouts.map(r => r.carH));
+            const maxPhotoH  = Math.max(0, minCarH - 2);
 
             return ROWS.map(({ key, btnLabel }, rowIdx) => {
             const lm      = LM.rows[rowIdx];
             const items   = rowData[key];
             const isShoes = rowIdx === 2;
+            const { carTop, carH } = rowLayouts[rowIdx];
 
             // ── Layout constants ──────────────────────────────────────────────
             const carLeft  = pX(ir, LM.doorL);
@@ -341,18 +358,7 @@ export default function WardrobePage() {
 
             // "+ ADD" tap zone — centred on the gold rod / pill
             const tapTop = rowTapTops[rowIdx];
-            const tapBot = rowTapBots[rowIdx];
-            // Next row's overlay top (or save bar top for the last row)
-            const nextOverlayTop = rowIdx < ROWS.length - 1
-              ? rowTapTops[rowIdx + 1]
-              : pY(ir, LM.barY);
-
-            // Photos start just below the "+ ADD" tap zone.
-            // carH is capped at nextOverlayTop so the next row's z=20 overlay
-            // never obscures the bottom of photos in this row.
-            const GAP_PX  = 2;
-            const carTop  = Math.max(pY(ir, lm.boxY), tapBot + GAP_PX);
-            const carH    = Math.max(0, nextOverlayTop - carTop);
+            const tapBot = rowTapBots[rowIdx]; // eslint-disable-line @typescript-eslint/no-unused-vars
 
             // Rod + button overlay — re-draws the background image from the
             // button top down to the first photo pixel, so the pill always
@@ -424,6 +430,7 @@ export default function WardrobePage() {
                       items={items}
                       onCenteredItem={centredHandlers[key]}
                       onItemTap={handleItemTap}
+                      maxPhotoH={maxPhotoH}
                     />
                   </div>
                 )}
