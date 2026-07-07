@@ -322,7 +322,15 @@ export default function WardrobePage() {
           )}
 
           {/* ── Three clothing rows ── */}
-          {ROWS.map(({ key, btnLabel }, rowIdx) => {
+          {(() => {
+            // Pre-compute tap zones for ALL rows so each row's photo area can
+            // be capped at the NEXT row's overlay top — preventing the z=20
+            // overlay from hiding the bottom of photos in the row above it.
+            const tapH       = Math.max(36, pH(ir, 0.055));
+            const rowTapTops = LM.rows.map(lm => pY(ir, lm.btnCY) - tapH / 2);
+            const rowTapBots = rowTapTops.map(t => t + tapH);
+
+            return ROWS.map(({ key, btnLabel }, rowIdx) => {
             const lm      = LM.rows[rowIdx];
             const items   = rowData[key];
             const isShoes = rowIdx === 2;
@@ -332,17 +340,19 @@ export default function WardrobePage() {
             const carRight = ir.left + pW(ir, 1 - LM.doorR);
 
             // "+ ADD" tap zone — centred on the gold rod / pill
-            // Compute tapBot first so photos can be pushed below it.
-            const tapH   = Math.max(44, pH(ir, 0.060));
-            const tapTop = pY(ir, lm.btnCY) - tapH / 2;
-            const tapBot = tapTop + tapH;
+            const tapTop = rowTapTops[rowIdx];
+            const tapBot = rowTapBots[rowIdx];
+            // Next row's overlay top (or save bar top for the last row)
+            const nextOverlayTop = rowIdx < ROWS.length - 1
+              ? rowTapTops[rowIdx + 1]
+              : pY(ir, LM.barY);
 
-            // Photos must start BELOW the "+ ADD" button (tapBot) with a small
-            // breathing gap.  We use Max() so the LM boxY is respected when it
-            // already clears the button (e.g. on larger screens).
+            // Photos start just below the "+ ADD" tap zone.
+            // carH is capped at nextOverlayTop so the next row's z=20 overlay
+            // never obscures the bottom of photos in this row.
             const GAP_PX  = 2;
             const carTop  = Math.max(pY(ir, lm.boxY), tapBot + GAP_PX);
-            const carH    = Math.max(0, pY(ir, lm.boxBot) - carTop);
+            const carH    = Math.max(0, nextOverlayTop - carTop);
 
             // Rod + button overlay — re-draws the background image from the
             // button top down to the first photo pixel, so the pill always
@@ -419,7 +429,8 @@ export default function WardrobePage() {
                 )}
               </React.Fragment>
             );
-          })}
+          });
+          })()}
 
           {/* ── SAVE OUTFIT bar — transparent tap zones over baked-in rug circles ──
               Visual (hanger icon, "SAVE OUTFIT ♡", dress-form icon) comes from the
