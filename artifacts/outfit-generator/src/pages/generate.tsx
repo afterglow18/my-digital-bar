@@ -441,43 +441,25 @@ export default function GeneratePage() {
               </div>
             )}
 
-            {/* ── Rug cover — hides the three baked-in wardrobe circle buttons ──
-                The closet-bg.png image has hanger / SAVE OUTFIT ♡ / mannequin
-                circles baked into the rug.  We redraw the rug using a zoomed-in
-                background-image crop of the circle-free top strip of the rug
-                (y = barY → barY+0.013, just above the circles).  That thin slice
-                is scaled to fill the full bar height, reproducing the authentic
-                rug colour without any circles. */}
-            {(() => {
-              const barH           = pH(ir, LM.barBot - LM.barY);
-              const rugStripH      = pH(ir, 0.013);          // circle-free rug top strip
-              const scaleY         = barH / Math.max(1, rugStripH);
-              const bgScaleH       = ir.height * scaleY;
-              const coverBgPosX    = -pW(ir, LM.doorL);      // same x alignment as rod overlays
-              const coverBgPosY    = -pY(ir, LM.barY) * scaleY;
-              return (
-                <div
-                  aria-hidden="true"
-                  style={{
-                    position: "absolute",
-                    top:    pY(ir, LM.barY),
-                    left:   pX(ir, LM.doorL),
-                    right:  ir.left + pW(ir, 1 - LM.doorR),
-                    height: barH,
-                    zIndex: 18,
-                    pointerEvents: "none",
-                    backgroundImage: "url('/closet-bg.png')",
-                    backgroundSize: `${ir.width}px ${bgScaleH}px`,
-                    backgroundPosition: `${coverBgPosX}px ${coverBgPosY}px`,
-                    backgroundRepeat: "no-repeat",
-                  }}
-                />
-              );
-            })()}
+            {/* ── Bottom action bar — clean white panel over the rug area ──
+                Covers all three baked-in wardrobe circles (hanger / save / mannequin)
+                with a solid white bar so only the Generate page's buttons show. */}
+            <div
+              aria-hidden="true"
+              style={{
+                position: "absolute",
+                top:    pY(ir, LM.barY),
+                left:   pX(ir, LM.doorL),
+                right:  ir.left + pW(ir, 1 - LM.doorR),
+                height: pH(ir, LM.barBot - LM.barY),
+                zIndex: 18,
+                pointerEvents: "none",
+                background: "#FFFFFF",
+                borderTop: "1.5px solid rgba(0,0,0,0.08)",
+              }}
+            />
 
-            {/* ── Rug bar — CTA buttons ── */}
-            {/* Positioned over the rug cover at z=22 so they appear on the rug
-                without any wardrobe circles showing through. */}
+            {/* ── CTA buttons — sit on top of the white bar ── */}
             <div
               style={{
                 position: "absolute",
@@ -561,49 +543,62 @@ export default function GeneratePage() {
                   </motion.div>
                 )}
 
-                {/* RESULT: Re-spin + Save It */}
+                {/* RESULT: AS IF! + SAVE IT */}
                 {phase === "result" && !isSaveOpen && (
                   <motion.div
                     key="result-btns"
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 8 }}
-                    style={{ display: "flex", gap: 8 }}
+                    style={{
+                      display: "flex", gap: 10,
+                      width: "100%", padding: "0 16px",
+                    }}
                   >
+                    {/* AS IF! — yellow, icon far right */}
                     <button
                       onClick={handleRespin}
                       style={{
-                        padding: "0 18px", height: 40, borderRadius: 22,
-                        border: "2px solid #000",
-                        background: "rgba(255,251,238,0.97)",
-                        color: "#2e1a00", fontWeight: 700,
-                        fontSize: 12, letterSpacing: "0.08em",
+                        flex: 1, height: 44, borderRadius: 24,
+                        border: "2.5px solid #000",
+                        background: "linear-gradient(to bottom, #f6db3a, #c98f12)",
+                        color: "#2e1a00", fontWeight: 800,
+                        fontSize: 13, letterSpacing: "0.08em",
                         textTransform: "uppercase",
                         boxShadow: "2px 2px 0 rgba(0,0,0,0.85)",
                         cursor: "pointer",
                         fontFamily: "var(--font-display)",
+                        display: "flex", alignItems: "center",
+                        justifyContent: "space-between",
+                        paddingLeft: 18, paddingRight: 14,
                       }}
                     >
-                      ✨ As If!
+                      <span>As If!</span>
+                      <span style={{ fontSize: 15, lineHeight: 1 }}>✨</span>
                     </button>
+
+                    {/* SAVE IT — white, icon far right */}
                     <button
                       onClick={() => setIsSaveOpen(true)}
                       disabled={!canSave}
                       style={{
-                        padding: "0 18px", height: 40, borderRadius: 22,
-                        border: "2px solid #000",
-                        background: canSave
-                          ? "linear-gradient(to bottom, #f6db3a, #c98f12)"
-                          : "rgba(210,185,100,0.38)",
+                        flex: 1, height: 44, borderRadius: 24,
+                        border: "2.5px solid #000",
+                        background: canSave ? "#FFFFFF" : "rgba(240,240,240,0.80)",
                         color: "#2e1a00", fontWeight: 800,
-                        fontSize: 12, letterSpacing: "0.08em",
+                        fontSize: 13, letterSpacing: "0.08em",
                         textTransform: "uppercase",
                         boxShadow: canSave ? "2px 2px 0 rgba(0,0,0,0.85)" : "none",
                         cursor: canSave ? "pointer" : "default",
                         fontFamily: "var(--font-display)",
+                        display: "flex", alignItems: "center",
+                        justifyContent: "space-between",
+                        paddingLeft: 18, paddingRight: 14,
+                        opacity: canSave ? 1 : 0.5,
                       }}
                     >
-                      Save It ♡
+                      <span>Save It</span>
+                      <span style={{ fontSize: 15, lineHeight: 1 }}>♡</span>
                     </button>
                   </motion.div>
                 )}
