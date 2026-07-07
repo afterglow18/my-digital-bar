@@ -30,23 +30,18 @@ function ItemPhoto({ item, size = "md" }: { item: ClothingItem; size?: "sm" | "m
   return (
     <div
       className={`w-full ${sizeClass} border-2 border-black overflow-hidden relative`}
-      style={{
-        backgroundImage:
-          item.imageObjectPath
-            ? "repeating-conic-gradient(#e8e3dd 0% 25%, #f9f4ee 0% 50%)"
-            : undefined,
-        backgroundSize: "10px 10px",
-      }}
+      style={{ background: "#FDECEF" }}
     >
       {item.imageObjectPath ? (
         <img
           src={getImageUrl(item.imageObjectPath)!}
           alt={item.name}
           className="w-full h-full object-contain"
+          style={{ objectFit: "contain", objectPosition: "center" }}
         />
       ) : (
-        <div className="w-full h-full bg-secondary/30 flex items-center justify-center p-1">
-          <span className="text-[9px] font-bold uppercase text-center leading-tight">—</span>
+        <div className="w-full h-full flex items-center justify-center p-1">
+          <span className="text-[9px] font-bold uppercase text-center leading-tight text-black/30">—</span>
         </div>
       )}
     </div>
@@ -172,7 +167,7 @@ export default function SavedPage() {
                 data-testid={`outfit-card-${outfit.id}`}
               >
                 {/* Card header */}
-                <div className="px-4 py-3 border-b-2 border-black flex justify-between items-center bg-accent">
+                <div className="px-4 py-3 border-b-2 border-black flex justify-between items-center bg-primary">
                   <h3 className="font-display font-bold text-lg uppercase tracking-tight">{outfit.name}</h3>
                   <button
                     onClick={() => handleDelete(outfit.id)}
@@ -244,22 +239,18 @@ export default function SavedPage() {
                         <div key={item.id} className="flex-none flex flex-col items-center gap-0.5">
                           <div
                             className="w-14 h-16 border-2 border-black overflow-hidden"
-                            style={{
-                              backgroundImage: item.imageObjectPath
-                                ? "repeating-conic-gradient(#e8e3dd 0% 25%, #f9f4ee 0% 50%)"
-                                : undefined,
-                              backgroundSize: "10px 10px",
-                            }}
+                            style={{ background: "#FDECEF" }}
                           >
                             {item.imageObjectPath ? (
                               <img
                                 src={getImageUrl(item.imageObjectPath)!}
                                 alt={item.name}
-                                className="w-full h-full object-contain"
+                                className="w-full h-full"
+                                style={{ objectFit: "contain", objectPosition: "center" }}
                               />
                             ) : (
-                              <div className="w-full h-full bg-secondary/30 flex items-center justify-center p-1">
-                                <span className="text-[8px] font-bold uppercase text-center leading-tight">—</span>
+                              <div className="w-full h-full flex items-center justify-center p-1">
+                                <span className="text-[8px] font-bold uppercase text-center leading-tight text-black/30">—</span>
                               </div>
                             )}
                           </div>
