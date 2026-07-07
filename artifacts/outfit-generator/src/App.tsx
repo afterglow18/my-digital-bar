@@ -1,4 +1,4 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { Route, Switch, Router as WouterRouter } from 'wouter';
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { AppLayout } from './components/layout/AppLayout';
@@ -8,15 +8,7 @@ import SavedPage from './pages/saved';
 import FavoritesPage from './pages/favorites';
 import WelcomePage from './pages/welcome';
 import { setGlobalTier } from '@/hooks/useEntitlements';
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false,
-      refetchOnWindowFocus: false,
-    },
-  },
-});
+import { queryClient } from '@/lib/queryClient';
 
 function NotFound() {
   return (
@@ -45,7 +37,9 @@ function App() {
   // Show the welcome screen once per session. The wardrobe pre-loads beneath
   // the overlay so the transition after the door animation is instant.
   const [entered, setEntered] = useState<boolean>(
-    () => sessionStorage.getItem("closet-entered") === "1"
+    () =>
+      sessionStorage.getItem("closet-entered") === "1" ||
+      new URLSearchParams(window.location.search).get("preview") === "1"
   );
 
   const handleEnter = useCallback(() => {
