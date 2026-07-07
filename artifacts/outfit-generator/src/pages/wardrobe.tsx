@@ -331,39 +331,63 @@ export default function WardrobePage() {
             const carLeft  = pX(ir, LM.doorL);
             const carRight = ir.left + pW(ir, 1 - LM.doorR);
 
-            // Photos start directly below the hanger arms (hangerBot) for
-            // TOPS and BOTTOMS so the full photo is visible under the hanger.
-            // For SHOES there are no hanging hangers — photos sit on the shelf
-            // starting just below the rod (boxY).
-            const photoTopFrac = isShoes ? lm.boxY : lm.hangerBot;
-            const carTop = pY(ir, photoTopFrac);
-            const carH   = pH(ir, lm.boxBot - photoTopFrac);
-
             // "+ ADD" tap zone — centred on the gold rod / pill
-            const tapH   = Math.max(36, pH(ir, 0.052));
+            // Compute tapBot first so photos can be pushed below it.
+            const tapH   = Math.max(44, pH(ir, 0.060));
             const tapTop = pY(ir, lm.btnCY) - tapH / 2;
+            const tapBot = tapTop + tapH;
 
-            // Hanger overlay — exact crop of the background image re-rendered at
-            // z=20 so the gold/pink hanger graphics always appear ABOVE clothing
-            // photos.  Shoes have no hanging hangers, so skip the overlay.
-            const hangerH      = pH(ir, lm.hangerBot - lm.hangerTop);
-            const hangerBgPosX = -pW(ir, LM.doorL);       // align with main image
-            const hangerBgPosY = -pH(ir, lm.hangerTop);   // rT=0, so simple fraction
+            // Photos must start BELOW the "+ ADD" button (tapBot) with a small
+            // breathing gap.  We use Max() so the LM boxY is respected when it
+            // already clears the button (e.g. on larger screens).
+            const GAP_PX  = 6;
+            const carTop  = Math.max(pY(ir, lm.boxY), tapBot + GAP_PX);
+            const carH    = Math.max(0, pY(ir, lm.boxBot) - carTop);
+
+            // Rod + button overlay — re-draws the background image from the
+            // button top down to the first photo pixel, so the pill always
+            // appears on top of any photo edge that might reach up.
+            // bgPosY uses the absolute pixel offset so the crop aligns with
+            // the main <img> (ir.top = 0 always in portrait).
+            const overlayTop  = tapTop;
+            const overlayH    = carTop - tapTop;   // covers button → first photo
+            const bgPosX      = -pW(ir, LM.doorL); // interior left edge offset
+            const bgPosY      = -overlayTop;        // aligns bg-image with main img
 
             return (
               <React.Fragment key={key}>
-                {/* Fixed "+ ADD" tap zone (transparent — image draws the pill) */}
+                {/* Rod + button overlay — z=20 ensures background pill shows
+                    above photos.  Covers from button top to first photo row. */}
+                <div
+                  aria-hidden="true"
+                  style={{
+                    position: "absolute",
+                    top:    overlayTop,
+                    left:   carLeft,
+                    right:  carRight,
+                    height: Math.max(0, overlayH),
+                    zIndex: 20,
+                    pointerEvents: "none",
+                    backgroundImage: "url('/closet-bg.png')",
+                    backgroundSize:     `${ir.width}px ${ir.height}px`,
+                    backgroundPosition: `${bgPosX}px ${bgPosY}px`,
+                    backgroundRepeat:   "no-repeat",
+                  }}
+                />
+
+                {/* "+ ADD" tap zone — z=22 keeps it above the overlay so it
+                    remains fully clickable.  Transparent: visual from background. */}
                 <button
                   onClick={addHandlers[key]}
                   aria-label={btnLabel}
                   data-testid={`add-btn-${key}`}
                   style={{
                     position: "absolute",
-                    top: tapTop,
-                    left: pX(ir, LM.doorL),
-                    width: pW(ir, LM.doorR - LM.doorL),
+                    top:    tapTop,
+                    left:   pX(ir, LM.doorL),
+                    width:  pW(ir, LM.doorR - LM.doorL),
                     height: tapH,
-                    zIndex: 12,
+                    zIndex: 22,
                     background: "transparent",
                     border: "none",
                     cursor: "pointer",
@@ -371,7 +395,7 @@ export default function WardrobePage() {
                   }}
                 />
 
-                {/* ClosetRow — clothing photos below the hanger arms */}
+                {/* ClosetRow — clothing photos, guaranteed to start below button */}
                 {items.length > 0 && (
                   <div
                     data-testid={`row-${key}`}
@@ -392,28 +416,6 @@ export default function WardrobePage() {
                       onItemTap={handleItemTap}
                     />
                   </div>
-                )}
-
-                {/* Hanger overlay — only for rows with hanging hangers (TOPS, BOTTOMS).
-                    Re-draws the background image crop at z=20 so the gold/pink hanger
-                    graphics stay on top of any photo that extends into that region. */}
-                {!isShoes && (
-                  <div
-                    aria-hidden="true"
-                    style={{
-                      position: "absolute",
-                      top:    pY(ir, lm.hangerTop),
-                      left:   carLeft,
-                      right:  carRight,
-                      height: hangerH,
-                      zIndex: 20,
-                      pointerEvents: "none",
-                      backgroundImage: "url('/closet-bg.png')",
-                      backgroundSize:     `${ir.width}px ${ir.height}px`,
-                      backgroundPosition: `${hangerBgPosX}px ${hangerBgPosY}px`,
-                      backgroundRepeat:   "no-repeat",
-                    }}
-                  />
                 )}
               </React.Fragment>
             );
