@@ -1,90 +1,74 @@
 ---
 name: Wardrobe layout strategy
-description: Background image sizing, landmark fractions, ClosetRow contract, and hanger overlay technique for the My Digital Closet app.
+description: Background image sizing, landmark fractions, ClosetRow contract, hanger overlay, and save bar placement for the My Digital Closet app.
 ---
 
 ## Background image
 
 **Current file:** `artifacts/outfit-generator/public/closet-bg.png`
-**Dimensions:** 1023×1537 px (aspect ratio 0.6657 — wider than tall relative to portrait phones)
+**Dimensions:** 941×1672 px (aspect ratio H/W = 1.7769)
+**Source:** User-supplied image (no modifications).
 
-**Rendering:** `object-fit: contain` inside `min(calc(100dvh - 90px), calc(100vw * 1.5025))`.
-- On portrait phones (e.g. 390×844): image fills width (390×586 px), container exactly matches → no letterbox.
-- On wide screens: image fills height with small side letterbox.
-- Container background `#F0C030` (door yellow) blends with the yellow doors.
-- `useImageRect`: if `cR > iR` → fill height, side letterbox (`rT=0`); else → fill width, `rT=0` (image anchored to top).
+**Rendering:** Container height = `min(calc(100dvh-90px), calc(100vw * 1.776833))` so image fills container width exactly with no letterbox gap on standard portrait phones. `useImageRect` anchors image to top (rT=0, rL=0 on portrait).
 
-## Landmark fractions (1023×1537 image)
+**Container background:** `#F0C030` (matches yellow doors visible on sides).
 
-All fractions are of the **image's own width/height**, applied via `pX/pY/pW/pH` helpers in `wardrobe.tsx`.
+## Landmark fractions (941×1672 image, from pixel sampling at x=150)
 
 ```
-doorL: 0.127  (x≈130)
-doorR: 0.865  (x≈885)
+doorL: 0.092   (x≈87,  boundary yellow→pink)
+doorR: 0.901   (x≈848, boundary pink→yellow)
 
 rows[0] TOPS:
-  btnCY:     0.202   rod centre y≈310
-  boxY:      0.217   hanger overlay top — just below rod (y≈333)
-  boxBot:    0.558   ClosetRow bottom — before BOTTOMS rod (y≈857)
-  hangerTop: 0.217   hanger overlay top = boxY
-  hangerBot: 0.393   photo area top — below centre hanger arms (y≈604)
+  btnCY: 0.311  (rod centre  y≈520)
+  boxY:  0.319  (rod bottom  y≈533)
+  boxBot:0.495  (y≈828, just before BOTTOMS rod)
+  hangerTop: 0.311  hangerBot: 0.319  (thin overlay, rod-bottom only)
 
 rows[1] BOTTOMS:
-  btnCY:     0.567   rod y≈871
-  boxY:      0.576   hanger overlay top (y≈885)
-  boxBot:    0.773   ClosetRow bottom — before SHOES rod (y≈1188)
-  hangerTop: 0.576
-  hangerBot: 0.632   photo area top — below BOTTOMS hanger arms (y≈971)
+  btnCY: 0.498  (rod centre  y≈833)
+  boxY:  0.506  (rod bottom  y≈846)
+  boxBot:0.685  (y≈1145, just before SHOES rod)
+  hangerTop: 0.498  hangerBot: 0.506
 
 rows[2] SHOES:
-  btnCY:     0.781   rod y≈1200
-  boxY:      0.790   photo area top — below SHOES rod (y≈1214)
-  boxBot:    0.896   photo area bottom — above SAVE bar (y≈1377)
-  hangerTop: 0.790   (not used — no shoe hanger overlay)
-  hangerBot: 0.800   (not used)
+  btnCY: 0.690  (rod centre  y≈1153)
+  boxY:  0.697  (rod bottom  y≈1165)
+  boxBot:0.849  (y≈1420, just before floor/rug)
+  hangerTop: 0.697  hangerBot: 0.697  (isShoes guard prevents overlay)
 
-barY:     0.898
-barBot:   0.973
-hangerCX: 0.140
-saveBtnL: 0.228
-saveBtnR: 0.772
-manneCX:  0.860
+Save bar (transparent tap zones over baked-in rug circles):
+  barY:    0.885   (rug top   y≈1480)
+  barBot:  0.993   (bar bot   y≈1660)
+  hangerCX: 0.175  (left hanger icon centre x≈165)
+  saveBtnL: 0.350  (centre button left  x≈329)
+  saveBtnR: 0.650  (centre button right x≈612)
+  manneCX:  0.824  (right dress-form   x≈775)
 ```
 
 ## ClosetRow photo positioning
 
-**TOPS / BOTTOMS** — photos start at `lm.hangerBot` (below hanger arms):
-- carTop = pY(ir, lm.hangerBot), carH = pH(ir, lm.boxBot - lm.hangerBot)
-- Visible photo heights at 390px: TOPS≈97px, BOTTOMS≈83px
-- Card is 3:4 (96×128px); bottom ~31–45px clips at container edge (acceptable)
-
-**SHOES** — photos sit on the shelf (no hangers):
-- carTop = pY(ir, lm.boxY), carH = pH(ir, lm.boxBot - lm.boxY)
-- Visible height ≈62px; same card width as other rows
+- `photoTopFrac = isShoes ? lm.boxY : lm.hangerBot`
+  For all rows in new image: hangerBot = boxY, so photos start at rod-bottom for every row.
+- `carH = pH(ir, lm.boxBot - photoTopFrac)` — same for all rows.
 
 ## ClosetRow card spec
 
-- **Size:** `cardW = slotW`, `cardH = slotW * 4/3` (strict 3:4 portrait)
-- **Image:** `objectFit: cover`, `objectPosition: center`
-- **Selection indicator:** pink center hanger baked into the background image — NO border or shadow on the card itself, ever
-- `isCenter` still drives `aria-pressed` and cursor, but no visual styling
+- `cardW = slotW`, `cardH = slotW * 4/3` (strict 3:4, same for all three rows)
+- Inset ~8%: `GAP = slotW*0.08`, `photoW = slotW-GAP`, `photoH = photoW*4/3`, `inset = GAP/2`
+- Center item: `border: 1.5px solid #F7C6D8`. Non-center: borderless.
+- `objectFit: cover`, `objectPosition: center`
+- Pink center hanger in background = selection indicator (no extra glow on card)
 
-## Hanger overlay technique (z=20)
+## Hanger overlay (z=20)
 
-Gold/pink hangers are baked into the background image. To keep them above clothing photos, each TOPS/BOTTOMS row renders a second `<div>` at z=20 re-drawing the background-image crop. SHOES row skips the overlay entirely (`!isShoes`).
+New background has NO visible hanging hanger-arm graphics. The overlay height is only:
+`hangerBot - hangerTop = boxY - btnCY ≈ 0.008` (≈8 px at 390px wide rendering).
+This thin strip covers the rod bottom edge above photos to prevent any photo-edge overlap.
+SHOES skipped via `{!isShoes && ...}` guard.
 
-```
-backgroundImage:    url('/closet-bg.png')
-backgroundSize:     `${ir.width}px ${ir.height}px`
-backgroundPosition: `${-pW(ir, LM.doorL)}px ${-pH(ir, lm.hangerTop)}px`
-backgroundRepeat:   no-repeat
-pointerEvents:      none
-```
+## Save bar
 
-**Why it works:** The div's CSS origin is at `(pX(ir, doorL), pY(ir, hangerTop))`.
-Applying `backgroundPosition = (-pW(doorL), -pH(hangerTop))` shifts the background so its
-apparent origin lands at `(ir.left, ir.top)` — matching the main `<img>` layer pixel-for-pixel.
-
-## carRight formula
-
-`right: ir.left + pW(ir, 1 - LM.doorR)` — valid for both symmetric letterbox and full-width modes because the formula is algebraically equivalent to `(cW - ir.left - ir.width) + pW(ir, 1-doorR)` when the letterbox is symmetric (ir.left = right_letterbox).
+Visual comes entirely from baked-in background circles on the pink rug.
+HTML = three invisible tap zones positioned at image fractions (barY, barBot etc.).
+When `isSaveOpen`: name-input form appears floating above (via `bottom: calc(100% - pY(ir,LM.barY)px + 8px)`).

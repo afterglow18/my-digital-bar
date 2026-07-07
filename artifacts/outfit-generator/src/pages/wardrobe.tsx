@@ -1,23 +1,22 @@
 /**
- * WardrobePage — closet-bg.png (1023×1844 PNG, new image)
+ * WardrobePage — closet-bg.png (941×1672 PNG)
  *
- * Sizing: object-fit CONTAIN inside calc(100dvh − 90px).
- *   Image ratio 0.6657 > iPhone container ratio (≈0.52) → fills width, side letterbox at bottom.
- *   Container background #F0C030 (door yellow) blends with yellow doors.
+ * Sizing: object-fit CONTAIN inside min(calc(100dvh − 90px), calc(100vw × H/W)).
+ *   Image ratio 0.5629 — taller than iPhone portrait ratio (≈0.517) → fills width.
+ *   min() clamps container to image aspect ratio so image fills exactly — no letterbox.
+ *   Container background #F0C030 (door yellow) blends with yellow doors on sides.
  *
  * Layout (z-index):
  *   0   background <img>
- *   10  ClosetRow carousels — positioned from below the rod, behind hangers
- *   12  Transparent "+ ADD" tap zones
- *   14  Transparent SAVE OUTFIT / shuffle / mannequin tap zones
- *   20  Hanger overlays — crop of the background image re-rendered on top of clothing cards
+ *   10  ClosetRow carousels — positioned below the rod
+ *   12  Transparent "+ ADD" tap zones (visual comes from baked-in background pills)
+ *   14  Transparent SAVE OUTFIT / shuffle / mannequin tap zones (visual from rug background)
+ *   20  Hanger overlays — thin crop re-rendered at z=20 to keep rod bottom above photos
  *   30+ Modals
  *
  * Hanger overlay technique:
- *   Each row renders a second div that uses closet-bg.png as background-image,
- *   aligned with background-size/position to exactly match the main image layer.
- *   This ensures the gold hangers always appear ABOVE the clothing photos even
- *   when the ClosetRow extends into the hanger area.
+ *   New background has no visible hanging hanger-arm graphics.
+ *   A thin overlay (rod-center → rod-bottom, ~5 px) covers the rod bottom edge above photos.
  */
 
 import React, {
@@ -29,7 +28,7 @@ import {
   useSaveOutfit, useListOutfits, getListOutfitsQueryKey,
   ClothingItem,
 } from "@workspace/api-client-react";
-import { X, Shuffle } from "lucide-react";
+import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ClosetRow, ClosetRowHandle } from "@/components/ClosetRow";
 import { QuickAddSheet } from "@/components/clothing/QuickAddSheet";
@@ -52,53 +51,66 @@ const ROWS: { key: RowKey; addLabel: string; btnLabel: string }[] = [
 ];
 
 // ── Image constants ───────────────────────────────────────────────────────────
-const IMG_W = 1023;
-const IMG_H = 1537;
+const IMG_W = 941;
+const IMG_H = 1672;
 const NAV_H = 90;
 
-// ── Landmark fractions (measured from the 1023×1537 PNG) ─────────────────────
+// ── Landmark fractions (measured from the 941×1672 PNG) ──────────────────────
 // All x-values are fractions of image WIDTH; y-values of image HEIGHT.
 //
-// Strategy: ClosetRow containers start just BELOW the gold rod (not below the
-// hanger arms).  A hanger overlay div at z=20 re-renders the background image
-// crop over the hanger area, keeping the gold/pink hangers visually on top.
+// Rod positions sampled at x=150 (left interior, clear of the centre pill):
+//   TOPS    rod dark pixels  y=515–528 → centre y≈520  (520/1672=0.311)
+//   BOTTOMS rod dark pixels  y=828–840 → centre y≈833  (833/1672=0.498)
+//   SHOES   rod dark pixels  y=1148–1160 → centre y≈1153 (1153/1672=0.690)
 //
-// boxY     = just below the gold rod — where the ClosetRow starts
-// boxBot   = where the ClosetRow ends (just before next rod)
-// hangerTop/hangerBot = the hanger graphic region (overlay at z=20)
-//   TOPS:    rod y≈295–325, pink center hanger base y≈600 (px in image)
-//   BOTTOMS: rod y≈864–878, hanger base y≈965
-//   SHOES:   rod y≈1192–1207, no hanging hangers → overlay is minimal
+// Door edges sampled at y=600:
+//   doorL: yellow→pink transition at x≈87 (87/941=0.092)
+//   doorR: pink→yellow transition at x≈848 (848/941=0.901)
+//
+// Hanger overlay: new background has NO hanging hanger-arm graphics.
+//   Each overlay covers only rod-centre → rod-bottom (~8 px) to keep the
+//   rod edge crisp above photos.  Zero impact on the clothing photo area.
+//
+// Save bar: three baked-in circles on the rug (transparent tap zones).
+//   Rug/bar starts at y≈1480 (0.885).  Button centres measured from crop.
 const LM = {
   // Inner closet edges (just inside the yellow doors)
-  doorL: 0.127,
-  doorR: 0.865,
+  doorL: 0.092,   // x≈87  (87/941)
+  doorR: 0.901,   // x≈848 (848/941)
 
-  // Per-row landmarks
+  // Per-row landmarks  (btnCY = rod centre, boxY = just below rod bottom)
   rows: [
     {
-      btnCY:     0.202, // centre of "+ ADD TOPS" pill (gold rod centre y=310)
-      boxY:      0.217, // ClosetRow top — just below rod bottom (y≈333)
-      boxBot:    0.558, // ClosetRow bottom — just before BOTTOMS rod (y≈857)
-      hangerTop: 0.217, // hanger overlay top = boxY
-      hangerBot: 0.393, // hanger overlay bottom — below centre hanger arms (y≈604)
+      btnCY:     0.311, // TOPS rod centre   y≈520  (520/1672)
+      boxY:      0.319, // just below rod    y≈533  (533/1672)
+      boxBot:    0.495, // just before BOTTOMS rod  y≈828
+      hangerTop: 0.311, // thin rod-bottom overlay — rod centre…
+      hangerBot: 0.319, // …to rod bottom (no hanger arms in new bg)
     },
     {
-      btnCY:     0.567, // centre of "+ ADD BOTTOMS" pill (rod y≈871)
-      boxY:      0.576, // just below BOTTOMS rod (y≈885)
-      boxBot:    0.773, // just before SHOES rod (y≈1188)
-      hangerTop: 0.576,
-      hangerBot: 0.632, // below BOTTOMS hanger arms (y≈971)
+      btnCY:     0.498, // BOTTOMS rod centre y≈833  (833/1672)
+      boxY:      0.506, // just below rod     y≈846  (846/1672)
+      boxBot:    0.685, // just before SHOES rod     y≈1145
+      hangerTop: 0.498,
+      hangerBot: 0.506,
     },
     {
-      btnCY:     0.781, // centre of "+ ADD SHOES" pill (rod y≈1200)
-      boxY:      0.790, // just below SHOES rod (y≈1214) — no hangers hanging
-      boxBot:    0.934, // extended — drawer area now painted over (y≈1435)
-      hangerTop: 0.790,
-      hangerBot: 0.800, // minimal overlay — only covers the rod bottom shadow
+      btnCY:     0.690, // SHOES rod centre   y≈1153 (1153/1672)
+      boxY:      0.697, // just below rod     y≈1165 (1165/1672)
+      boxBot:    0.849, // just before floor/rug      y≈1420
+      hangerTop: 0.697, // SHOES: no overlay (isShoes guard in JSX)
+      hangerBot: 0.697,
     },
   ],
 
+  // SAVE OUTFIT bar — three baked-in circles on the rug
+  // Visual from background image; HTML = transparent tap zones only.
+  barY:     0.885, // rug/bar top   y≈1480 (1480/1672)
+  barBot:   0.993, // bar bottom    y≈1660 (1660/1672)
+  hangerCX: 0.175, // left  hanger icon centre x≈165 (165/941)
+  saveBtnL: 0.350, // centre button left  edge  x≈329 (329/941)
+  saveBtnR: 0.650, // centre button right edge  x≈612 (612/941)
+  manneCX:  0.824, // right dress-form centre   x≈775 (775/941)
 } as const;
 
 // ── useImageRect ─────────────────────────────────────────────────────────────
@@ -259,9 +271,10 @@ export default function WardrobePage() {
       style={{
         position: "relative",
         width: "100%",
-        // Full viewport height above the nav bar. The image fills width (~586 px on
-        // a 390-wide phone) and the remaining floor space below it holds the save bar.
-        height: `calc(100dvh - ${NAV_H}px)`,
+        // Clamp to image aspect ratio so it fills the container exactly — no
+        // letterbox gap below — because the save-bar is baked into the rug at the
+        // bottom of the image.  min() prevents overflow on very short screens.
+        height: `min(calc(100dvh - ${NAV_H}px), calc(100vw * ${(IMG_H / IMG_W).toFixed(6)}))`,
         overflow: "hidden",
         // Door-yellow background blends with yellow doors visible at sides/bottom
         background: "#F0C030",
@@ -309,7 +322,7 @@ export default function WardrobePage() {
           )}
 
           {/* ── Three clothing rows ── */}
-          {ROWS.map(({ key, addLabel, btnLabel }, rowIdx) => {
+          {ROWS.map(({ key, btnLabel }, rowIdx) => {
             const lm      = LM.rows[rowIdx];
             const items   = rowData[key];
             const isShoes = rowIdx === 2;
@@ -406,144 +419,137 @@ export default function WardrobePage() {
             );
           })}
 
-          {/* ── SAVE OUTFIT bar — sits in the floor zone below the image ──
-              The baked-in drawer graphic has been painted out of closet-bg.png,
-              so these are real visible buttons (not transparent tap zones).
-              Positioned at ir.height + 8 so they land on the yellow floor/rug area. */}
-          <div
+          {/* ── SAVE OUTFIT bar — transparent tap zones over baked-in rug circles ──
+              Visual (hanger icon, "SAVE OUTFIT ♡", dress-form icon) comes from the
+              background image.  These HTML elements are invisible tap targets only. */}
+
+          {/* Shuffle / hanger icon — left circle */}
+          <button
+            onClick={handleShuffle}
+            data-testid="button-shuffle"
+            aria-label="Shuffle outfit"
+            title="Shuffle outfit"
             style={{
               position: "absolute",
-              // Portrait: land in floor zone below image. Landscape/wide: clamp so bar
-            // stays inside the container (image fills full height, no floor zone).
-            top:   Math.min(ir.top + ir.height + 8, ir.containerH - 56),
-              left:  pX(ir, LM.doorL),
-              right: ir.left + pW(ir, 1 - LM.doorR),
-              height: 48,
+              top:    pY(ir, LM.barY),
+              left:   pX(ir, LM.hangerCX) - 38,
+              width:  76,
+              height: pH(ir, LM.barBot - LM.barY),
               zIndex: 14,
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
             }}
-          >
-            {/* Shuffle — left circle */}
-            <button
-              onClick={handleShuffle}
-              data-testid="button-shuffle"
-              aria-label="Shuffle outfit"
-              title="Shuffle outfit"
-              style={{
-                width: 48, height: 48, borderRadius: "50%", flexShrink: 0,
-                background: "rgba(255,248,230,0.97)",
-                border: "1.5px solid rgba(196,155,42,0.52)",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.14)",
-                cursor: "pointer",
-                display: "flex", alignItems: "center", justifyContent: "center",
-              }}
-            >
-              <Shuffle style={{ width: 18, height: 18, color: GOLD }} />
-            </button>
+          />
 
-            {/* Save Outfit — expands to fill remaining space */}
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <AnimatePresence mode="wait">
-                {isSaveOpen ? (
-                  <motion.div
-                    key="input"
-                    initial={{ opacity: 0, y: 4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 4 }}
-                    style={{ display: "flex", gap: 6, width: "100%" }}
-                  >
-                    <input
-                      autoFocus
-                      type="text"
-                      placeholder="Name this outfit…"
-                      value={saveName}
-                      onChange={e => setSaveName(e.target.value)}
-                      onKeyDown={e => e.key === "Enter" && handleSave()}
-                      data-testid="input-outfit-name"
-                      style={{
-                        flex: 1, height: 48, borderRadius: 24, padding: "0 14px",
-                        fontSize: 13, fontWeight: 600, color: "#3a2400",
-                        background: "rgba(255,252,245,0.98)",
-                        border: "1.5px solid rgba(196,155,42,0.50)",
-                        boxShadow: "0 3px 12px rgba(0,0,0,0.14)",
-                        outline: "none", minWidth: 0,
-                      }}
-                    />
-                    <button
-                      onClick={() => { setIsSaveOpen(false); setSaveName(""); }}
-                      style={{
-                        width: 48, height: 48, borderRadius: "50%", flexShrink: 0,
-                        background: "rgba(255,250,240,0.97)",
-                        border: "1.5px solid rgba(196,155,42,0.36)",
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                        cursor: "pointer",
-                      }}
-                    >
-                      <X style={{ width: 14, height: 14, color: GOLD }} />
-                    </button>
-                    <button
-                      onClick={handleSave}
-                      disabled={!saveName.trim() || saveOutfit.isPending}
-                      data-testid="button-save-outfit-confirm"
-                      style={{
-                        padding: "0 16px", height: 48, borderRadius: 24, flexShrink: 0,
-                        background: "linear-gradient(to bottom,#f5d840,#c89018)",
-                        color: "#3a2400", fontWeight: 700, fontSize: 13, border: "none",
-                        boxShadow: "0 3px 10px rgba(200,168,24,0.32)",
-                        opacity: (!saveName.trim() || saveOutfit.isPending) ? 0.42 : 1,
-                        cursor: "pointer",
-                      }}
-                    >
-                      {saveOutfit.isPending ? "…" : "Save ♡"}
-                    </button>
-                  </motion.div>
-                ) : (
-                  <button
-                    key="save-zone"
-                    onClick={handleSaveClick}
-                    data-testid="button-save-outfit"
-                    aria-label="Save Outfit"
-                    style={{
-                      width: "100%", height: 48, borderRadius: 24,
-                      background: "rgba(255,248,230,0.97)",
-                      border: "1.5px solid rgba(196,155,42,0.52)",
-                      color: "#5a3a00", fontWeight: 700, fontSize: 13,
-                      letterSpacing: "0.07em",
-                      cursor: "pointer",
-                      boxShadow: canSave
-                        ? "0 0 0 2.5px rgba(196,155,42,0.55), 0 4px 16px rgba(200,168,24,0.28)"
-                        : "0 2px 8px rgba(0,0,0,0.14)",
-                    }}
-                  >
-                    SAVE OUTFIT ♡
-                  </button>
-                )}
-              </AnimatePresence>
-            </div>
+          {/* Save Outfit — centre circle */}
+          <AnimatePresence mode="wait">
+            {isSaveOpen ? (
+              <motion.div
+                key="input"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 6 }}
+                style={{
+                  position: "absolute",
+                  bottom: `calc(100% - ${pY(ir, LM.barY)}px + 8px)`,
+                  left:   pX(ir, LM.saveBtnL),
+                  right:  ir.left + pW(ir, 1 - LM.saveBtnR),
+                  display: "flex",
+                  gap: 6,
+                  zIndex: 20,
+                }}
+              >
+                <input
+                  autoFocus
+                  type="text"
+                  placeholder="Name this outfit…"
+                  value={saveName}
+                  onChange={e => setSaveName(e.target.value)}
+                  onKeyDown={e => e.key === "Enter" && handleSave()}
+                  data-testid="input-outfit-name"
+                  style={{
+                    flex: 1, height: 38, borderRadius: 20, padding: "0 14px",
+                    fontSize: 13, fontWeight: 600, color: "#3a2400",
+                    background: "rgba(255,252,245,0.98)",
+                    border: "1.5px solid rgba(196,155,42,0.50)",
+                    boxShadow: "0 3px 12px rgba(0,0,0,0.14)",
+                    outline: "none",
+                  }}
+                />
+                <button
+                  onClick={() => { setIsSaveOpen(false); setSaveName(""); }}
+                  style={{
+                    width: 38, height: 38, borderRadius: "50%", flexShrink: 0,
+                    background: "rgba(255,250,240,0.97)",
+                    border: "1.5px solid rgba(196,155,42,0.36)",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    cursor: "pointer",
+                  }}
+                >
+                  <X style={{ width: 14, height: 14, color: GOLD }} />
+                </button>
+                <button
+                  onClick={handleSave}
+                  disabled={!saveName.trim() || saveOutfit.isPending}
+                  data-testid="button-save-outfit-confirm"
+                  style={{
+                    padding: "0 16px", height: 38, borderRadius: 20, flexShrink: 0,
+                    background: "linear-gradient(to bottom,#f5d840,#c89018)",
+                    color: "#3a2400", fontWeight: 700, fontSize: 13, border: "none",
+                    boxShadow: "0 3px 10px rgba(200,168,24,0.32)",
+                    opacity: (!saveName.trim() || saveOutfit.isPending) ? 0.42 : 1,
+                    cursor: "pointer",
+                  }}
+                >
+                  {saveOutfit.isPending ? "…" : "Save ♡"}
+                </button>
+              </motion.div>
+            ) : (
+              <button
+                key="save-zone"
+                onClick={handleSaveClick}
+                data-testid="button-save-outfit"
+                aria-label="Save Outfit"
+                style={{
+                  position: "absolute",
+                  top:    pY(ir, LM.barY),
+                  left:   pX(ir, LM.saveBtnL),
+                  right:  ir.left + pW(ir, 1 - LM.saveBtnR),
+                  height: pH(ir, LM.barBot - LM.barY),
+                  zIndex: 14,
+                  background: "transparent",
+                  border: "none",
+                  cursor: "pointer",
+                  borderRadius: 20,
+                  boxShadow: canSave
+                    ? "0 0 0 2.5px rgba(196,155,42,0.45)"
+                    : "none",
+                }}
+              />
+            )}
+          </AnimatePresence>
 
-            {/* Mannequin — right circle */}
-            <button
-              onClick={handleMannequinClick}
-              disabled={!canSave}
-              data-testid="button-view-mannequin"
-              aria-label="View outfit on mannequin"
-              title="View on mannequin"
-              style={{
-                width: 48, height: 48, borderRadius: "50%", flexShrink: 0,
-                background: "rgba(255,248,230,0.97)",
-                border: "1.5px solid rgba(196,155,42,0.52)",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.14)",
-                cursor: canSave ? "pointer" : "default",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                opacity: canSave ? 1 : 0.32,
-                fontSize: "1.25rem",
-              }}
-            >
-              👗
-            </button>
-          </div>
+          {/* Mannequin / dress-form icon — right circle */}
+          <button
+            onClick={handleMannequinClick}
+            disabled={!canSave}
+            data-testid="button-view-mannequin"
+            aria-label="View outfit on mannequin"
+            title="View on mannequin"
+            style={{
+              position: "absolute",
+              top:    pY(ir, LM.barY),
+              left:   pX(ir, LM.manneCX) - 38,
+              width:  76,
+              height: pH(ir, LM.barBot - LM.barY),
+              zIndex: 14,
+              background: "transparent",
+              border: "none",
+              cursor: canSave ? "pointer" : "default",
+              opacity: canSave ? 1 : 0.35,
+            }}
+          />
         </>
       )}
 
