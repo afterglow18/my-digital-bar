@@ -37,6 +37,25 @@ const SHADOW_CTR  = "0 4px 18px rgba(200,100,120,0.22), 0 1px 4px rgba(0,0,0,0.1
 import { ClothingItem } from "@workspace/api-client-react";
 import { getImageUrl } from "@/lib/utils";
 
+// ── Decorative hanger SVG ─────────────────────────────────────────────────────
+// Rendered at zIndex:0 inside the button slot, BEHIND the photo card (zIndex:1).
+// Only the hook and upper shoulders peek above the card top — the rest is hidden.
+function HangerSvg({ width, opacity }: { width: number; opacity: number }) {
+  const h = Math.round(width * 0.68);
+  return (
+    <svg width={width} height={h} viewBox="0 0 32 22" fill="none" aria-hidden="true"
+      style={{ display: "block", opacity, filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.18))" }}>
+      <path d="M16 1.5 C18.4 1 20 2.8 18.2 4.8 C17.4 5.6 16 5.8 15 5.2"
+        stroke="#C8961A" strokeWidth="2.2" strokeLinecap="round" fill="none" />
+      <path d="M15 5.2 C15 5.2 30 12 31 18 L1 18 C2 12 15 5.2 16 5.2 Z"
+        stroke="#C8961A" strokeWidth="1.9" strokeLinejoin="round"
+        fill="rgba(200,150,26,0.10)" />
+      <line x1="1" y1="18" x2="31" y2="18"
+        stroke="#C8961A" strokeWidth="2.4" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 // ── Types ─────────────────────────────────────────────────────────────────────
 export interface ClosetRowHandle {
   scrollToIndex: (index: number, smooth?: boolean) => void;
@@ -316,6 +335,25 @@ export const ClosetRow = forwardRef<ClosetRowHandle, ClosetRowProps>(
                   zIndex: isCenter ? 2 : 1,
                 }}
               >
+                {/* Hanger — side cards only, behind the photo card.
+                    Positioned near the card top so the hook + upper shoulders
+                    are visible above the card while the body hides behind it. */}
+                {!isCenter && (
+                  <div
+                    aria-hidden="true"
+                    style={{
+                      position: "absolute",
+                      top: Math.max(2, Math.round((containerH - photoH) / 2) - Math.round(slotW * 0.34 * 0.28)),
+                      left: "50%",
+                      transform: "translateX(-50%)",
+                      pointerEvents: "none",
+                      zIndex: 0,
+                    }}
+                  >
+                    <HangerSvg width={Math.round(slotW * 0.34)} opacity={opacity} />
+                  </div>
+                )}
+
                 {/* Photo card — scales, fades, and recolours as it moves
                     to/from centre.  transform-origin centre keeps the card
                     visually anchored in its slot. */}
@@ -329,6 +367,7 @@ export const ClosetRow = forwardRef<ClosetRowHandle, ClosetRowProps>(
                     background: bg,
                     boxShadow: shadow,
                     position: "relative",
+                    zIndex: 1,
                     pointerEvents: "none",
                     opacity,
                     transform: `scale(${scale.toFixed(4)})`,
