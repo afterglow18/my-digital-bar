@@ -49,7 +49,7 @@ router.post("/auth/forgot-password", async (req, res): Promise<void> => {
     const resetUrl = `${getAppUrl()}/?reset_token=${token}`;
 
     const resend = getResend();
-    await resend.emails.send({
+    const { data, error } = await resend.emails.send({
       from: "My Digital Closet <support@afterglow-tanningsalon.com>",
       to: user.email,
       subject: "Reset your My Digital Closet password",
@@ -65,8 +65,13 @@ router.post("/auth/forgot-password", async (req, res): Promise<void> => {
         </div>
       `,
     });
+    if (error) {
+      console.error("[Resend] Failed to send password reset email:", JSON.stringify(error));
+    } else {
+      console.log("[Resend] Password reset email sent — id:", data?.id, "to:", user.email);
+    }
   } catch (err) {
-    console.error("Password reset email error:", err);
+    console.error("[Resend] Unexpected error sending password reset email:", err);
   }
 });
 
