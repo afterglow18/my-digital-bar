@@ -468,8 +468,8 @@ export default function WardrobePage() {
                 style={{
                   position: "absolute",
                   bottom: `calc(100% - ${pY(ir, LM.barY)}px + 8px)`,
-                  left:   pX(ir, LM.saveBtnL),
-                  right:  ir.left + pW(ir, 1 - LM.saveBtnR),
+                  left:   16,
+                  right:  16,
                   display: "flex",
                   gap: 6,
                   zIndex: 20,
