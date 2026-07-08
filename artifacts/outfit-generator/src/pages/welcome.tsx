@@ -245,44 +245,44 @@ export default function WelcomePage({ onEnter }: Props) {
         )}
       </div>
 
-      {/* Privacy policy link — in outer fixed container so it's never clipped */}
-      <a
-        href="https://classy-alpaca-441.notion.site/Privacy-Policy-39682db6065380b19dedcb108d4a0ef4"
-        target="_blank"
-        rel="noopener noreferrer"
+      {/* Bottom links — centered, stacked */}
+      <div
         style={{
           position: "fixed",
           bottom: "calc(env(safe-area-inset-bottom) + 10px)",
           left: 0, right: 0,
-          textAlign: "center",
-          fontSize: 11,
-          fontWeight: 500,
-          color: "rgba(255,255,255,0.45)",
-          textDecoration: "none",
-          letterSpacing: "0.02em",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 4,
           zIndex: 210,
         }}
       >
-        Privacy Policy
-      </a>
-      <a
-        href="https://app.notion.com/p/My-Digital-Closet-Support-39782db60653802a9088dcbae84c0527?source=copy_link"
-        target="_blank"
-        rel="noopener noreferrer"
-        style={{
-          position: "fixed",
-          bottom: 10,
-          right: 16,
-          fontSize: 11,
-          fontWeight: 600,
-          color: "rgba(255,255,255,0.45)",
-          textDecoration: "none",
-          letterSpacing: "0.02em",
-          zIndex: 210,
-        }}
-      >
-        Support
-      </a>
+        <a
+          href="https://classy-alpaca-441.notion.site/Privacy-Policy-39682db6065380b19dedcb108d4a0ef4"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            fontSize: 11, fontWeight: 500,
+            color: "rgba(255,255,255,0.45)",
+            textDecoration: "none", letterSpacing: "0.02em",
+          }}
+        >
+          Privacy Policy
+        </a>
+        <a
+          href="https://app.notion.com/p/My-Digital-Closet-Support-39782db60653802a9088dcbae84c0527?source=copy_link"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            fontSize: 11, fontWeight: 500,
+            color: "rgba(255,255,255,0.45)",
+            textDecoration: "none", letterSpacing: "0.02em",
+          }}
+        >
+          Support
+        </a>
+      </div>
     </div>
   );
 }
