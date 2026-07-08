@@ -5,10 +5,12 @@ import clothingRouter from "./clothing";
 import outfitsRouter from "./outfits";
 import stripeRouter from "./stripe";
 import authRouter from "./auth";
+import passwordResetRouter from "./password-reset";
 
 const router: IRouter = Router();
 
 router.use(authRouter);
+router.use(passwordResetRouter);
 router.use(healthRouter);
 router.use(storageRouter);
 router.use(clothingRouter);
