@@ -160,8 +160,8 @@ export default function AuthPage({ onAuthenticated }: { onAuthenticated: () => v
     "reset-done": "All done! 🎉",
   };
 
-  // Card positioned lower so more of the closet is visible above
-  const cardTop = ir ? ir.top + ir.height * 0.52 : null;
+  // Card positioned so the full form fits without the bottom being cut off
+  const cardTop = ir ? ir.top + ir.height * 0.38 : null;
 
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 200, background: "#F0C030", display: "flex", alignItems: "flex-start", justifyContent: "center", overflow: "hidden" }}>
@@ -169,10 +169,17 @@ export default function AuthPage({ onAuthenticated }: { onAuthenticated: () => v
         ref={containerRef}
         style={{ width: "100%", maxWidth: 448, height: "calc(100dvh - 90px)", position: "relative", overflow: "hidden", background: "#F0C030" }}
       >
-        {/* Background wardrobe image */}
+        {/* Background wardrobe image — blurred */}
         {ir && (
           <img src="/auth-bg.jpg" alt="" draggable={false}
-            style={{ position: "absolute", top: ir.top, left: ir.left, width: ir.width, height: ir.height, display: "block", userSelect: "none", pointerEvents: "none" }}
+            style={{
+              position: "absolute",
+              top: ir.top - 12, left: ir.left - 12,
+              width: ir.width + 24, height: ir.height + 24,
+              display: "block", userSelect: "none", pointerEvents: "none",
+              filter: "blur(10px)",
+              transform: "scale(1.02)",
+            }}
           />
         )}
 
