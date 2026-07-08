@@ -4,6 +4,8 @@ import { db, savedOutfitsTable, outfitItemsTable, clothingItemsTable } from "@wo
 import {
   SaveOutfitBody,
   DeleteOutfitParams,
+  AddOutfitItemParams,
+  AddOutfitItemBody,
 } from "@workspace/api-zod";
 
 const router: IRouter = Router();
@@ -72,6 +74,61 @@ router.post("/outfits", async (req, res): Promise<void> => {
     itemIds: parsed.data.itemIds,
     items: savedItems,
   });
+});
+
+router.patch("/outfits/:id/items", async (req, res): Promise<void> => {
+  const params = AddOutfitItemParams.safeParse(req.params);
+  if (!params.success) {
+    res.status(400).json({ error: params.error.message });
+    return;
+  }
+
+  const body = AddOutfitItemBody.safeParse(req.body);
+  if (!body.success) {
+    res.status(400).json({ error: body.error.message });
+    return;
+  }
+
+  // Verify outfit exists
+  const [outfit] = await db
+    .select()
+    .from(savedOutfitsTable)
+    .where(eq(savedOutfitsTable.id, params.data.id));
+
+  if (!outfit) {
+    res.status(404).json({ error: "Outfit not found" });
+    return;
+  }
+
+  // Check item not already in outfit
+  const existing = await db
+    .select()
+    .from(outfitItemsTable)
+    .where(eq(outfitItemsTable.outfitId, params.data.id));
+
+  const alreadyAdded = existing.some((r) => r.clothingItemId === body.data.itemId);
+  if (!alreadyAdded) {
+    await db.insert(outfitItemsTable).values({
+      outfitId: params.data.id,
+      clothingItemId: body.data.itemId,
+    });
+  }
+
+  // Return updated outfit
+  const allItems = await db
+    .select()
+    .from(outfitItemsTable)
+    .where(eq(outfitItemsTable.outfitId, params.data.id));
+
+  const itemIds = allItems.map((r) => r.clothingItemId);
+  const items = itemIds.length > 0
+    ? await db
+        .select()
+        .from(clothingItemsTable)
+        .where(inArray(clothingItemsTable.id, itemIds))
+    : [];
+
+  res.json({ ...outfit, itemIds, items });
 });
 
 router.delete("/outfits/:id", async (req, res): Promise<void> => {

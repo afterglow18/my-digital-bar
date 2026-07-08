@@ -876,6 +876,58 @@ export const useDeleteOutfit = <TError = ErrorType<ErrorEnvelope>,
       return useMutation(getDeleteOutfitMutationOptions(options));
     }
 
+export const getAddItemToOutfitUrl = (id: number) => {
+  return `/api/outfits/${id}/items`
+}
+
+/**
+ * @summary Add an item to an existing outfit
+ */
+export const addItemToOutfit = async (id: number, itemId: number, options?: RequestInit): Promise<SavedOutfit> => {
+  return customFetch<SavedOutfit>(getAddItemToOutfitUrl(id),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify({ itemId })
+  }
+);}
+
+export const getAddItemToOutfitMutationOptions = <TError = ErrorType<ErrorEnvelope>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addItemToOutfit>>, TError,{id: number; itemId: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof addItemToOutfit>>, TError,{id: number; itemId: number}, TContext> => {
+
+const mutationKey = ['addItemToOutfit'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof addItemToOutfit>>, {id: number; itemId: number}> = (props) => {
+          const {id, itemId} = props ?? {};
+          return addItemToOutfit(id, itemId, requestOptions)
+        }
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AddItemToOutfitMutationResult = NonNullable<Awaited<ReturnType<typeof addItemToOutfit>>>
+    export type AddItemToOutfitMutationError = ErrorType<ErrorEnvelope>
+
+    /**
+ * @summary Add an item to an existing outfit
+ */
+export const useAddItemToOutfit = <TError = ErrorType<ErrorEnvelope>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addItemToOutfit>>, TError,{id: number; itemId: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof addItemToOutfit>>,
+        TError,
+        {id: number; itemId: number},
+        TContext
+      > => {
+      return useMutation(getAddItemToOutfitMutationOptions(options));
+    }
+
 export const getRequestUploadUrlUrl = () => {
 
 

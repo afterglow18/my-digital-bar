@@ -136,6 +136,8 @@ interface Props {
   onOpenChange:  (open: boolean) => void;
   category:      Category;
   existingCount: number;
+  /** Called with the newly created item after a successful upload. */
+  onCreated?:    (item: import("@workspace/api-client-react").ClothingItem) => void;
 }
 
 const PHOTO_TIPS = [
@@ -146,7 +148,7 @@ const PHOTO_TIPS = [
   "Make sure the entire item is visible.",
 ] as const;
 
-export function QuickAddSheet({ open, onOpenChange, category, existingCount }: Props) {
+export function QuickAddSheet({ open, onOpenChange, category, existingCount, onCreated }: Props) {
   const [phase,    setPhase]   = useState<Phase>("pick");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -209,8 +211,9 @@ export function QuickAddSheet({ open, onOpenChange, category, existingCount }: P
         createItem.mutate(
           { data: { name: autoName, category, imageObjectPath: path } },
           {
-            onSuccess: () => {
+            onSuccess: (createdItem) => {
               queryClient.invalidateQueries({ queryKey: getListClothingQueryKey() });
+              if (onCreated) onCreated(createdItem);
               resolve();
             },
             onError: reject,

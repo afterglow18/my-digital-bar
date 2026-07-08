@@ -285,6 +285,32 @@ export const DeleteOutfitParams = zod.object({
 
 export const DeleteOutfitResponse = zod.void()
 
+/**
+ * @summary Add an item to an existing outfit
+ */
+export const AddOutfitItemParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const AddOutfitItemBody = zod.object({
+  "itemId": zod.number()
+})
+
+export const AddOutfitItemResponse = zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "notes": zod.string().nullish(),
+  "itemIds": zod.array(zod.number()),
+  "items": zod.array(zod.object({
+    "id": zod.number(),
+    "name": zod.string(),
+    "category": zod.enum(['tops', 'bottoms', 'shoes', 'accessories', 'outerwear', 'dresses']),
+    "imageObjectPath": zod.string().nullish(),
+    "createdAt": zod.string().nullish(),
+    "isFavorite": zod.boolean().nullish()
+  }))
+})
+
 
 /**
  * @summary Request a presigned URL for file upload

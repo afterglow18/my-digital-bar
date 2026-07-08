@@ -2,16 +2,18 @@ import React, { useState } from "react";
 import {
   useListOutfits,
   useDeleteOutfit,
+  useAddItemToOutfit,
   getListOutfitsQueryKey,
   ClothingItem,
 } from "@workspace/api-client-react";
-import { Trash2, Bookmark } from "lucide-react";
+import { Trash2, Bookmark, Plus } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getImageUrl } from "@/lib/utils";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEntitlements } from "@/hooks/useEntitlements";
 import { UpgradeSheet } from "@/components/paywall/UpgradeSheet";
 import { FREE_OUTFIT_LIMIT } from "@/lib/entitlements";
+import { QuickAddSheet } from "@/components/clothing/QuickAddSheet";
 
 const SLOT_ORDER = ["tops", "bottoms", "shoes", "dresses", "outerwear", "accessories"] as const;
 type SlotKey = (typeof SLOT_ORDER)[number];
@@ -51,9 +53,11 @@ function ItemPhoto({ item, size = "md" }: { item: ClothingItem; size?: "sm" | "m
 export default function SavedPage() {
   const { data: outfits, isLoading } = useListOutfits();
   const deleteOutfit = useDeleteOutfit();
+  const addItemToOutfit = useAddItemToOutfit();
   const queryClient = useQueryClient();
   const { tier } = useEntitlements();
   const [showUpgrade, setShowUpgrade] = useState(false);
+  const [addAccessoryToId, setAddAccessoryToId] = useState<number | null>(null);
 
   const isFree = tier === "free";
   const outfitCount = outfits?.length ?? 0;
@@ -62,6 +66,18 @@ export default function SavedPage() {
   const handleDelete = (id: number) => {
     deleteOutfit.mutate(
       { id },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getListOutfitsQueryKey() });
+        },
+      }
+    );
+  };
+
+  const handleAccessoryCreated = (item: ClothingItem) => {
+    if (addAccessoryToId == null) return;
+    addItemToOutfit.mutate(
+      { id: addAccessoryToId, itemId: item.id },
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListOutfitsQueryKey() });
@@ -232,35 +248,49 @@ export default function SavedPage() {
                     </div>
                   </div>
 
-                  {/* Accessories / extras row */}
-                  {extras.length > 0 && (
-                    <div className="flex gap-2 overflow-x-auto no-scrollbar pt-1 border-t border-black/10">
-                      {extras.map((item) => (
-                        <div key={item.id} className="flex-none flex flex-col items-center gap-0.5">
-                          <div
-                            className="w-14 h-16 border-2 border-black overflow-hidden"
-                            style={{ background: "#FDECEF" }}
-                          >
-                            {item.imageObjectPath ? (
-                              <img
-                                src={getImageUrl(item.imageObjectPath)!}
-                                alt={item.name}
-                                className="w-full h-full"
-                                style={{ objectFit: "contain", objectPosition: "center" }}
-                              />
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center p-1">
-                                <span className="text-[8px] font-bold uppercase text-center leading-tight text-black/30">—</span>
-                              </div>
-                            )}
-                          </div>
-                          <span className="text-[8px] font-bold uppercase text-muted-foreground">
-                            {SLOT_LABELS[item.category as SlotKey] ?? item.category}
-                          </span>
+                  {/* Accessories / extras row + Add Accessory button */}
+                  <div className="flex gap-2 overflow-x-auto no-scrollbar pt-1 border-t border-black/10">
+                    {extras.map((item) => (
+                      <div key={item.id} className="flex-none flex flex-col items-center gap-0.5">
+                        <div
+                          className="w-14 h-16 border-2 border-black overflow-hidden"
+                          style={{ background: "#FDECEF" }}
+                        >
+                          {item.imageObjectPath ? (
+                            <img
+                              src={getImageUrl(item.imageObjectPath)!}
+                              alt={item.name}
+                              className="w-full h-full"
+                              style={{ objectFit: "contain", objectPosition: "center" }}
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center p-1">
+                              <span className="text-[8px] font-bold uppercase text-center leading-tight text-black/30">—</span>
+                            </div>
+                          )}
                         </div>
-                      ))}
-                    </div>
-                  )}
+                        <span className="text-[8px] font-bold uppercase text-muted-foreground">
+                          {SLOT_LABELS[item.category as SlotKey] ?? item.category}
+                        </span>
+                      </div>
+                    ))}
+
+                    {/* + Add Accessory button */}
+                    <button
+                      onClick={() => setAddAccessoryToId(outfit.id)}
+                      className="flex-none flex flex-col items-center gap-0.5"
+                    >
+                      <div
+                        className="w-14 h-16 border-2 border-dashed border-black/30 rounded flex items-center justify-center"
+                        style={{ background: "#FAFAFA" }}
+                      >
+                        <Plus className="w-4 h-4 text-black/30" />
+                      </div>
+                      <span className="text-[8px] font-bold uppercase text-black/30 whitespace-nowrap">
+                        + Accessory
+                      </span>
+                    </button>
+                  </div>
                 </div>
 
                 {/* Footer: item count */}
@@ -289,6 +319,23 @@ export default function SavedPage() {
       <AnimatePresence>
         {showUpgrade && (
           <UpgradeSheet reason="outfits" onClose={() => setShowUpgrade(false)} />
+        )}
+      </AnimatePresence>
+
+      {/* Add Accessory sheet */}
+      <AnimatePresence>
+        {addAccessoryToId !== null && (
+          <QuickAddSheet
+            key={addAccessoryToId}
+            open
+            onOpenChange={(open) => { if (!open) setAddAccessoryToId(null); }}
+            category="accessories"
+            existingCount={
+              outfits?.find((o) => o.id === addAccessoryToId)
+                ?.items?.filter((i) => i.category === "accessories").length ?? 0
+            }
+            onCreated={handleAccessoryCreated}
+          />
         )}
       </AnimatePresence>
     </div>
