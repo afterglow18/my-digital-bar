@@ -31,12 +31,13 @@ workflows:
         - build_env
       vars:
         XCODE_SCHEME: App
+        COREPACK_ENABLE_STRICT: "0"
 
     scripts:
       - name: Install pnpm and dependencies
         script: |
           which pnpm || npm install -g pnpm
-          pnpm install --frozen-lockfile
+          pnpm install --frozen-lockfile --ignore-workspace-root-check
 
       - name: Build web assets
         script: |
