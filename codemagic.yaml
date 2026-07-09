@@ -2,16 +2,16 @@
 # Codemagic CI/CD — My Digital Closet iOS build
 # ─────────────────────────────────────────────────────────────────────────────
 #
-# REQUIRED env vars — add in Codemagic → your app → Environment variables
-# under a group called "signing":
+# REQUIRED — add these in Codemagic → your app → Environment variables
+# Create a group called "signing" with these exact variable names:
 #
-#   APP_STORE_CONNECT_KEY_ID        67K2T48W7Y
-#   APP_STORE_CONNECT_ISSUER_ID     66d4ce13-148d-4d6b-bab8-f1d0d8441a1e
-#   APP_STORE_CONNECT_PRIVATE_KEY   Full contents of AuthKey_67K2T48W7Y.p8
-#                                   (include the BEGIN/END PRIVATE KEY lines)
+#   APP_STORE_CONNECT_KEY_IDENTIFIER   67K2T48W7Y
+#   APP_STORE_CONNECT_ISSUER_ID        66d4ce13-148d-4d6b-bab8-f1d0d8441a1e
+#   APP_STORE_CONNECT_PRIVATE_KEY      Full contents of AuthKey_67K2T48W7Y.p8
+#                                      (include BEGIN/END PRIVATE KEY lines)
 #
-# Also required in group "build_env":
-#   VITE_API_BASE_URL               Your deployed API URL
+# Also required — group "build_env":
+#   VITE_API_BASE_URL                  Your deployed API URL
 
 workflows:
   ios-app-store:
@@ -23,10 +23,6 @@ workflows:
       ios_signing:
         distribution_type: app_store
         bundle_identifier: com.mydigitalcloset.app
-        api_key:
-          key_id: $APP_STORE_CONNECT_KEY_ID
-          issuer_id: $APP_STORE_CONNECT_ISSUER_ID
-          private_key: $APP_STORE_CONNECT_PRIVATE_KEY
       xcode: latest
       node: 20
       groups:
@@ -97,9 +93,5 @@ workflows:
 
     publishing:
       app_store_connect:
-        api_key:
-          key_id: $APP_STORE_CONNECT_KEY_ID
-          issuer_id: $APP_STORE_CONNECT_ISSUER_ID
-          private_key: $APP_STORE_CONNECT_PRIVATE_KEY
         submit_to_testflight: true
         submit_to_app_store: false
