@@ -104,15 +104,17 @@ workflows:
             -exportArchive \
             -archivePath "$CM_BUILD_DIR/build/App.xcarchive" \
             -exportOptionsPlist app-store/ExportOptions.plist \
-            -exportPath "$CM_BUILD_DIR/build/ipa" \
-            | xcpretty
+            -exportPath "$CM_BUILD_DIR/build/ipa"
+
+      - name: Upload to TestFlight
+        script: |
+          app-store-connect publish \
+            --path "$CM_BUILD_DIR/build/ipa/App.ipa" \
+            --key-id "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
+            --issuer-id "$APP_STORE_CONNECT_ISSUER_ID" \
+            --private-key "$APP_STORE_CONNECT_PRIVATE_KEY" \
+            --testflight
 
     artifacts:
       - $CM_BUILD_DIR/build/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
-
-    publishing:
-      app_store_connect:
-        auth: environment_variables
-        submit_to_testflight: true
-        submit_to_app_store: false
