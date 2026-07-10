@@ -36,7 +36,8 @@ workflows:
     scripts:
       - name: Install pnpm and dependencies
         script: |
-          which pnpm || npm install -g pnpm
+          corepack disable || true
+          npm install -g pnpm@9 --force
           pnpm install --no-frozen-lockfile
 
       - name: Build web assets
