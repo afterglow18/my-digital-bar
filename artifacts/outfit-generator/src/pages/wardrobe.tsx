@@ -593,7 +593,5 @@ export default function WardrobePage() {
         )}
       </AnimatePresence>
     </div>
-
-    </div>
   );
 }
