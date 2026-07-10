@@ -52,21 +52,22 @@ workflows:
           npx cap add ios
           npx cap sync ios
 
-      - name: Pod install
-        script: |
-          cd artifacts/outfit-generator/ios/App
-          ls -la
-          pod install
-
       - name: Set build number
         script: |
           cd artifacts/outfit-generator/ios/App
           agvtool new-version -all $BUILD_NUMBER
 
+      - name: Resolve Swift Package dependencies
+        script: |
+          xcodebuild \
+            -resolvePackageDependencies \
+            -project artifacts/outfit-generator/ios/App/App.xcodeproj \
+            -scheme $XCODE_SCHEME
+
       - name: Xcode archive
         script: |
           xcodebuild \
-            -workspace artifacts/outfit-generator/ios/App/App.xcworkspace \
+            -project artifacts/outfit-generator/ios/App/App.xcodeproj \
             -scheme $XCODE_SCHEME \
             -configuration Release \
             -archivePath $CM_BUILD_DIR/build/App.xcarchive \
