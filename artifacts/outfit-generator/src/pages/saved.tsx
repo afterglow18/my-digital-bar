@@ -28,12 +28,21 @@ const SLOT_LABELS: Record<SlotKey, string> = {
   accessories: "Acc",
 };
 
-function ItemPhoto({ item, size = "md" }: { item: ClothingItem; size?: "sm" | "md" | "lg" }) {
+function ItemPhoto({
+  item,
+  size = "md",
+  onClick,
+}: {
+  item: ClothingItem;
+  size?: "sm" | "md" | "lg";
+  onClick?: () => void;
+}) {
   const sizeClass = size === "lg" ? "h-32" : size === "md" ? "h-24" : "h-16";
   return (
-    <div
+    <button
+      onClick={onClick}
       className={`w-full ${sizeClass} border-2 border-black overflow-hidden relative`}
-      style={{ background: "#FDECEF" }}
+      style={{ background: "#FDECEF", padding: 0, display: "block" }}
     >
       {item.imageObjectPath ? (
         <img
@@ -47,7 +56,10 @@ function ItemPhoto({ item, size = "md" }: { item: ClothingItem; size?: "sm" | "m
           <span className="text-[9px] font-bold uppercase text-center leading-tight text-black/30">—</span>
         </div>
       )}
-    </div>
+      {item.isFavorite && (
+        <span className="absolute top-1 right-1 text-[10px] leading-none">❤️</span>
+      )}
+    </button>
   );
 }
 
@@ -204,7 +216,7 @@ export default function SavedPage() {
                     <div className="flex flex-col gap-1">
                       {heroItem ? (
                         <>
-                          <ItemPhoto item={heroItem} size="lg" />
+                          <ItemPhoto item={heroItem} size="lg" onClick={() => setDetailsItem(heroItem)} />
                           <span className="text-[9px] font-bold uppercase text-center text-muted-foreground">
                             {byCategory["dresses"] ? "Dress" : "Top"}
                           </span>
@@ -220,12 +232,12 @@ export default function SavedPage() {
                     <div className="flex flex-col gap-1">
                       {bottomItem && !byCategory["dresses"] ? (
                         <>
-                          <ItemPhoto item={bottomItem} size="lg" />
+                          <ItemPhoto item={bottomItem} size="lg" onClick={() => setDetailsItem(bottomItem)} />
                           <span className="text-[9px] font-bold uppercase text-center text-muted-foreground">Bottom</span>
                         </>
                       ) : byCategory["dresses"] && outerwearItem ? (
                         <>
-                          <ItemPhoto item={outerwearItem} size="lg" />
+                          <ItemPhoto item={outerwearItem} size="lg" onClick={() => setDetailsItem(outerwearItem)} />
                           <span className="text-[9px] font-bold uppercase text-center text-muted-foreground">Jacket</span>
                         </>
                       ) : (
@@ -239,7 +251,7 @@ export default function SavedPage() {
                     <div className="flex flex-col gap-1">
                       {shoesItem ? (
                         <>
-                          <ItemPhoto item={shoesItem} size="lg" />
+                          <ItemPhoto item={shoesItem} size="lg" onClick={() => setDetailsItem(shoesItem)} />
                           <span className="text-[9px] font-bold uppercase text-center text-muted-foreground">Shoes</span>
                         </>
                       ) : (
@@ -263,7 +275,7 @@ export default function SavedPage() {
                         {otherExtras.length > 0 && (
                           <div className="flex gap-2 overflow-x-auto no-scrollbar mb-2">
                             {otherExtras.map((item) => (
-                              <div key={item.id} className="flex-none flex flex-col items-center gap-0.5">
+                              <button key={item.id} onClick={() => setDetailsItem(item)} className="flex-none flex flex-col items-center gap-0.5 relative">
                                 <div className="w-14 h-14 border-2 border-black overflow-hidden" style={{ background: "#FDECEF" }}>
                                   {item.imageObjectPath ? (
                                     <img src={getImageUrl(item.imageObjectPath)!} alt={item.name} className="w-full h-full object-contain" />
@@ -273,10 +285,11 @@ export default function SavedPage() {
                                     </div>
                                   )}
                                 </div>
+                                {item.isFavorite && <span className="absolute top-0 right-0 text-[9px] leading-none">❤️</span>}
                                 <span className="text-[8px] font-bold uppercase text-muted-foreground">
                                   {SLOT_LABELS[item.category as SlotKey] ?? item.category}
                                 </span>
-                              </div>
+                              </button>
                             ))}
                           </div>
                         )}
