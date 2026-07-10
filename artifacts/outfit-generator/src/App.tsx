@@ -1,5 +1,5 @@
 import { QueryClientProvider } from '@tanstack/react-query';
-import { Route, Switch, Router as WouterRouter } from 'wouter';
+import { Route, Switch, Redirect, Router as WouterRouter } from 'wouter';
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { AppLayout } from './components/layout/AppLayout';
 import WardrobePage from './pages/wardrobe';
@@ -29,7 +29,7 @@ function Router() {
         <Route path="/generate" component={GeneratePage} />
         <Route path="/saved" component={SavedPage} />
         <Route path="/favorites" component={FavoritesPage} />
-        <Route component={NotFound} />
+        <Redirect to="/" />
       </Switch>
     </AppLayout>
   );
