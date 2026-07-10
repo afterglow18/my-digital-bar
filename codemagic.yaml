@@ -108,21 +108,24 @@ workflows:
 
       - name: Upload to TestFlight
         script: |
-          # Write key to file, normalising any escaped \n to real newlines
-          python3 - <<'EOF'
-          import os
-          key = os.environ['APP_STORE_CONNECT_PRIVATE_KEY']
-          if '\\n' in key and '\n' not in key:
-              key = key.replace('\\n', '\n')
-          with open('/tmp/AuthKey.p8', 'w') as f:
-              f.write(key.strip() + '\n')
-          print('First line:', key.strip().split('\n')[0])
-          EOF
+          # Use the .p8 key file Codemagic already placed on this machine
+          # for the Developer Portal integration (same key, same ID)
+          KEY_FILE=$(find /Users/builder -name "AuthKey_${APP_STORE_CONNECT_KEY_IDENTIFIER}.p8" 2>/dev/null | head -1)
+          if [ -z "$KEY_FILE" ]; then
+            echo "Exact key not found, searching for any .p8..."
+            KEY_FILE=$(find /Users/builder -name "AuthKey_*.p8" 2>/dev/null | head -1)
+          fi
+          if [ -z "$KEY_FILE" ]; then
+            echo "ERROR: No .p8 key file found on machine"
+            find /Users/builder -name "*.p8" 2>/dev/null || true
+            exit 1
+          fi
+          echo "Using key file: $KEY_FILE"
           app-store-connect publish \
             --path "$CM_BUILD_DIR/build/ipa/App.ipa" \
             --key-id "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
             --issuer-id "$APP_STORE_CONNECT_ISSUER_ID" \
-            --private-key "@file:/tmp/AuthKey.p8" \
+            --private-key "@file:$KEY_FILE" \
             --testflight
 
     artifacts:
