@@ -194,7 +194,7 @@ export const ClosetRow = forwardRef<ClosetRowHandle, ClosetRowProps>(
     // ── Geometry ──────────────────────────────────────────────────────────────
     const baseX  = (1 - centredIdx) * slotW;
     const stripX = baseX + dragX;
-    const containerCX = slotW * 1.5; // visual center of the 3-slot viewport
+    const containerCX = slotW * 1.0; // visual center of the 2-slot viewport
 
     // Items beyond ±1.65 slots from center are culled
     const isVisible = (i: number) => {
