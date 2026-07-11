@@ -27,7 +27,7 @@ import {
   useListOutfits, getListOutfitsQueryKey,
   ClothingItem,
 } from "@workspace/api-client-react";
-import { X } from "lucide-react";
+import { X, Bookmark } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ClosetRow, ClosetRowHandle } from "@/components/ClosetRow";
 import { QuickAddSheet } from "@/components/clothing/QuickAddSheet";
@@ -329,6 +329,27 @@ export default function WardrobePage() {
           })}
 
 
+          {/* ── Saved shortcut — sits over the vanity chair bottom-left ── */}
+          <button
+            onClick={() => navigate("/saved")}
+            data-testid="button-saved"
+            aria-label="View saved looks"
+            style={{
+              position: "absolute",
+              top:    pY(ir, 0.895),
+              left:   ir.left + pW(ir, 0.04),
+              width:  44,
+              height: 44,
+              borderRadius: "50%",
+              zIndex: 25,
+              background: "rgba(255,255,255,0.55)",
+              border: "1.5px solid rgba(220,150,160,0.35)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              cursor: "pointer",
+            }}
+          >
+            <Bookmark style={{ width: 18, height: 18, color: "#9a5060" }} />
+          </button>
         </>
       )}
 
