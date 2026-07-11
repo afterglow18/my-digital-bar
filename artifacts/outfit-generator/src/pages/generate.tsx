@@ -37,9 +37,9 @@ const LM = {
     { sectionTop: 0.587, shelfY: 0.703, btnCY: 0.565 },  // HAIR
     { sectionTop: 0.742, shelfY: 0.845, btnCY: 0.723 },  // FRAGRANCES
   ],
-  // Action bar sits just below FRAGRANCES section
-  barY:   0.855,
-  barBot: 0.960,
+  // Action bar: from just below FRAGRANCES through the full bottom
+  barY:   0.848,
+  barBot: 1.000,
 } as const;
 
 interface ImgRect {
@@ -280,13 +280,17 @@ export default function GeneratePage() {
 
               return (
                 <React.Fragment key={key}>
-                  {/* Cover the baked-in pink ADD pill so it's hidden on this page */}
+                  {/* Cover the baked-in ADD pill text with a matching pink pill shape.
+                      Width/position mirrors the background image button.               */}
                   <div style={{
                     position: "absolute",
-                    top: btnCY - btnH / 2, left: carLeft,
-                    width: carW, height: btnH,
+                    top:    btnCY - btnH / 2,
+                    left:   pX(ir, 0.385),
+                    width:  pW(ir, 0.238),
+                    height: btnH,
                     zIndex: 15,
-                    background: "rgba(255,252,254,0.72)",
+                    background: "rgb(249,224,224)",
+                    borderRadius: 999,
                     pointerEvents: "none",
                   }} />
 
