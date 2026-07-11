@@ -30,13 +30,15 @@ export default function VideoTemplate() {
       setDoorsOpen(true);
     }, 200);
 
-    // Start closing doors so they are fully shut exactly when the scene ends
+    // Start closing doors so they are fully shut exactly when the scene ends.
+    // Exception: Scene 3 closes doors early (at 1600ms) so the clip-path reveal
+    // isn't obstructed by the door handles.
     const duration = SCENE_DURATIONS[currentSceneKey as keyof typeof SCENE_DURATIONS] || 3500;
-    
-    // The player will loop to scene0, so we close it at the end of every scene.
+    const closeDelay = currentSceneKey === 'scene3' ? 1500 : duration - 600;
+
     const closeTimer = setTimeout(() => {
       setDoorsOpen(false);
-    }, duration - 600); // 600ms closing duration
+    }, closeDelay);
 
     return () => {
       clearTimeout(openTimer);
