@@ -30,3 +30,9 @@ id = "Q5EaqexZmf04Gafa4Ye0-"
 uri = "file://app-store/AppIcon-1024.png"
 type = "image"
 title = "AppIcon-1024.png — Final App Store submission file"
+
+[[outputs]]
+id = "Ar8qrssJV16B5Cw2q9Tgo"
+uri = "file://attached_assets/promo_886x1920.mp4"
+type = "video"
+title = "Promo Video — 886 × 1920px"
