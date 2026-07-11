@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { SceneContainer, springBouncy, springSnappy } from './Shared';
+import { topImg, skirtImg, shoesImg, bagImg, earringsImg } from '../../../assets/images';
 
 export const Scene0 = () => {
   const [phase, setPhase] = useState(-1);
@@ -24,7 +25,7 @@ export const Scene0 = () => {
         muted
         loop
         playsInline
-        src={`${import.meta.env.BASE_URL}videos/90s_runway.mp4`}
+        src={`/video-promo/videos/90s_runway.mp4`}
         className="absolute inset-0 w-full h-full object-cover opacity-30 blur-sm"
       />
       
@@ -49,7 +50,7 @@ export const Scene0 = () => {
         <div className="relative w-[80cqw] h-[55cqh] mt-[15cqh]">
           {/* Top */}
           <motion.img
-            src={`${import.meta.env.BASE_URL}images/top.jpeg`}
+            src={topImg}
             className="absolute top-[5%] left-[20%] w-[50cqw] object-contain rounded-xl"
             style={{ filter: 'drop-shadow(4px 6px 12px rgba(0,0,0,0.25))' }}
             initial={{ scale: 0, y: -100, rotate: -15 }}
@@ -59,7 +60,7 @@ export const Scene0 = () => {
           
           {/* Skirt */}
           <motion.img
-            src={`${import.meta.env.BASE_URL}images/skirt.jpeg`}
+            src={skirtImg}
             className="absolute top-[35%] left-[25%] w-[45cqw] object-contain rounded-xl"
             style={{ filter: 'drop-shadow(4px 6px 12px rgba(0,0,0,0.25))' }}
             initial={{ scale: 0, y: -100, rotate: 20 }}
@@ -69,7 +70,7 @@ export const Scene0 = () => {
 
           {/* Shoes */}
           <motion.img
-            src={`${import.meta.env.BASE_URL}images/shoes.jpeg`}
+            src={shoesImg}
             className="absolute bottom-[5%] left-[20%] w-[40cqw] object-contain rounded-xl z-10"
             style={{ filter: 'drop-shadow(4px 6px 12px rgba(0,0,0,0.25))' }}
             initial={{ scale: 0, x: -100, rotate: -20 }}
@@ -79,7 +80,7 @@ export const Scene0 = () => {
 
           {/* Bag */}
           <motion.img
-            src={`${import.meta.env.BASE_URL}images/bag.jpeg`}
+            src={bagImg}
             className="absolute top-[40%] right-[0%] w-[35cqw] object-contain rounded-xl z-20"
             style={{ filter: 'drop-shadow(4px 6px 12px rgba(0,0,0,0.25))' }}
             initial={{ scale: 0, x: 100, rotate: 30 }}
@@ -89,7 +90,7 @@ export const Scene0 = () => {
 
           {/* Earrings */}
           <motion.img
-            src={`${import.meta.env.BASE_URL}images/earrings.jpeg`}
+            src={earringsImg}
             className="absolute top-[10%] right-[10%] w-[25cqw] object-contain rounded-xl z-30"
             style={{ filter: 'drop-shadow(4px 6px 12px rgba(0,0,0,0.25))' }}
             initial={{ scale: 0, y: -50, rotate: 45 }}

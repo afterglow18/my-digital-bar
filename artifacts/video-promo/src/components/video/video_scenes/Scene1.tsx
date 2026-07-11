@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { SceneContainer, springSnappy, springSmooth } from './Shared';
+import { screenWardrobeImg } from '../../../assets/images';
 
 export const Scene1 = () => {
   const [phase, setPhase] = useState(0);
@@ -31,7 +32,7 @@ export const Scene1 = () => {
           transition={{ ...springSnappy, delay: 0.3 }}
         >
           <img 
-            src={`${import.meta.env.BASE_URL}images/screen_wardrobe.jpeg`}
+            src={screenWardrobeImg}
             className="w-full h-full object-cover object-top"
           />
         </motion.div>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { SceneContainer, springSnappy, springBouncy } from './Shared';
+import { screenLookbookImg } from '../../../assets/images';
 
 export const Scene3 = () => {
   const [phase, setPhase] = useState(0);
@@ -30,7 +31,7 @@ export const Scene3 = () => {
           transition={{ ...springSnappy, delay: 0.2 }}
         >
           <img 
-            src={`${import.meta.env.BASE_URL}images/screen_lookbook.jpeg`}
+            src={screenLookbookImg}
             className="w-full h-full object-cover object-top"
           />
         </motion.div>

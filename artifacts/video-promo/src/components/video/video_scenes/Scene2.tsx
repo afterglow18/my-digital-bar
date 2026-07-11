@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { SceneContainer, springSnappy, springBouncy } from './Shared';
+import { screenGenerateImg } from '../../../assets/images';
 
 export const Scene2 = () => {
   const [phase, setPhase] = useState(0);
@@ -38,7 +39,7 @@ export const Scene2 = () => {
           transition={{ ...springSnappy, delay: 0.4 }}
         >
           <img 
-            src={`${import.meta.env.BASE_URL}images/screen_generate.jpeg`}
+            src={screenGenerateImg}
             className="w-full h-full object-cover object-top"
           />
         </motion.div>

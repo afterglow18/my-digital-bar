@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { woodTextureImg } from '../../../assets/images';
 
 export const springBouncy = { type: "spring", stiffness: 300, damping: 15 };
 export const springSnappy = { type: "spring", stiffness: 400, damping: 25 };
@@ -10,7 +11,7 @@ export const WardrobeDoorsLayer = ({ isOpen }: { isOpen: boolean }) => (
     <motion.div
       className="absolute top-0 left-0 w-[50.5%] h-full origin-left border-r-[3px] border-[#1A1A1A] flex items-center justify-end pr-[3cqw]"
       style={{ 
-        backgroundImage: `url(${import.meta.env.BASE_URL}images/wood_texture.jpg)`, 
+        backgroundImage: `url(${woodTextureImg})`, 
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         boxShadow: isOpen ? '15px 0 40px rgba(0,0,0,0.6)' : '0px 0 0px rgba(0,0,0,0)',
@@ -27,7 +28,7 @@ export const WardrobeDoorsLayer = ({ isOpen }: { isOpen: boolean }) => (
     <motion.div
       className="absolute top-0 right-0 w-[50.5%] h-full origin-right border-l-[3px] border-[#1A1A1A] flex items-center justify-start pl-[3cqw]"
       style={{ 
-        backgroundImage: `url(${import.meta.env.BASE_URL}images/wood_texture.jpg)`, 
+        backgroundImage: `url(${woodTextureImg})`, 
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         boxShadow: isOpen ? '-15px 0 40px rgba(0,0,0,0.6)' : '0px 0 0px rgba(0,0,0,0)',
