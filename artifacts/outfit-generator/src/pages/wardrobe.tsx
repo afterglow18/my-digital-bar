@@ -27,7 +27,7 @@ import {
   useListOutfits, getListOutfitsQueryKey,
   ClothingItem,
 } from "@workspace/api-client-react";
-import { X, Bookmark } from "lucide-react";
+import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ClosetRow, ClosetRowHandle } from "@/components/ClosetRow";
 import { QuickAddSheet } from "@/components/clothing/QuickAddSheet";
@@ -310,27 +310,25 @@ export default function WardrobePage() {
           })}
 
 
-          {/* ── Saved shortcut — bottom-left of mirror glass, below FRAGRANCES ── */}
+          {/* ── Person icon tap zone — transparent overlay over the baked-in
+              person icon in the background image (x≈155–245, y≈1390–1480
+              in the 1024×1536 PNG). Tapping it navigates to favorites.    ── */}
           <button
             onClick={() => navigate("/favorites")}
-            data-testid="button-saved"
+            data-testid="button-person-icon"
             aria-label="View saved looks"
             style={{
               position: "absolute",
-              top:    pY(ir, 0.832),
-              left:   pX(ir, LM.doorL + 0.01),
-              width:  44,
-              height: 44,
-              borderRadius: "50%",
+              top:    pY(ir, 0.905),
+              left:   pX(ir, 0.140),
+              width:  pW(ir, 0.110),
+              height: pH(ir, 0.065),
               zIndex: 25,
-              background: "rgba(255,255,255,0.55)",
-              border: "1.5px solid rgba(220,150,160,0.35)",
-              display: "flex", alignItems: "center", justifyContent: "center",
+              background: "transparent",
+              border: "none",
               cursor: "pointer",
             }}
-          >
-            <Bookmark style={{ width: 18, height: 18, color: "#9a5060" }} />
-          </button>
+          />
         </>
       )}
 
