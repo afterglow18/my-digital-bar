@@ -1,6 +1,6 @@
 kind = "web"
 previewPath = "/"
-title = "Outfit Generator"
+title = "My Digital Vanity"
 version = "1.0.0"
 id = "artifacts/outfit-generator"
 router = "path"
