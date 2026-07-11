@@ -444,7 +444,7 @@ components:
           type: string
         category:
           type: string
-          enum: [tops, bottoms, shoes, accessories, outerwear, dresses]
+          enum: [makeup, skincare, hair, fragrances]
         imageObjectPath:
           type: ["string", "null"]
         color:
@@ -480,7 +480,7 @@ components:
           minLength: 1
         category:
           type: string
-          enum: [tops, bottoms, shoes, accessories, outerwear, dresses]
+          enum: [makeup, skincare, hair, fragrances]
         imageObjectPath:
           type: string
         color:
@@ -510,7 +510,7 @@ components:
           minLength: 1
         category:
           type: string
-          enum: [tops, bottoms, shoes, accessories, outerwear, dresses]
+          enum: [makeup, skincare, hair, fragrances]
         imageObjectPath:
           type: string
         color:
