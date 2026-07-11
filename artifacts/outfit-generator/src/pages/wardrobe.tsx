@@ -198,7 +198,7 @@ export default function WardrobePage() {
     >
       {/* ── Background image ── */}
       <img
-        src="/vanity-bg.png?v=2"
+        src="/vanity-bg.png?v=3"
         alt="My Digital Vanity"
         style={{
           position: "absolute",
