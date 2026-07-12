@@ -1,5 +1,5 @@
 # ─────────────────────────────────────────────────────────────────────────────
-# Codemagic CI/CD — My Digital Closet iOS build
+# Codemagic CI/CD — My Digital Vanity iOS build
 # ─────────────────────────────────────────────────────────────────────────────
 #
 # REQUIRED — Codemagic → your app → Environment variables
@@ -20,7 +20,7 @@ workflows:
     environment:
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: com.mydigitalcloset.app
+        bundle_identifier: com.mydigitalvanity.app
       xcode: latest
       node: 22
       groups:
