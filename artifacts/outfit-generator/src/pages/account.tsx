@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useAuthContext } from "@/context/AuthContext";
-import { Eye, EyeOff, Check, Loader2, TriangleAlert } from "lucide-react";
+import { Eye, EyeOff, Check, Loader2, TriangleAlert, LogOut } from "lucide-react";
 
 type Section = "email" | "password";
 
@@ -255,6 +255,20 @@ export default function AccountPage() {
             autoComplete="new-password"
           />
         </Card>
+
+        {/* Sign Out */}
+        <button
+          onClick={logout}
+          className="w-full flex items-center justify-center gap-2 py-3
+                     border-2 border-black rounded-2xl bg-white
+                     font-display font-bold text-sm uppercase tracking-tight
+                     shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
+                     active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all
+                     hover:bg-muted"
+        >
+          <LogOut className="w-4 h-4" />
+          Sign Out
+        </button>
 
         {/* Delete Account */}
         <div className="bg-white border-2 border-black rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
