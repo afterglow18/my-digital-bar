@@ -80,10 +80,10 @@
   --popover-foreground: 0 0% 9%;
   --popover-border: 0 0% 9%;
   
-  --primary: 340 100% 78%; /* Hot Pink */
+  --primary: 5 59% 81%; /* Blush — matches ADD button pills */
   --primary-foreground: 0 0% 9%;
   
-  --secondary: 330 100% 80%; /* Bubblegum Pink */
+  --secondary: 5 45% 75%; /* Blush deep */
   --secondary-foreground: 0 0% 9%;
   
   --muted: 0 0% 90%;
@@ -125,10 +125,10 @@
   --popover-foreground: 45 33% 98%;
   --popover-border: 45 33% 98%;
   
-  --primary: 340 100% 78%;
+  --primary: 5 59% 81%;
   --primary-foreground: 0 0% 9%;
   
-  --secondary: 330 100% 80%;
+  --secondary: 5 45% 75%;
   --secondary-foreground: 0 0% 9%;
   
   --muted: 0 0% 20%;

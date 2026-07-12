@@ -380,7 +380,7 @@ export default function WardrobePage() {
               height: pW(ir, 0.125),
               borderRadius: "50%",
               zIndex: 26,
-              background: "linear-gradient(160deg, #ffb6c8 0%, #e8607a 100%)",
+              background: "linear-gradient(160deg, #EBB7B2 0%, #D4958E 100%)",
               border: "2px solid rgba(255,255,255,0.6)",
               boxShadow: "0 2px 8px rgba(200,60,90,0.35), inset 0 1px 1px rgba(255,255,255,0.4)",
               cursor: "pointer",
@@ -464,7 +464,7 @@ export default function WardrobePage() {
                       style={{
                         flex: 1, height: 40, borderRadius: 20,
                         border: "2px solid #000",
-                        background: "linear-gradient(to bottom, #f7c6d8, #e08090)",
+                        background: "linear-gradient(to bottom, #EBB7B2, #D4958E)",
                         color: "#fff", fontWeight: 800, fontSize: 13,
                         cursor: saveName.trim() ? "pointer" : "default",
                         opacity: saveName.trim() ? 1 : 0.45,
