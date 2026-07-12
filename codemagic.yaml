@@ -99,10 +99,11 @@ workflows:
 
       - name: Fetch signing files
         script: |
+          echo "$APP_STORE_CONNECT_PRIVATE_KEY" > /tmp/auth_key.p8
           app-store-connect fetch-signing-files \
             com.mydigitalvanity.app \
             --type IOS_APP_STORE \
-            --certificate-key @env:APP_STORE_CONNECT_PRIVATE_KEY \
+            --certificate-key @file:/tmp/auth_key.p8 \
             --create
 
       - name: Add certificates to keychain
