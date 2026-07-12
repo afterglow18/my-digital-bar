@@ -351,6 +351,23 @@ export default function WardrobePage() {
             }}
           />
 
+          {/* ── Lipstick icon tap zone — opens premium upgrade sheet ── */}
+          <button
+            onClick={() => setUpgradeReason("items")}
+            aria-label="Upgrade to premium"
+            style={{
+              position: "absolute",
+              top:    pY(ir, 0.905),
+              left:   pX(ir, 0.755),
+              width:  pW(ir, 0.110),
+              height: pH(ir, 0.065),
+              zIndex: 25,
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+            }}
+          />
+
           {/* ── SAVE tap zone — over the baked-in sparkles/SAVE icon ── */}
           <button
             onClick={() => { setSaveName(""); setIsSaveOpen(true); }}
