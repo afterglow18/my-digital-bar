@@ -18,9 +18,13 @@ workflows:
     instance_type: mac_mini_m2
 
     environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.mydigitalvanity.app
       xcode: latest
       node: 22
       groups:
+        - signing
         - build_env
       vars:
         XCODE_SCHEME: App
@@ -93,12 +97,7 @@ workflows:
           cd artifacts/outfit-generator/ios/App
           agvtool new-version -all $BUILD_NUMBER
 
-      - name: Set up keychain and signing
-        script: |
-          keychain initialize
-          keychain add-certificates
-
-      - name: Apply provisioning profiles
+      - name: Re-apply provisioning profiles after cap sync
         script: |
           xcode-project use-profiles \
             --project artifacts/outfit-generator/ios/App/App.xcodeproj
