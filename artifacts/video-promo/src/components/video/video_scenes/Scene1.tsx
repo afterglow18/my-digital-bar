@@ -1,61 +1,67 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import { SceneContainer, springSnappy, springSmooth } from './Shared';
-import { screenWardrobeImg } from '../../../assets/images';
+import { SceneContainer, easePremium } from './Shared';
+
+const CATEGORIES = ['MAKEUP', 'SKINCARE', 'HAIR', 'FRAGRANCES'];
 
 export const Scene1 = () => {
-  const [phase, setPhase] = useState(0);
-
-  useEffect(() => {
-    const timers = [
-      setTimeout(() => setPhase(1), 800),
-      setTimeout(() => setPhase(2), 1600),
-    ];
-    return () => timers.forEach(t => clearTimeout(t));
-  }, []);
-
   return (
-    <SceneContainer style={{ backgroundColor: 'var(--color-brand-pink)' }}>
-      {/* Background patterns */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,var(--color-brand-yellow)_0%,transparent_50%)] opacity-40 mix-blend-overlay" />
-      <motion.div 
-        className="absolute -top-[20cqh] -right-[20cqw] w-[80cqw] h-[80cqw] bg-white/20 rounded-full blur-[40px]"
-        animate={{ scale: [1, 1.2, 1], rotate: [0, 90, 0] }}
-        transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-      />
+    <SceneContainer>
+      <div className="w-full h-full flex flex-col items-center justify-center relative">
+        
+        {/* Floating Flatlay items behind text */}
+        <motion.img
+          src={`${import.meta.env.BASE_URL}assets/makeup_flatlay.png`}
+          alt="Makeup Flatlay"
+          className="absolute right-0 top-[20%] w-[50vw] drop-shadow-2xl z-0 object-contain"
+          initial={{ x: '100%', y: '10%', rotate: 15, opacity: 0 }}
+          animate={{ x: '-10%', y: 0, rotate: -5, opacity: 1 }}
+          exit={{ x: '100%', opacity: 0, filter: 'blur(1vw)' }}
+          transition={{ duration: 1.8, ease: easePremium, delay: 0.2 }}
+        />
 
-      <div className="relative w-full h-full flex flex-col items-center justify-center pt-[5cqh]">
-        <motion.div
-          className="relative w-[75cqw] h-[65cqh] rounded-[2cqw] overflow-hidden shadow-2xl border-[3px] border-black"
-          initial={{ scale: 0.8, y: 100, opacity: 0, rotateX: 20 }}
-          animate={{ scale: 1, y: 0, opacity: 1, rotateX: 0 }}
-          transition={{ ...springSnappy, delay: 0.3 }}
-        >
-          <img 
-            src={screenWardrobeImg}
-            className="w-full h-full object-cover object-top"
-          />
-        </motion.div>
+        <div className="z-10 flex flex-col items-start justify-center w-full px-[15vw] space-y-[1.5vw]">
+          {CATEGORIES.map((cat, i) => (
+            <motion.div 
+              key={cat}
+              className="relative flex items-center"
+              initial={{ opacity: 0, x: '-5vw' }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: '-3vw', filter: 'blur(0.5vw)' }}
+              transition={{ duration: 1, delay: 0.5 + i * 0.3, ease: easePremium }}
+            >
+              <motion.div 
+                className="w-[3vw] h-[2px] bg-white mr-[1.5vw]"
+                initial={{ scaleX: 0, opacity: 0 }}
+                animate={{ scaleX: 1, opacity: 1 }}
+                transition={{ duration: 0.8, delay: 0.8 + i * 0.3, ease: easePremium }}
+                style={{ originX: 0 }}
+              />
+              <h2 className="font-display italic text-[5vw] text-white drop-shadow-md tracking-wider">
+                {cat}
+              </h2>
+            </motion.div>
+          ))}
+        </div>
 
+        {/* Shelf line metaphor */}
         <motion.div
-          className="absolute bottom-[8cqh] bg-black text-brand-yellow py-[1.5cqh] px-[6cqw] rounded-full border-2 border-brand-yellow font-body font-bold text-[3cqh] uppercase tracking-wider"
-          style={{ backgroundColor: 'var(--color-brand-black)', color: 'var(--color-brand-yellow)', borderColor: 'var(--color-brand-yellow)' }}
-          initial={{ scale: 0, y: 50 }}
-          animate={phase >= 1 ? { scale: 1, y: 0 } : { scale: 0, y: 50 }}
-          transition={springSnappy}
+          className="absolute bottom-[15%] left-[10%] right-[10%] h-[1px] bg-gradient-to-r from-transparent via-white to-transparent opacity-50"
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          exit={{ scaleX: 0, opacity: 0 }}
+          transition={{ duration: 1.5, delay: 1, ease: easePremium }}
+        />
+        
+        <motion.p
+          className="absolute bottom-[10%] text-white font-body font-light text-[2vw] tracking-[0.2em] uppercase opacity-80"
+          initial={{ opacity: 0, y: '2vw' }}
+          animate={{ opacity: 0.8, y: 0 }}
+          exit={{ opacity: 0, y: '1vw' }}
+          transition={{ duration: 1, delay: 1.5, ease: easePremium }}
         >
-          Organize Every Piece
-        </motion.div>
-
-        <motion.div
-          className="absolute top-[10cqh] left-[5cqw] text-black font-display font-black text-[6cqh] uppercase leading-none transform -rotate-6"
-          style={{ color: 'var(--color-brand-black)' }}
-          initial={{ scale: 0, opacity: 0 }}
-          animate={phase >= 2 ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
-          transition={springSnappy}
-        >
-          YOUR<br/>DIGITAL<br/>CLOSET
-        </motion.div>
+          Organise your collection
+        </motion.p>
       </div>
     </SceneContainer>
   );

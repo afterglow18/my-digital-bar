@@ -1,57 +1,73 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import { SceneContainer, springSnappy, springBouncy } from './Shared';
-import { screenGenerateImg } from '../../../assets/images';
+import { SceneContainer, easePremium } from './Shared';
 
 export const Scene2 = () => {
-  const [phase, setPhase] = useState(0);
-
-  useEffect(() => {
-    const timers = [
-      setTimeout(() => setPhase(1), 600),
-      setTimeout(() => setPhase(2), 1200),
-    ];
-    return () => timers.forEach(t => clearTimeout(t));
-  }, []);
-
   return (
-    <SceneContainer style={{ backgroundColor: 'var(--color-brand-yellow)' }}>
-      {/* Background pattern */}
-      <div className="absolute inset-0 opacity-20" style={{
-        backgroundImage: `repeating-linear-gradient(45deg, transparent, transparent 10px, var(--color-brand-black) 10px, var(--color-brand-black) 20px)`
-      }} />
+    <SceneContainer>
+      <div className="w-full h-full flex flex-col items-center justify-center relative">
+        {/* Magical glow background effect */}
+        <motion.img
+          src={`${import.meta.env.BASE_URL}assets/magic_glow.png`}
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover mix-blend-screen opacity-70 z-0 pointer-events-none"
+          initial={{ opacity: 0, scale: 1.2, rotate: 10 }}
+          animate={{ opacity: 0.7, scale: 1, rotate: 0 }}
+          exit={{ opacity: 0, scale: 0.8 }}
+          transition={{ duration: 2.5, ease: easePremium }}
+        />
 
-      <div className="relative w-full h-full flex flex-col items-center justify-center pt-[5cqh]">
-        <motion.div
-          className="absolute right-[5cqw] top-[15cqh] z-20 font-display font-black text-[7cqh] uppercase leading-[0.9] text-right transform rotate-6"
-          style={{ color: 'var(--color-brand-black)' }}
-          initial={{ x: 100, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ ...springSnappy, delay: 0.2 }}
+        <motion.div 
+          className="z-10 bg-white/10 backdrop-blur-md border border-white/20 p-[3vw] rounded-[2vw] shadow-2xl flex flex-col items-center justify-center max-w-[60vw]"
+          initial={{ y: '10vw', opacity: 0, scale: 0.9 }}
+          animate={{ y: 0, opacity: 1, scale: 1 }}
+          exit={{ y: '-5vw', opacity: 0, scale: 1.05 }}
+          transition={{ duration: 1.2, delay: 0.3, ease: easePremium }}
         >
-          MIX &<br/>MATCH
-        </motion.div>
+          {/* AI Sparkle Icon */}
+          <motion.div
+            animate={{ rotate: [0, 15, -10, 0], scale: [1, 1.1, 1] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            className="mb-[1.5vw]"
+          >
+             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-[5vw] h-[5vw]">
+              <path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z" fill="url(#paint0_linear)" />
+              <path d="M19 16L19.5 18.5L22 19L19.5 19.5L19 22L18.5 19.5L16 19L18.5 18.5L19 16Z" fill="url(#paint0_linear)" />
+              <path d="M5 4L5.5 6.5L8 7L5.5 7.5L5 10L4.5 7.5L2 7L4.5 6.5L5 4Z" fill="url(#paint0_linear)" />
+              <defs>
+                <linearGradient id="paint0_linear" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+                  <stop stopColor="white" />
+                  <stop offset="1" stopColor="var(--color-brand-pink-dark)" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </motion.div>
 
-        <motion.div
-          className="relative w-[75cqw] h-[65cqh] rounded-[2cqw] overflow-hidden shadow-2xl border-[3px] border-black z-10"
-          initial={{ scale: 0.8, x: -100, opacity: 0, rotateZ: -10 }}
-          animate={{ scale: 1, x: 0, opacity: 1, rotateZ: 0 }}
-          transition={{ ...springSnappy, delay: 0.4 }}
-        >
-          <img 
-            src={screenGenerateImg}
-            className="w-full h-full object-cover object-top"
+          <motion.h2
+            className="font-display text-[6vw] leading-tight text-white mb-[1vw] text-center font-bold drop-shadow-lg"
+            initial={{ opacity: 0, y: '2vw' }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.8, ease: easePremium }}
+          >
+            Generate<br />
+            <span className="italic font-light">Your Look</span>
+          </motion.h2>
+
+          <motion.div
+            className="h-[1px] bg-gradient-to-r from-transparent via-white to-transparent w-full mb-[1.5vw]"
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ duration: 1, delay: 1.2, ease: easePremium }}
           />
-        </motion.div>
 
-        <motion.div
-          className="absolute bottom-[10cqh] z-30 bg-brand-pink text-black py-[2cqh] px-[8cqw] rounded-[1cqw] border-4 border-black font-display font-black text-[4cqh] tracking-widest shadow-[8px_8px_0px_0px_rgba(26,26,26,1)]"
-          style={{ backgroundColor: 'var(--color-brand-pink)', color: 'var(--color-brand-black)' }}
-          initial={{ scale: 0 }}
-          animate={phase >= 1 ? { scale: [0, 1.2, 1], rotate: [-10, 10, 0] } : { scale: 0 }}
-          transition={springBouncy}
-        >
-          SPIN IT!
+          <motion.p
+            className="font-body text-white/90 text-[2vw] text-center max-w-[80%]"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 1.5, ease: easePremium }}
+          >
+            AI curates the perfect combination from your vanity.
+          </motion.p>
         </motion.div>
       </div>
     </SceneContainer>

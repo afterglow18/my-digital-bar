@@ -1,103 +1,82 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import { SceneContainer, springBouncy, springSnappy } from './Shared';
-import { topImg, skirtImg, shoesImg, bagImg, earringsImg } from '../../../assets/images';
+import { SceneContainer, easePremium } from './Shared';
 
 export const Scene0 = () => {
-  const [phase, setPhase] = useState(-1);
-
-  useEffect(() => {
-    const timers = [
-      setTimeout(() => setPhase(0), 400),
-      setTimeout(() => setPhase(1), 900),
-      setTimeout(() => setPhase(2), 1400),
-      setTimeout(() => setPhase(3), 1900),
-      setTimeout(() => setPhase(4), 2400),
-    ];
-    return () => timers.forEach(t => clearTimeout(t));
-  }, []);
-
   return (
-    <SceneContainer style={{ backgroundColor: 'var(--color-brand-cream)' }}>
-      {/* Background Video */}
-      <motion.video
-        autoPlay
-        muted
-        loop
-        playsInline
-        src={`/video-promo/videos/90s_runway.mp4`}
-        className="absolute inset-0 w-full h-full object-cover opacity-30 blur-sm"
+    <SceneContainer>
+      {/* Glamorous reveal element */}
+      <motion.div
+        className="absolute inset-0 z-0 bg-white"
+        initial={{ opacity: 1 }}
+        animate={{ opacity: 0 }}
+        transition={{ duration: 1.5, ease: easePremium, delay: 0.5 }}
       />
-      
-      {/* Grid pattern overlay */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(26,26,26,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(26,26,26,0.1)_1px,transparent_1px)] bg-[size:4cqw_4cqw]" />
 
-      <div className="relative w-full h-full flex flex-col items-center justify-center">
-        {/* Title */}
+      <div className="relative z-10 flex flex-col items-center justify-center text-center px-[2vw] w-full">
+        {/* Sparkle icon / decorative element */}
         <motion.div
-          className="absolute top-[12cqh] z-10 w-[90%]"
-          initial={{ y: -50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.6, ...springSnappy }}
+          initial={{ scale: 0, opacity: 0, rotate: -45 }}
+          animate={{ scale: 1, opacity: 1, rotate: 0 }}
+          exit={{ scale: 1.5, opacity: 0, filter: 'blur(1vw)' }}
+          transition={{ duration: 1.2, ease: easePremium, delay: 0.8 }}
+          className="mb-[2vw]"
         >
-          <h1 className="font-display font-black text-center text-[10cqw] leading-[0.9] tracking-tighter uppercase" style={{ color: 'var(--color-brand-black)' }}>
-            Build Your<br />
-            <span className="text-stroke" style={{ WebkitTextStroke: '2px var(--color-brand-pink)' }}>Dream Look</span>
-          </h1>
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-[4vw] h-[4vw]">
+            <path d="M12 0L13.5 8.5L22 10L13.5 11.5L12 20L10.5 11.5L2 10L10.5 8.5L12 0Z" fill="var(--color-brand-pink-dark)" />
+            <path d="M19 18L19.5 20.5L22 21L19.5 21.5L19 24L18.5 21.5L16 21L18.5 20.5L19 18Z" fill="white" />
+            <path d="M5 4L5.5 6.5L8 7L5.5 7.5L5 10L4.5 7.5L2 7L4.5 6.5L5 4Z" fill="white" />
+          </svg>
         </motion.div>
 
-        {/* Clothing Items */}
-        <div className="relative w-[80cqw] h-[55cqh] mt-[15cqh]">
-          {/* Top */}
-          <motion.img
-            src={topImg}
-            className="absolute top-[5%] left-[20%] w-[50cqw] object-contain rounded-xl"
-            style={{ filter: 'drop-shadow(4px 6px 12px rgba(0,0,0,0.25))' }}
-            initial={{ scale: 0, y: -100, rotate: -15 }}
-            animate={phase >= 0 ? { scale: 1, y: 0, rotate: -5 } : { scale: 0, y: -100, rotate: -15 }}
-            transition={springBouncy}
-          />
+        <motion.div className="overflow-hidden">
+          <motion.h2
+            className="font-body text-[3vw] tracking-[0.3em] uppercase text-white mb-[0.5vw] font-light"
+            initial={{ y: '100%' }}
+            animate={{ y: 0 }}
+            exit={{ y: '-100%', opacity: 0 }}
+            transition={{ duration: 1, ease: easePremium, delay: 1 }}
+          >
+            Step into
+          </motion.h2>
+        </motion.div>
+
+        <div className="flex flex-col items-center justify-center mt-[0.5vw] leading-[1.1]">
+          <motion.div className="overflow-hidden">
+            <motion.h1
+              className="font-display text-[12vw] font-bold text-white drop-shadow-xl"
+              initial={{ y: '100%', rotate: 2 }}
+              animate={{ y: 0, rotate: 0 }}
+              exit={{ scale: 1.1, opacity: 0, filter: 'blur(1vw)' }}
+              transition={{ duration: 1.2, ease: easePremium, delay: 1.2 }}
+            >
+              MY DIGITAL
+            </motion.h1>
+          </motion.div>
           
-          {/* Skirt */}
-          <motion.img
-            src={skirtImg}
-            className="absolute top-[35%] left-[25%] w-[45cqw] object-contain rounded-xl"
-            style={{ filter: 'drop-shadow(4px 6px 12px rgba(0,0,0,0.25))' }}
-            initial={{ scale: 0, y: -100, rotate: 20 }}
-            animate={phase >= 1 ? { scale: 1, y: 0, rotate: 5 } : { scale: 0, y: -100, rotate: 20 }}
-            transition={springBouncy}
-          />
-
-          {/* Shoes */}
-          <motion.img
-            src={shoesImg}
-            className="absolute bottom-[5%] left-[20%] w-[40cqw] object-contain rounded-xl z-10"
-            style={{ filter: 'drop-shadow(4px 6px 12px rgba(0,0,0,0.25))' }}
-            initial={{ scale: 0, x: -100, rotate: -20 }}
-            animate={phase >= 2 ? { scale: 1, x: 0, rotate: -10 } : { scale: 0, x: -100, rotate: -20 }}
-            transition={springBouncy}
-          />
-
-          {/* Bag */}
-          <motion.img
-            src={bagImg}
-            className="absolute top-[40%] right-[0%] w-[35cqw] object-contain rounded-xl z-20"
-            style={{ filter: 'drop-shadow(4px 6px 12px rgba(0,0,0,0.25))' }}
-            initial={{ scale: 0, x: 100, rotate: 30 }}
-            animate={phase >= 3 ? { scale: 1, x: 0, rotate: 15 } : { scale: 0, x: 100, rotate: 30 }}
-            transition={springBouncy}
-          />
-
-          {/* Earrings */}
-          <motion.img
-            src={earringsImg}
-            className="absolute top-[10%] right-[10%] w-[25cqw] object-contain rounded-xl z-30"
-            style={{ filter: 'drop-shadow(4px 6px 12px rgba(0,0,0,0.25))' }}
-            initial={{ scale: 0, y: -50, rotate: 45 }}
-            animate={phase >= 4 ? { scale: 1, y: 0, rotate: 10 } : { scale: 0, y: -50, rotate: 45 }}
-            transition={springBouncy}
-          />
+          <motion.div className="overflow-hidden">
+            <motion.h1
+              className="font-display text-[12vw] font-bold text-white drop-shadow-xl italic"
+              initial={{ y: '100%', rotate: -2 }}
+              animate={{ y: 0, rotate: 0 }}
+              exit={{ scale: 1.1, opacity: 0, filter: 'blur(1vw)' }}
+              transition={{ duration: 1.2, ease: easePremium, delay: 1.4 }}
+            >
+              VANITY
+            </motion.h1>
+          </motion.div>
         </div>
+
+        {/* Subtle macro bulb image in foreground/corner for depth */}
+        <motion.img
+          src={`${import.meta.env.BASE_URL}assets/vanity_bulb.png`}
+          alt=""
+          className="absolute -bottom-[10%] -right-[10%] w-[40vw] mix-blend-screen opacity-60 pointer-events-none object-contain"
+          initial={{ opacity: 0, scale: 0.8, x: '5vw' }}
+          animate={{ opacity: 0.6, scale: 1, x: 0 }}
+          exit={{ opacity: 0, x: '10vw' }}
+          transition={{ duration: 2, ease: easePremium, delay: 1.5 }}
+        />
       </div>
     </SceneContainer>
   );

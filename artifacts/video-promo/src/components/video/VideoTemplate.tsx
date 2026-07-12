@@ -1,17 +1,20 @@
 import { useVideoPlayer } from '@/lib/video';
 import { useEffect, useState } from 'react';
+import { AnimatePresence } from 'framer-motion';
 
 import { Scene0 } from './video_scenes/Scene0';
 import { Scene1 } from './video_scenes/Scene1';
 import { Scene2 } from './video_scenes/Scene2';
 import { Scene3 } from './video_scenes/Scene3';
-import { WardrobeDoorsLayer } from './video_scenes/Shared';
+import { Scene4 } from './video_scenes/Scene4';
+import { PersistentBackground } from './video_scenes/Shared';
 
 const SCENE_DURATIONS = {
-  scene0: 4000,
-  scene1: 3000,
-  scene2: 3000,
-  scene3: 5000, // Total = 15s
+  scene0: 4500, // Opening
+  scene1: 5000, // Categories
+  scene2: 4500, // AI Generate
+  scene3: 4000, // Lookbook
+  scene4: 4500, // Closing
 };
 
 export default function VideoTemplate() {
@@ -19,60 +22,27 @@ export default function VideoTemplate() {
     durations: SCENE_DURATIONS,
   });
 
-  const [doorsOpen, setDoorsOpen] = useState(false);
-
-  useEffect(() => {
-    // Force doors closed immediately at scene start
-    setDoorsOpen(false);
-    
-    // Open doors slightly after the scene has mounted
-    const openTimer = setTimeout(() => {
-      setDoorsOpen(true);
-    }, 200);
-
-    // Start closing doors so they are fully shut exactly when the scene ends.
-    // Exception: Scene 3 closes doors early (at 1600ms) so the clip-path reveal
-    // isn't obstructed by the door handles.
-    const duration = SCENE_DURATIONS[currentSceneKey as keyof typeof SCENE_DURATIONS] || 3500;
-    const closeDelay = currentSceneKey === 'scene3' ? 1500 : duration - 600;
-
-    const closeTimer = setTimeout(() => {
-      setDoorsOpen(false);
-    }, closeDelay);
-
-    return () => {
-      clearTimeout(openTimer);
-      clearTimeout(closeTimer);
-    };
-  }, [currentScene, currentSceneKey]);
-
   return (
     <div
-      className="w-full h-screen flex items-center justify-center"
-      style={{ backgroundColor: '#111' }}
+      className="w-full h-screen flex items-center justify-center overflow-hidden"
+      style={{ backgroundColor: 'var(--color-brand-dusty-rose)' }}
     >
-      {/* 9:16 portrait frame — matches Instagram Reels / Facebook Stories */}
       <div
-        className="relative overflow-hidden"
+        className="relative overflow-hidden w-full h-full"
         style={{
-          aspectRatio: '9 / 16',
-          height: '100vh',
-          maxHeight: '100vh',
-          maxWidth: 'calc(100vh * 9 / 16)',
-          backgroundColor: 'var(--color-brand-black)',
-          containerType: 'size',
+          aspectRatio: '16 / 9',
+          backgroundColor: 'var(--color-brand-dusty-rose)',
         }}
       >
-        {/* Persistent global door layer */}
-        <WardrobeDoorsLayer isOpen={doorsOpen} />
+        <PersistentBackground currentScene={currentScene} />
 
-        {/* The scenes themselves jump-cut, but it's hidden by the doors */}
-        <div className="absolute inset-0 z-0">
-          {currentScene === 0 && <Scene0 />}
-          {currentScene === 1 && <Scene1 />}
-          {currentScene === 2 && <Scene2 />}
-          {currentScene === 3 && <Scene3 />}
-        </div>
+        <AnimatePresence mode="sync">
+          {currentScene === 0 && <Scene0 key="scene0" />}
+          {currentScene === 1 && <Scene1 key="scene1" />}
+          {currentScene === 2 && <Scene2 key="scene2" />}
+          {currentScene === 3 && <Scene3 key="scene3" />}
+          {currentScene === 4 && <Scene4 key="scene4" />}
+        </AnimatePresence>
       </div>
     </div>
   );
