@@ -45,7 +45,7 @@ type Category = "makeup" | "skincare" | "hair" | "fragrances";
 const ROWS: { key: RowKey; btnLabel: string }[] = [
   { key: "makeup",     btnLabel: "+ ADD MAKEUP"     },
   { key: "skincare",   btnLabel: "+ ADD SKINCARE"   },
-  { key: "hair",       btnLabel: "+ ADD HAIR"       },
+  { key: "hair",       btnLabel: "+ ADD HAIRCARE"   },
   { key: "fragrances", btnLabel: "+ ADD FRAGRANCES" },
 ];
 

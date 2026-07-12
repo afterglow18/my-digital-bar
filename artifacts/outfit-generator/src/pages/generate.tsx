@@ -277,7 +277,7 @@ export default function GeneratePage() {
               const btnCY  = pY(ir, lm.btnCY);
               const btnH   = Math.max(32, pH(ir, 0.045));
 
-              const label = key === "fragrances" ? "FRAGRANCES" : key.toUpperCase();
+              const label = key === "fragrances" ? "FRAGRANCES" : key === "hair" ? "HAIRCARE" : key.toUpperCase();
               const labelY = pY(ir, lm.btnCY + (lm.sectionTop - lm.btnCY) * 0.08);
 
               return (
