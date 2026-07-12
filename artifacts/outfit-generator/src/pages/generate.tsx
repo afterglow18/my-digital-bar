@@ -470,7 +470,7 @@ export default function GeneratePage() {
                       display: "flex", alignItems: "center", justifyContent: "center", gap: 7,
                     }}
                   >
-                    ✨ Spin It!
+                    ✨ New Combos
                   </motion.button>
                 )}
 
