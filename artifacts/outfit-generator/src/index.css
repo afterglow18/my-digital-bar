@@ -80,10 +80,10 @@
   --popover-foreground: 0 0% 9%;
   --popover-border: 0 0% 9%;
   
-  --primary: 348 78% 93%; /* Blush — matches ADD button pills */
-  --primary-foreground: 0 0% 9%;
+  --primary: 346 58% 90%; /* Blush — matches ADD button pills */
+  --primary-foreground: 0 13% 26%;
   
-  --secondary: 348 55% 83%; /* Blush deep */
+  --secondary: 346 40% 75%; /* Blush deep */
   --secondary-foreground: 0 0% 9%;
   
   --muted: 0 0% 90%;
@@ -125,10 +125,10 @@
   --popover-foreground: 45 33% 98%;
   --popover-border: 45 33% 98%;
   
-  --primary: 348 78% 93%;
-  --primary-foreground: 0 0% 9%;
+  --primary: 346 58% 90%;
+  --primary-foreground: 0 13% 26%;
   
-  --secondary: 348 55% 83%;
+  --secondary: 346 40% 75%;
   --secondary-foreground: 0 0% 9%;
   
   --muted: 0 0% 20%;

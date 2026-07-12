@@ -40,9 +40,9 @@ const INPUT_STYLE: React.CSSProperties = {
   padding: "0 18px",
   fontSize: 14,
   fontWeight: 500,
-  color: "#fff",
-  background: "rgba(255,255,255,0.12)",
-  border: "1.5px solid rgba(255,255,255,0.22)",
+  color: "#4A3A3A",
+  background: "rgba(255,255,255,0.70)",
+  border: "1.5px solid #D9A7B3",
   outline: "none",
   boxSizing: "border-box",
 };
@@ -55,8 +55,8 @@ const BTN_STYLE = (loading: boolean): React.CSSProperties => ({
   fontWeight: 800,
   fontSize: 15,
   letterSpacing: "-0.01em",
-  color: "#fff",
-  background: loading ? "rgba(235,183,178,0.5)" : "linear-gradient(to bottom, #FBDDE3, #F0B8C0)",
+  color: "#4A3A3A",
+  background: loading ? "rgba(244,214,221,0.5)" : "linear-gradient(to bottom, #F4D6DD, #D9A7B3)",
   border: "none",
   cursor: loading ? "not-allowed" : "pointer",
   boxShadow: "0 4px 16px rgba(224,67,122,0.40)",
@@ -84,7 +84,7 @@ function EyeIcon({ open }: { open: boolean }) {
 const EYE_BTN: React.CSSProperties = {
   position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)",
   background: "none", border: "none", cursor: "pointer", padding: 0,
-  color: "rgba(255,255,255,0.5)", display: "flex", alignItems: "center",
+  color: "rgba(74,58,58,0.5)", display: "flex", alignItems: "center",
 };
 
 export default function AuthPage({ onAuthenticated }: { onAuthenticated: () => void }) {
@@ -188,10 +188,10 @@ export default function AuthPage({ onAuthenticated }: { onAuthenticated: () => v
   const cardTop = ir ? ir.top + ir.height * 0.38 : null;
 
   return (
-    <div style={{ position: "fixed", inset: 0, zIndex: 200, background: "#FBDDE3", display: "flex", alignItems: "flex-start", justifyContent: "center", overflow: "hidden" }}>
+    <div style={{ position: "fixed", inset: 0, zIndex: 200, background: "#F4D6DD", display: "flex", alignItems: "flex-start", justifyContent: "center", overflow: "hidden" }}>
       <div
         ref={containerRef}
-        style={{ width: "100%", maxWidth: 448, height: "calc(100dvh - 90px)", position: "relative", overflow: "hidden", background: "#FBDDE3" }}
+        style={{ width: "100%", maxWidth: 448, height: "calc(100dvh - 90px)", position: "relative", overflow: "hidden", background: "#F4D6DD" }}
       >
         {/* Background wardrobe image */}
         {ir && (
@@ -219,14 +219,14 @@ export default function AuthPage({ onAuthenticated }: { onAuthenticated: () => v
             }}
           >
             {/* App name */}
-            <p style={{ fontFamily: "var(--font-display,sans-serif)", fontWeight: 900, fontSize: 11, letterSpacing: "0.16em", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", textAlign: "center", marginBottom: 4 }}>
+            <p style={{ fontFamily: "var(--font-display,sans-serif)", fontWeight: 900, fontSize: 11, letterSpacing: "0.16em", color: "rgba(74,58,58,0.5)", textTransform: "uppercase", textAlign: "center", marginBottom: 4 }}>
               My Digital Vanity
             </p>
 
             {/* Title */}
             <AnimatePresence mode="wait">
               <motion.h1 key={mode} initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 4 }} transition={{ duration: 0.18 }}
-                style={{ fontFamily: "var(--font-display,sans-serif)", fontWeight: 800, fontSize: 22, color: "#fff", textAlign: "center", marginBottom: 22, letterSpacing: "-0.02em" }}
+                style={{ fontFamily: "var(--font-display,sans-serif)", fontWeight: 800, fontSize: 22, color: "#4A3A3A", textAlign: "center", marginBottom: 22, letterSpacing: "-0.02em" }}
               >
                 {titles[mode]}
               </motion.h1>

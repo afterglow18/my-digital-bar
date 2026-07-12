@@ -111,7 +111,7 @@ export function UpgradeSheet({ reason, onClose }: Props) {
             <div className="flex items-baseline gap-2">
               <span
                 className="font-display font-bold text-5xl leading-none"
-                style={{ color: "#F0B8C0" }}
+                style={{ color: "#D9A7B3" }}
               >
                 $4.99
               </span>
@@ -137,7 +137,7 @@ export function UpgradeSheet({ reason, onClose }: Props) {
                      active:translate-x-1 active:translate-y-1 transition-all
                      disabled:opacity-60 disabled:cursor-not-allowed"
           style={{
-            background: "#FBDDE3",
+            background: "#F4D6DD",
             boxShadow: status === "pending" ? "none" : "5px 5px 0px 0px rgba(0,0,0,1)",
           }}
         >
