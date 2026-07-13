@@ -254,7 +254,7 @@ export default function WardrobePage() {
               fontSize: Math.max(10, pW(ir, 0.038)),
               letterSpacing: "0.18em",
               textTransform: "uppercase",
-              color: "#5a3a20",
+              color: "#1a0800",
               lineHeight: 1.1,
             }}>
               MY DIGITAL SUITCASE
