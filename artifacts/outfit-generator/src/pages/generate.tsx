@@ -26,7 +26,7 @@ import { useQueryClient } from "@tanstack/react-query";
 const IMG_W = 1024;
 const IMG_H = 1536;
 const NAV_H = 90;
-const PINK  = "#F4D6DD";
+const PINK  = "#E8D4B0";
 
 const LM = {
   doorL: 0.207,
@@ -242,7 +242,7 @@ export default function GeneratePage() {
         width: "100%",
         height: `min(calc(100dvh - ${NAV_H}px), calc(100vw * ${(IMG_H / IMG_W).toFixed(6)}))`,
         overflow: "hidden",
-        background: "#e8b8b0",
+        background: "#C4A882",
       }}
     >
       {/* ── Background image ── */}
@@ -369,12 +369,12 @@ export default function GeneratePage() {
                   <span style={{
                     fontSize: 10, fontWeight: 800,
                     letterSpacing: "0.13em", textTransform: "uppercase",
-                    color: "#7a3040",
-                    background: "rgba(255,235,240,0.90)",
+                    color: "#3A2210",
+                    background: "rgba(240,225,196,0.90)",
                     padding: "3px 11px", borderRadius: 20,
                     whiteSpace: "nowrap",
                   }}>
-                    Building your look…
+                    Building your case…
                   </span>
                 </motion.div>
               )}
@@ -390,15 +390,15 @@ export default function GeneratePage() {
                 textAlign: "center",
                 padding: "14px 22px",
                 borderRadius: 16,
-                background: "rgba(255,240,245,0.92)",
-                border: "1.5px solid rgba(220,150,160,0.40)",
+                background: "rgba(245,237,216,0.92)",
+                border: "1.5px solid rgba(180,140,90,0.40)",
                 boxShadow: "0 4px 18px rgba(0,0,0,0.11)",
                 maxWidth: pW(ir, 0.65),
               }}>
                 <p style={{
                   fontWeight: 800, fontSize: 12,
                   letterSpacing: "0.07em", textTransform: "uppercase",
-                  color: "#7a3040", fontFamily: "var(--font-display)", margin: 0,
+                  color: "#3A2210", fontFamily: "var(--font-display)", margin: 0,
                 }}>
                   Your suitcase is empty
                 </p>
@@ -423,8 +423,8 @@ export default function GeneratePage() {
                 height: pH(ir, LM.barBot - LM.barY),
                 zIndex: 18,
                 pointerEvents: "none",
-                background: "rgba(255,248,250,0.96)",
-                borderTop: "1px solid rgba(220,150,160,0.25)",
+                background: "rgba(245,237,216,0.96)",
+                borderTop: "1px solid rgba(180,140,90,0.25)",
               }}
             />
 
@@ -456,11 +456,11 @@ export default function GeneratePage() {
                     disabled={!hasItems}
                     style={{
                       width: "100%", height: 52, borderRadius: 28,
-                      border: "2.5px solid #D9A7B3",
+                      border: "2.5px solid #B8894E",
                       background: hasItems
-                        ? "linear-gradient(to bottom, #F4D6DD, #D9A7B3)"
-                        : "rgba(220,180,190,0.32)",
-                      color: hasItems ? "#4A3A3A" : "#9a6070",
+                        ? "linear-gradient(to bottom, #E8D4B0, #B8894E)"
+                        : "rgba(200,175,140,0.32)",
+                      color: hasItems ? "#3A2210" : "#7A5A30",
                       fontWeight: 800, fontSize: 16,
                       letterSpacing: "-0.01em", textTransform: "uppercase",
                       whiteSpace: "nowrap",
@@ -486,8 +486,8 @@ export default function GeneratePage() {
                       padding: "0 24px", height: 44,
                       alignItems: "center", justifyContent: "center",
                       borderRadius: 24,
-                      background: "rgba(255,235,240,0.85)",
-                      border: "1.5px solid rgba(220,150,160,0.28)",
+                      background: "rgba(240,225,196,0.85)",
+                      border: "1.5px solid rgba(180,140,90,0.28)",
                     }}
                   >
                     {[0, 1, 2].map(i => (
@@ -524,8 +524,8 @@ export default function GeneratePage() {
                       style={{
                         flexGrow: 1, flexShrink: 1, flexBasis: "0%", minWidth: 0,
                         height: 44, borderRadius: 24,
-                        border: "2.5px solid #D9A7B3",
-                        background: "linear-gradient(to bottom, #F4D6DD, #D9A7B3)",
+                        border: "2.5px solid #B8894E",
+                        background: "linear-gradient(to bottom, #E8D4B0, #B8894E)",
                         color: "#4A3A3A",
                         fontFamily: "var(--font-display)",
                         fontWeight: 800, fontSize: 14,
@@ -548,9 +548,9 @@ export default function GeneratePage() {
                       style={{
                         flexGrow: 1, flexShrink: 1, flexBasis: "0%", minWidth: 0,
                         height: 44, borderRadius: 24,
-                        border: "2.5px solid #D9A7B3",
+                        border: "2.5px solid #B8894E",
                         background: canSave ? "#fff" : "rgba(240,240,240,0.80)",
-                        color: "#4A3A3A",
+                        color: "#3A2210",
                         fontFamily: "var(--font-display)",
                         fontWeight: 800, fontSize: 14,
                         letterSpacing: "-0.01em", textTransform: "uppercase",
@@ -563,7 +563,7 @@ export default function GeneratePage() {
                         gap: 2, padding: "0 12px",
                       }}
                     >
-                      <span>Save It</span>
+                      <span>Save Case</span>
                       <span style={{ fontSize: 14, lineHeight: 1 }}>♡</span>
                     </button>
                   </motion.div>
@@ -581,15 +581,15 @@ export default function GeneratePage() {
                     <input
                       autoFocus
                       type="text"
-                      placeholder="Name this look…"
+                      placeholder="Name this case…"
                       value={saveName}
                       onChange={e => setSaveName(e.target.value)}
                       onKeyDown={e => e.key === "Enter" && handleSave()}
                       style={{
                         flex: 1, height: 38, borderRadius: 20, padding: "0 14px",
-                        fontSize: 13, fontWeight: 600, color: "#5a2030",
-                        background: "rgba(255,252,248,0.98)",
-                        border: "1.5px solid rgba(220,150,160,0.50)",
+                        fontSize: 13, fontWeight: 600, color: "#3A2210",
+                        background: "rgba(245,237,216,0.98)",
+                        border: "1.5px solid rgba(180,140,90,0.50)",
                         boxShadow: "0 3px 12px rgba(0,0,0,0.13)",
                         outline: "none",
                       }}
@@ -598,8 +598,8 @@ export default function GeneratePage() {
                       onClick={() => { setIsSaveOpen(false); setSaveName(""); }}
                       style={{
                         width: 36, height: 36, borderRadius: "50%", flexShrink: 0,
-                        background: "rgba(255,248,250,0.97)",
-                        border: "1.5px solid rgba(220,150,160,0.36)",
+                        background: "rgba(245,237,216,0.97)",
+                        border: "1.5px solid rgba(180,140,90,0.36)",
                         display: "flex", alignItems: "center", justifyContent: "center",
                         cursor: "pointer",
                       }}
@@ -611,9 +611,9 @@ export default function GeneratePage() {
                       disabled={!saveName.trim() || saveOutfit.isPending}
                       style={{
                         padding: "0 14px", height: 36, borderRadius: 20, flexShrink: 0,
-                        background: "linear-gradient(to bottom, #F4D6DD, #D9A7B3)",
-                        color: "#4A3A3A", fontWeight: 700, fontSize: 13, border: "1.5px solid #D9A7B3",
-                        boxShadow: "0 3px 10px rgba(220,100,130,0.30)",
+                        background: "linear-gradient(to bottom, #E8D4B0, #B8894E)",
+                        color: "#3A2210", fontWeight: 700, fontSize: 13, border: "1.5px solid #B8894E",
+                        boxShadow: "0 3px 10px rgba(120,80,40,0.30)",
                         opacity: (!saveName.trim() || saveOutfit.isPending) ? 0.42 : 1,
                         cursor: "pointer",
                       }}

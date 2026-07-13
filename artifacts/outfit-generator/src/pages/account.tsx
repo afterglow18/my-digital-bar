@@ -263,8 +263,8 @@ export default function AccountPage() {
                      rounded-2xl font-display font-bold text-sm uppercase tracking-tight
                      active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all"
           style={{
-            background: "linear-gradient(to bottom, #F4D6DD, #D9A7B3)",
-            border: "2px solid #D9A7B3",
+            background: "linear-gradient(to bottom, #E8D4B0, #B8894E)",
+            border: "2px solid #B8894E",
             color: "#4A3A3A",
             boxShadow: "3px 3px 0 rgba(0,0,0,0.18)",
           }}

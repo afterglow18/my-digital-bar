@@ -42,7 +42,7 @@ function ItemPhoto({
     <button
       onClick={onClick}
       className={`w-full ${sizeClass} border-2 border-black overflow-hidden relative`}
-      style={{ background: "#FDECEF", padding: 0, display: "block" }}
+      style={{ background: "#F5EDD8", padding: 0, display: "block" }}
     >
       {item.imageObjectPath ? (
         <img
@@ -196,7 +196,7 @@ export default function SavedPage() {
           </p>
           <p className="text-xs text-black/60 mt-1 mb-3 leading-snug">
             You've saved {FREE_OUTFIT_LIMIT} looks — the free limit.
-            Unlock Forever to save unlimited looks.
+            Unlock Forever to save unlimited cases.
           </p>
           <button
             onClick={() => setShowUpgrade(true)}
@@ -365,7 +365,7 @@ export default function SavedPage() {
                             <button
                               onClick={() => setDetailsItem(item)}
                               className="w-full aspect-square border-2 border-black overflow-hidden rounded"
-                              style={{ background: "#FDECEF" }}
+                              style={{ background: "#F5EDD8" }}
                             >
                               {item.imageObjectPath ? (
                                 <img src={getImageUrl(item.imageObjectPath)!} alt={item.name} className="w-full h-full object-contain" />
@@ -416,7 +416,7 @@ export default function SavedPage() {
           </div>
           <h3 className="font-display font-bold text-xl mb-2">No looks saved yet.</h3>
           <p className="text-sm font-medium text-muted-foreground">
-            Head to your Suitcase, spin the slots, and save looks you love.
+            Head to your Suitcase, spin the slots, and save cases you love.
           </p>
         </div>
       )}

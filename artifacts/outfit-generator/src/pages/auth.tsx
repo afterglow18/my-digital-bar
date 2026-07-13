@@ -42,7 +42,7 @@ const INPUT_STYLE: React.CSSProperties = {
   fontWeight: 500,
   color: "#4A3A3A",
   background: "rgba(255,255,255,0.70)",
-  border: "1.5px solid #D9A7B3",
+  border: "1.5px solid #B8894E",
   outline: "none",
   boxSizing: "border-box",
 };
@@ -56,7 +56,7 @@ const BTN_STYLE = (loading: boolean): React.CSSProperties => ({
   fontSize: 15,
   letterSpacing: "-0.01em",
   color: "#4A3A3A",
-  background: loading ? "rgba(244,214,221,0.5)" : "linear-gradient(to bottom, #F4D6DD, #D9A7B3)",
+  background: loading ? "rgba(232,212,176,0.5)" : "linear-gradient(to bottom, #E8D4B0, #B8894E)",
   border: "none",
   cursor: loading ? "not-allowed" : "pointer",
   boxShadow: "0 4px 16px rgba(224,67,122,0.40)",
@@ -188,10 +188,10 @@ export default function AuthPage({ onAuthenticated }: { onAuthenticated: () => v
   const cardTop = ir ? ir.top + ir.height * 0.38 : null;
 
   return (
-    <div style={{ position: "fixed", inset: 0, zIndex: 200, background: "#F4D6DD", display: "flex", alignItems: "flex-start", justifyContent: "center", overflow: "hidden" }}>
+    <div style={{ position: "fixed", inset: 0, zIndex: 200, background: "#E8D4B0", display: "flex", alignItems: "flex-start", justifyContent: "center", overflow: "hidden" }}>
       <div
         ref={containerRef}
-        style={{ width: "100%", maxWidth: 448, height: "calc(100dvh - 90px)", position: "relative", overflow: "hidden", background: "#F4D6DD" }}
+        style={{ width: "100%", maxWidth: 448, height: "calc(100dvh - 90px)", position: "relative", overflow: "hidden", background: "#E8D4B0" }}
       >
         {/* Background wardrobe image */}
         {ir && (

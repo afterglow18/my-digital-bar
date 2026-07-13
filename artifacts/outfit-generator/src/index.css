@@ -64,13 +64,13 @@
   --app-font-sans: 'Outfit', sans-serif;
   --app-font-display: 'Syne', sans-serif;
   
-  /* Clueless Palette: Yellow, Bubblegum Pink, Baby Blue, Black, Cream */
-  --background: 45 33% 98%; /* Cream */
+  /* Suitcase Palette: Warm Tan, Leather Brown, Cream, Black */
+  --background: 40 30% 97%; /* Cream */
   --foreground: 0 0% 9%; /* Almost Black */
   
   --border: 0 0% 9%;
   --input: 0 0% 9%;
-  --ring: 0 0% 9%;
+  --ring: 28 45% 40%;
   
   --card: 0 0% 100%;
   --card-foreground: 0 0% 9%;
@@ -80,11 +80,11 @@
   --popover-foreground: 0 0% 9%;
   --popover-border: 0 0% 9%;
   
-  --primary: 346 58% 90%; /* Blush — matches ADD button pills */
-  --primary-foreground: 0 13% 26%;
+  --primary: 35 55% 82%; /* Warm Tan */
+  --primary-foreground: 28 50% 18%; /* Dark Brown */
   
-  --secondary: 346 40% 75%; /* Blush deep */
-  --secondary-foreground: 0 0% 9%;
+  --secondary: 28 42% 55%; /* Medium Leather Brown */
+  --secondary-foreground: 40 30% 97%; /* Cream */
   
   --muted: 0 0% 90%;
   --muted-foreground: 0 0% 40%;
@@ -125,11 +125,11 @@
   --popover-foreground: 45 33% 98%;
   --popover-border: 45 33% 98%;
   
-  --primary: 346 58% 90%;
-  --primary-foreground: 0 13% 26%;
+  --primary: 35 55% 82%;
+  --primary-foreground: 28 50% 18%;
   
-  --secondary: 346 40% 75%;
-  --secondary-foreground: 0 0% 9%;
+  --secondary: 28 42% 55%;
+  --secondary-foreground: 40 30% 97%;
   
   --muted: 0 0% 20%;
   --muted-foreground: 0 0% 70%;

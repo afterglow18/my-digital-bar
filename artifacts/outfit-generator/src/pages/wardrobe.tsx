@@ -216,7 +216,7 @@ export default function WardrobePage() {
         height: `min(calc(100dvh - ${NAV_H}px), calc(100vw * ${(IMG_H / IMG_W).toFixed(6)}))`,
         overflow: "hidden",
         // Dusty rose background matches the outer wall colour in the suitcase image
-        background: "#e8b8b0",
+        background: "#C4A882",
       }}
     >
       {/* ── Background image ── */}
@@ -403,7 +403,7 @@ export default function WardrobePage() {
           {/* ── SAVE circular button — covers the baked-in circle ── */}
           <button
             onClick={() => { setSaveName(""); setIsSaveOpen(true); }}
-            aria-label="Save current look"
+            aria-label="Save current case"
             style={{
               position: "absolute",
               top:    pY(ir, 0.9466) - pW(ir, 0.0625),
@@ -412,9 +412,9 @@ export default function WardrobePage() {
               height: pW(ir, 0.125),
               borderRadius: "50%",
               zIndex: 26,
-              background: "linear-gradient(160deg, #F4D6DD 0%, #D9A7B3 100%)",
-              border: "2px solid #D9A7B3",
-              boxShadow: "0 2px 8px rgba(180,100,120,0.25)",
+              background: "linear-gradient(160deg, #E8D4B0 0%, #B8894E 100%)",
+              border: "2px solid #B8894E",
+              boxShadow: "0 2px 8px rgba(120,80,40,0.25)",
               cursor: "pointer",
               display: "flex",
               flexDirection: "column",
@@ -425,8 +425,8 @@ export default function WardrobePage() {
               padding: 0,
             }}
           >
-            <span style={{ fontSize: pW(ir, 0.022), fontWeight: 900, color: "#000", letterSpacing: "0.06em", fontFamily: "var(--font-display)" }}>SAVE</span>
-            <span style={{ fontSize: pW(ir, 0.019), fontWeight: 800, color: "#000", letterSpacing: "0.04em", fontFamily: "var(--font-display)" }}>LOOK 🩷</span>
+            <span style={{ fontSize: pW(ir, 0.022), fontWeight: 900, color: "#3A2210", letterSpacing: "0.06em", fontFamily: "var(--font-display)" }}>SAVE</span>
+            <span style={{ fontSize: pW(ir, 0.019), fontWeight: 800, color: "#3A2210", letterSpacing: "0.04em", fontFamily: "var(--font-display)" }}>CASE 🤎</span>
           </button>
         </>
       )}
@@ -460,12 +460,12 @@ export default function WardrobePage() {
               {saveSuccess ? (
                 <div style={{ textAlign: "center", padding: "12px 0" }}>
                   <div style={{ fontSize: 32, marginBottom: 8 }}>💕</div>
-                  <p style={{ fontWeight: 800, fontSize: 16, fontFamily: "var(--font-display)" }}>Look saved!</p>
+                  <p style={{ fontWeight: 800, fontSize: 16, fontFamily: "var(--font-display)" }}>Case saved!</p>
                 </div>
               ) : (
                 <>
                   <p style={{ fontWeight: 800, fontSize: 15, fontFamily: "var(--font-display)", marginBottom: 12 }}>
-                    Name this look
+                    Name this case
                   </p>
                   <input
                     autoFocus
@@ -495,9 +495,9 @@ export default function WardrobePage() {
                       disabled={!saveName.trim() || saveOutfit.isPending}
                       style={{
                         flex: 1, height: 40, borderRadius: 20,
-                        border: "2px solid #D9A7B3",
-                        background: "linear-gradient(to bottom, #F4D6DD, #D9A7B3)",
-                        color: "#4A3A3A", fontWeight: 800, fontSize: 13,
+                        border: "2px solid #B8894E",
+                        background: "linear-gradient(to bottom, #E8D4B0, #B8894E)",
+                        color: "#3A2210", fontWeight: 800, fontSize: 13,
                         cursor: saveName.trim() ? "pointer" : "default",
                         opacity: saveName.trim() ? 1 : 0.45,
                         fontFamily: "var(--font-display)",
