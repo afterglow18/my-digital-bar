@@ -588,7 +588,7 @@ export default function GeneratePage() {
                         gap: 2, padding: "0 12px",
                       }}
                     >
-                      <span>Save Case</span>
+                      <span>Save</span>
                       <span style={{ fontSize: 14, lineHeight: 1 }}>♡</span>
                     </button>
                   </motion.div>
