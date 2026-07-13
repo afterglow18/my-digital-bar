@@ -268,6 +268,29 @@ export default function GeneratePage() {
 
         return (
           <>
+            {/* ── Page title ── */}
+            <div style={{
+              position: "absolute",
+              top: pY(ir, 0.075), left: "50%",
+              transform: "translateX(-50%)",
+              zIndex: 25,
+              textAlign: "center",
+              pointerEvents: "none",
+              whiteSpace: "nowrap",
+            }}>
+              <div style={{
+                fontFamily: "var(--font-display, serif)",
+                fontWeight: 900,
+                fontSize: Math.max(10, pW(ir, 0.038)),
+                letterSpacing: "0.18em",
+                textTransform: "uppercase",
+                color: "#5a3a20",
+                lineHeight: 1.1,
+              }}>
+                MY DIGITAL SUITCASE
+              </div>
+            </div>
+
             {/* ── 4 shelf carousels + ADD-button covers ── */}
             {ROWS.map(({ key }, rowIdx) => {
               const lm    = LM.rows[rowIdx];
