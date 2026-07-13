@@ -33,7 +33,7 @@ workflows:
         COREPACK_ENABLE_STRICT: "0"
         BUNDLE_ID: com.mydigitalsuitcase.app
         TEAM_ID: 2A78MFVCJS
-        PROFILE_NAME: My Digital Suitcase App
+        PROFILE_NAME: My Digital Suitcase
 
     scripts:
       - name: Install pnpm and dependencies
