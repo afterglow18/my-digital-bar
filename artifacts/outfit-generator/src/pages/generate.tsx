@@ -247,7 +247,7 @@ export default function GeneratePage() {
     >
       {/* ── Background image ── */}
       <img
-        src="/generate-bg.png?v=2"
+        src="/briefcase-bg.png?v=2"
         alt="My Digital Vanity"
         style={{
           position: "absolute",

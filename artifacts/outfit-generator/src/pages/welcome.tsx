@@ -182,7 +182,7 @@ export default function WelcomePage({ onEnter }: Props) {
 
         {/* Vanity background — fades in after bulbs light up */}
         <motion.img
-          src="/vanity-bg.png"
+          src="/briefcase-bg.png"
           alt=""
           draggable={false}
           style={{
