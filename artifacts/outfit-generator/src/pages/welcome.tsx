@@ -63,22 +63,15 @@ export default function WelcomePage({ onEnter }: Props) {
         overflow: "hidden",
       }}
     >
-      {/* ── Photo background ── */}
-      <div style={{
-        position: "absolute", inset: 0,
-        backgroundImage: "url(/suitcase-open-bg.jpg)",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }} />
-      {/* Dark overlay so text + animated suitcase stay readable */}
+      {/* ── Dark background — fades once image takes over ── */}
       <motion.div
         style={{ position: "absolute", inset: 0 }}
         animate={{
           background: isReveal
-            ? "rgba(196,168,130,0.55)"
+            ? "#C4A882"
             : isOpen
-              ? "rgba(28,10,4,0.55)"
-              : "rgba(14,8,4,0.52)",
+              ? "radial-gradient(ellipse 70% 50% at 50% 45%, #7B4F2E 0%, #1C0A04 70%)"
+              : "#0E0804",
         }}
         transition={{ duration: 0.5 }}
       />

@@ -216,13 +216,12 @@ export default function WardrobePage() {
         width: "100%",
         height: `min(calc(100dvh - ${NAV_H}px), calc(100vw * ${(IMG_H / IMG_W).toFixed(6)}))`,
         overflow: "hidden",
-        // Dusty rose background matches the outer wall colour in the suitcase image
-        background: "#C4A882",
+        background: "#C8B9A2",
       }}
     >
       {/* ── Background image ── */}
       <img
-        src="/suitcase-bg.png?v=1"
+        src="/suitcase-open-bg.jpg"
         alt="My Digital Suitcase"
         style={{
           position: "absolute",
