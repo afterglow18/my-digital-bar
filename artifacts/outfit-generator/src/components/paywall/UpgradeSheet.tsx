@@ -48,7 +48,7 @@ export function UpgradeSheet({ reason, onClose }: Props) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const priceString = (rcPackage as any)?.product?.priceString as string | undefined;
   const displayPrice = priceString ?? "$9.99";
-  const ctaLabel  = status === "pending" ? "Opening…" : `Go Pro – ${displayPrice}/mo`;
+  const ctaLabel  = status === "pending" ? "Opening…" : `Unlock Forever – ${displayPrice}`;
 
   const handlePurchase = useCallback(async () => {
     if (status === "pending") return;
@@ -135,10 +135,10 @@ export function UpgradeSheet({ reason, onClose }: Props) {
                 {displayPrice}
               </span>
               <span className="text-white/45 font-semibold text-sm leading-tight">
-                per&nbsp;month
+                one-time
               </span>
             </div>
-            <p className="text-white/30 text-xs mt-1 font-medium">Cancel anytime</p>
+            <p className="text-white/30 text-xs mt-1 font-medium">Pay once, yours forever</p>
           </div>
         </div>
 

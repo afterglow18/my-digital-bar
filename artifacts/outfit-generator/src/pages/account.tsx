@@ -222,7 +222,7 @@ export default function AccountPage() {
               onClick={handlePurchase}
               pending={isPurchasing}
               icon={isPurchasing ? Loader2 : (() => null)}
-              label={`Upgrade — ${priceString}/mo`}
+              label={`Upgrade — ${priceString} Lifetime`}
             />
           )}
 
