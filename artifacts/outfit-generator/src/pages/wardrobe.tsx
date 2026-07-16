@@ -87,12 +87,14 @@ function useImageRect(containerRef: RefObject<HTMLDivElement>): ImgRect {
       if (!c) return;
       const cW = c.clientWidth, cH = c.clientHeight;
       const iR = IMG_W / IMG_H;
-      const cR = cW / cH;
+      // Cover: scale image to fill container completely, crop overflow
       let rW: number, rH: number, rL: number, rT: number;
-      if (cR > iR) {
-        rH = cH; rW = cH * iR; rT = 0; rL = (cW - rW) / 2;
+      if (cW / cH > iR) {
+        // Container wider: fit to width, crop top/bottom
+        rW = cW; rH = cW / iR; rL = 0; rT = (cH - rH) / 2;
       } else {
-        rW = cW; rH = cW / iR; rL = 0; rT = 0;
+        // Container taller: fit to height, crop sides
+        rH = cH; rW = cH * iR; rT = 0; rL = (cW - rW) / 2;
       }
       setRect({ top: rT, left: rL, width: rW, height: rH, containerH: cH, containerW: cW });
     };
@@ -224,9 +226,9 @@ export default function WardrobePage() {
         alt="My Digital Suitcase"
         style={{
           position: "absolute",
-          top:    ready ? ir.top    : 0,
-          left:   0,
-          width:  ready ? ir.containerW : "100%",
+          top:    ready ? ir.top  : 0,
+          left:   ready ? ir.left : 0,
+          width:  ready ? ir.width  : "100%",
           height: ready ? ir.height : "auto",
           display: "block",
           pointerEvents: "none",
