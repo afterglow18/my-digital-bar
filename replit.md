@@ -1,6 +1,6 @@
-# Clueless Closet — Outfit Generator
+# My Digital Bar
 
-A mobile-first digital wardrobe app where you upload clothing photos, categorize them, and generate random outfits — inspired by the iconic Clueless closet scene.
+A mobile-first digital bar app where you catalog your spirits, wines, cocktails, and bottles.
 
 ## Run & Operate
 

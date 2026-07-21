@@ -1,13 +1,13 @@
-# My Digital Closet — App Store Connect Listing
+# My Digital Bar — App Store Connect Listing
 
 ## Identity
 
 | Field | Value |
 |---|---|
-| **App Name** | My Digital Closet |
-| **Subtitle** (30 chars max) | Style your wardrobe with AI |
-| **Bundle ID** | com.mydigitalcloset.app |
-| **SKU** | MYDIGITALCLOSET001 |
+| **App Name** | My Digital Bar |
+| **Subtitle** (30 chars max) | Your personal digital bar |
+| **Bundle ID** | com.mydigitalbar.app |
+| **SKU** | MYDIGITALBAR001 |
 | **Primary Category** | Lifestyle |
 | **Secondary Category** | Shopping |
 | **Content Rating** | 4+ |
@@ -106,11 +106,11 @@ Key points to cover:
 
 | Field | Value |
 |---|---|
-| **Reference Name** | My Digital Closet Premium |
-| **Product ID** | com.mydigitalcloset.app.premium |
+| **Reference Name** | My Digital Bar Premium |
+| **Product ID** | com.mydigitalbar.app.premium |
 | **Type** | Non-Consumable |
 | **Price** | $4.99 (Tier 5) |
-| **Display Name** | My Digital Closet Premium |
+| **Display Name** | My Digital Bar Premium |
 | **Description** | Unlimited wardrobe items and saved outfits. One-time purchase — no subscription. |
 
 ---
