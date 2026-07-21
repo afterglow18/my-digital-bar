@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.mydigitalbar.app',
-  appName: 'My Digital Bar',
+  appName: 'My Bar',
   webDir: 'dist/public',
 
   // -------------------------------------------------------------------------
