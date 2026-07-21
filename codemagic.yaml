@@ -157,13 +157,13 @@ workflows:
 
       - name: Upload to TestFlight
         script: |
-          # Write the private key from the environment variable to a temp file
+          # Hardcode key credentials so ios_signing cannot override them
           KEY_FILE=$(mktemp /tmp/AuthKey_XXXXXX.p8)
           echo "$APP_STORE_CONNECT_PRIVATE_KEY" > "$KEY_FILE"
           app-store-connect publish \
             --path "$CM_BUILD_DIR/build/ipa/App.ipa" \
-            --key-id "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
-            --issuer-id "$APP_STORE_CONNECT_ISSUER_ID" \
+            --key-id "2HMV3DT7XZ" \
+            --issuer-id "66d4ce13-148d-4d6b-bab8-f1d0d8441a1e" \
             --private-key "@file:$KEY_FILE" \
             --testflight
           rm -f "$KEY_FILE"
