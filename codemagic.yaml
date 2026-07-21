@@ -31,6 +31,8 @@ workflows:
         TEAM_ID: 2A78MFVCJS
         PROFILE_NAME: My Digital Bar
         VITE_API_BASE_URL: https://afterglow18.replit.app/api
+        APP_STORE_CONNECT_KEY_IDENTIFIER: KF2R947UR5
+        APP_STORE_CONNECT_ISSUER_ID: 66d4ce13-148d-4d6b-bab8-f1d0d8441a1e
 
     scripts:
       - name: Install pnpm and dependencies
