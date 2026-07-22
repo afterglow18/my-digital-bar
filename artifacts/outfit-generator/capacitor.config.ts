@@ -15,6 +15,15 @@ const config: CapacitorConfig = {
     backgroundColor: '#F9F4EE',
     // Allow inline media playback (used for wardrobe image previews)
     allowsInlineMediaPlayback: true,
+    // Privacy usage descriptions — all three are required for camera/photo access on iOS
+    infoPlist: {
+      NSCameraUsageDescription:
+        'My Digital Bar uses your camera to add clothing items to your wardrobe.',
+      NSPhotoLibraryUsageDescription:
+        'My Digital Bar reads your photo library so you can choose clothing photos to add to your wardrobe.',
+      NSPhotoLibraryAddUsageDescription:
+        'My Digital Bar saves photos captured with the camera to your photo library.',
+    },
   },
 
   plugins: {
