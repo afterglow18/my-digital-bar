@@ -29,8 +29,8 @@ export default function WelcomePage({ onEnter }: Props) {
     return () => window.removeEventListener("resize", update);
   }, []);
 
-  // Suitcase is ~80 % of viewport width, capped for tablets
-  const SW  = Math.min(vw * 0.80, 360);
+  // Suitcase is ~80 % of viewport width; cap raised for iPad
+  const SW  = Math.min(vw * 0.80, vw >= 768 ? 480 : 360);
   const SH  = SW * 0.68;          // classic briefcase ratio ≈ 3 : 2
   const LH  = SH * 0.44;          // lid is top 44 %
   const BH  = SH - LH;

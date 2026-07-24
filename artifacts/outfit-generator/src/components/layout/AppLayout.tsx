@@ -28,18 +28,18 @@ export function AppLayout({ children }: AppLayoutProps) {
   ];
 
   return (
-    <div className="min-h-[100dvh] w-full bg-[#f8f9fa] flex justify-center lg:py-8 lg:px-4">
-      {/* Phone Frame Constraint for Desktop */}
-      <div className="w-full max-w-md bg-background h-[100dvh] lg:min-h-[850px] lg:h-[850px] lg:border-[6px] lg:border-black lg:rounded-[3rem] lg:shadow-2xl relative overflow-hidden flex flex-col lg:overflow-y-auto">
+    <div className="min-h-[100dvh] w-full bg-[#f8f9fa] flex justify-center xl:py-8 xl:px-4">
+      {/* Responsive container: phone on mobile, wider on iPad, phone-frame on desktop */}
+      <div className="w-full max-w-md md:max-w-2xl xl:max-w-md bg-background h-[100dvh] xl:min-h-[850px] xl:h-[850px] xl:border-[6px] xl:border-black xl:rounded-[3rem] xl:shadow-2xl relative overflow-hidden flex flex-col xl:overflow-y-auto">
 
         {/* Main Content Area */}
-        <main className="flex-1 overflow-y-auto pb-[90px] relative">
+        <main className="flex-1 overflow-y-auto pb-[90px] md:pb-[100px] relative">
           {children}
         </main>
 
         {/* Bottom Navigation */}
-        <nav className="absolute bottom-0 left-0 right-0 bg-white border-t-[3px] border-black p-3 pb-safe z-[40]">
-          <ul className="flex items-center justify-around">
+        <nav className="absolute bottom-0 left-0 right-0 bg-white border-t-[3px] border-black p-3 pb-safe md:py-4 z-[40]">
+          <ul className="flex items-center justify-around max-w-lg mx-auto">
             {navItems.map((item) => {
               const isActive = location === item.href;
               const Icon = item.icon;
