@@ -27,10 +27,10 @@ import { encodeToPng } from "@/lib/processImage";
 type Category = "outfits" | "beauty" | "toiletries" | "essentials";
 
 const CATEGORY_LABELS: Record<Category, string> = {
-  outfits:    "Outfits",
-  beauty:     "Beauty",
-  toiletries: "Toiletries",
-  essentials: "Essentials",
+  outfits:    "Cocktails",
+  beauty:     "Spirits",
+  toiletries: "Mixers",
+  essentials: "Tools",
 };
 
 type Phase =
@@ -84,10 +84,10 @@ const PHOTO_TIPS = [
 ] as const;
 
 const CATEGORY_EXAMPLES: Record<string, { emoji: string; items: string[] }> = {
-  outfits:    { emoji: "👗", items: ["Tops", "Bottoms", "Shoes", "Swim", "Undergarments", "Dresses", "Accessories"] },
-  beauty:     { emoji: "💄", items: ["Makeup", "Skincare", "Hair", "Jewelry", "Nail Polish"] },
-  toiletries: { emoji: "🪥", items: ["Shower", "Dental", "Medicine", "Feminine Care", "First Aid"] },
-  essentials: { emoji: "🧳", items: ["Travel Docs", "Tech", "Snacks", "Books", "Accessories"] },
+  outfits:    { emoji: "🍸", items: ["Classics", "Signatures", "Mocktails", "Shots", "Punches", "Wine", "Beer"] },
+  beauty:     { emoji: "🥃", items: ["Vodka", "Gin", "Rum", "Whiskey", "Tequila", "Brandy", "Liqueurs"] },
+  toiletries: { emoji: "🍋", items: ["Juices", "Syrups", "Sodas", "Bitters", "Cream", "Spices", "Garnishes"] },
+  essentials: { emoji: "🍹", items: ["Shakers", "Strainers", "Jiggers", "Muddlers", "Glasses", "Ice Tools", "Bar Spoons"] },
 };
 
 export function QuickAddSheet({ open, onOpenChange, category, existingCount, onCreated }: Props) {
@@ -308,7 +308,7 @@ export function QuickAddSheet({ open, onOpenChange, category, existingCount, onC
                 <p className="text-sm text-muted-foreground mt-1">
                   {progress && progress.total > 1
                     ? `Photo ${progress.current} of ${progress.total}`
-                    : "Adding to your suitcase."}
+                    : "Adding to your bar."}
                 </p>
               </div>
             </motion.div>

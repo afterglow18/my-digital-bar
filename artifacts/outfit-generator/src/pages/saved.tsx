@@ -22,10 +22,10 @@ const SLOT_ORDER = ["outfits", "beauty", "toiletries", "essentials"] as const;
 type SlotKey = (typeof SLOT_ORDER)[number];
 
 const SLOT_LABELS: Record<SlotKey, string> = {
-  outfits:    "Outfits",
-  beauty:     "Beauty",
-  toiletries: "Toiletries",
-  essentials: "Essentials",
+  outfits:    "Cocktails",
+  beauty:     "Spirits",
+  toiletries: "Mixers",
+  essentials: "Tools",
 };
 
 function ItemPhoto({
@@ -195,8 +195,8 @@ export default function SavedPage() {
             🔓 Lookbook is full
           </p>
           <p className="text-xs text-black/60 mt-1 mb-3 leading-snug">
-            You've saved {FREE_OUTFIT_LIMIT} looks — the free limit.
-            Unlock Forever to save unlimited cases.
+            You've saved {FREE_OUTFIT_LIMIT} drinks — the free limit.
+            Unlock Forever to save unlimited drinks.
           </p>
           <button
             onClick={() => setShowUpgrade(true)}
@@ -414,9 +414,9 @@ export default function SavedPage() {
           <div className="w-14 h-14 bg-accent rounded-full flex items-center justify-center border-2 border-black mb-4">
             <Bookmark className="w-7 h-7" />
           </div>
-          <h3 className="font-display font-bold text-xl mb-2">No looks saved yet.</h3>
+          <h3 className="font-display font-bold text-xl mb-2">No drinks saved yet.</h3>
           <p className="text-sm font-medium text-muted-foreground">
-            Head to your Suitcase, spin the slots, and save cases you love.
+            Head to your Bar, spin the slots, and save drinks you love.
           </p>
         </div>
       )}

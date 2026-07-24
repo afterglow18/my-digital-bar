@@ -25,22 +25,22 @@ interface Props {
 // ── Copy ──────────────────────────────────────────────────────────────────────
 
 const FEATURES = [
-  "Unlimited clothing items",
-  "Unlimited saved outfits",
-  "Save your entire wardrobe",
+  "Unlimited bar items",
+  "Unlimited saved drinks",
+  "Stock your entire bar",
   "One-time payment options",
   "Choose monthly, yearly or lifetime!",
 ] as const;
 
 const HEADLINES: Record<UpgradeReason, string> = {
-  items:     "UNLOCK YOUR UNLIMITED DIGITAL SUITCASE",
-  outfits:   "UNLOCK YOUR UNLIMITED DIGITAL SUITCASE",
-  mannequin: "UNLOCK YOUR UNLIMITED DIGITAL SUITCASE",
+  items:     "UNLOCK YOUR UNLIMITED DIGITAL BAR",
+  outfits:   "UNLOCK YOUR UNLIMITED DIGITAL BAR",
+  mannequin: "UNLOCK YOUR UNLIMITED DIGITAL BAR",
 };
 
 const SUBTITLES: Record<UpgradeReason, string> = {
-  items:     "You've reached the free 20 item limit.\nUpgrade once, pack everything.",
-  outfits:   "You've hit the free outfit limit. Upgrade to save every look.",
+  items:     "You've reached the free 20 item limit.\nUpgrade once, stock everything.",
+  outfits:   "You've hit the free drinks limit. Upgrade to save every drink.",
   mannequin: "A premium feature — unlock it once.",
 };
 
@@ -194,14 +194,14 @@ export function UpgradeSheet({ reason, onClose }: Props) {
           <div className="px-4 py-4 flex flex-col gap-2">
             <p className="font-display font-bold uppercase text-[1.45rem] leading-[0.92] tracking-tight"
                style={{ color: "hsl(35 55% 82%)" }}>
-              Unlimited packed suitcases
+              Unlimited stocked bars
             </p>
             <p className="font-display font-bold uppercase text-[1.45rem] leading-[0.92] tracking-tight"
                style={{ color: "hsl(35 55% 82%)" }}>
-              Unlimited saved outfits
+              Unlimited saved drinks
             </p>
             <p className="text-white/60 text-xs font-medium mt-1 leading-snug">
-              Your entire wardrobe, beautifully packed — forever.
+              Your entire bar, stocked beautifully — forever.
             </p>
           </div>
         </div>
