@@ -25,7 +25,8 @@ import { useQueryClient } from "@tanstack/react-query";
 // ── Layout constants (same as wardrobe.tsx) ───────────────────────────────────
 const IMG_W = 1024;
 const IMG_H = 1536;
-const NAV_H = 90;
+// NAV_H is computed at runtime so it adapts to iPad (taller nav bar)
+const getNavH = () => (window.innerWidth >= 768 ? 100 : 90);
 const PINK  = "#E8D4B0";
 
 const LM = {
@@ -238,7 +239,7 @@ export default function GeneratePage() {
       style={{
         position: "relative",
         width: "100%",
-        height: `calc(100dvh - ${NAV_H}px)`,
+        height: `calc(100dvh - ${getNavH()}px)`,
         overflow: "hidden",
         background: "#C8B9A2",
       }}
