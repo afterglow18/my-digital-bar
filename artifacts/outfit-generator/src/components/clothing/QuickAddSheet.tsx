@@ -110,6 +110,11 @@ export function QuickAddSheet({ open, onOpenChange, category, existingCount, onC
   // state — prevents a slow first photo from clobbering a fast second one.
   const bgGenRef = useRef(0);
 
+  // Multi-photo queue: files[0] is always the one currently being processed.
+  const queueRef              = useRef<File[]>([]);
+  const [queueIdx,   setQueueIdx]   = useState(0);   // 1-based index of current photo
+  const [queueTotal, setQueueTotal] = useState(0);   // total photos selected this batch
+
   const cameraInputRef  = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
 
@@ -120,6 +125,9 @@ export function QuickAddSheet({ open, onOpenChange, category, existingCount, onC
   const handleClose = useCallback(() => {
     bgGenRef.current += 1;   // cancels any in-flight removal
     setBgProcessing(false);  // MUST reset — close can happen mid-removal
+    queueRef.current = [];
+    setQueueIdx(0);
+    setQueueTotal(0);
     setPhase("pick");
     setErrorMsg(null);
     setOriginalBlob(null);
@@ -195,7 +203,10 @@ export function QuickAddSheet({ open, onOpenChange, category, existingCount, onC
     try {
       const dataUrl  = await blobToDataUrl(blob);
       const label    = CATEGORY_LABELS[category];
-      const autoName = existingCount === 0 ? label : `${label} ${existingCount + 1}`;
+      // savedSoFar = number of items saved before this one in the current batch
+      const savedSoFar = queueIdx > 0 ? queueIdx - 1 : 0;
+      const autoName =
+        existingCount + savedSoFar === 0 ? label : `${label} ${existingCount + savedSoFar + 1}`;
       await new Promise<void>((resolve, reject) => {
         createItem.mutate(
           { data: { name: autoName, category, imageObjectPath: dataUrl } },
@@ -210,16 +221,29 @@ export function QuickAddSheet({ open, onOpenChange, category, existingCount, onC
           },
         );
       });
-      handleClose();
+
+      // Advance to next file in queue, or close if done
+      const next = queueRef.current.shift();
+      if (next) {
+        setQueueIdx((i) => i + 1);
+        handleFile(next);
+      } else {
+        handleClose();
+      }
     } catch (err) {
       setErrorMsg(`Save failed: ${err instanceof Error ? err.message : String(err)}`);
       setPhase("preview");
     }
-  }, [selected, cleanedBlob, originalBlob, category, existingCount, createItem, queryClient, onCreated, handleClose]);
+  }, [selected, cleanedBlob, originalBlob, category, existingCount, queueIdx, createItem, queryClient, onCreated, handleFile, handleClose]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? []);
-    if (files.length) handleFile(files[0]);
+    if (!files.length) { e.target.value = ""; return; }
+    // Queue all files; process first one now, rest after each save
+    queueRef.current = files.slice(1);
+    setQueueIdx(1);
+    setQueueTotal(files.length);
+    handleFile(files[0]);
     e.target.value = "";
   };
 
@@ -240,9 +264,16 @@ export function QuickAddSheet({ open, onOpenChange, category, existingCount, onC
         className="flex items-center justify-between px-4 bg-white border-b-2 border-black flex-shrink-0"
         style={{ paddingTop: "max(0.75rem, env(safe-area-inset-top))", paddingBottom: "0.75rem" }}
       >
-        <h2 className="font-display font-bold text-xl uppercase tracking-tight">
-          Add {label}
-        </h2>
+        <div>
+          <h2 className="font-display font-bold text-xl uppercase tracking-tight">
+            Add {label}
+          </h2>
+          {queueTotal > 1 && (
+            <p className="text-xs font-semibold text-black/40 mt-0.5 uppercase tracking-wide">
+              Photo {queueIdx} of {queueTotal}
+            </p>
+          )}
+        </div>
         {(phase === "pick" || phase === "preview") && (
           <button
             onClick={handleClose}
@@ -511,11 +542,12 @@ export function QuickAddSheet({ open, onOpenChange, category, existingCount, onC
         className="hidden"
         onChange={handleInputChange}
       />
-      {/* Gallery — opens photo library / file picker (single selection for bg removal flow) */}
+      {/* Gallery — opens photo library / file picker (multiple selection supported) */}
       <input
         ref={galleryInputRef}
         type="file"
         accept="image/*"
+        multiple
         className="hidden"
         onChange={handleInputChange}
       />
