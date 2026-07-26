@@ -27,8 +27,6 @@ import { useQueryClient } from "@tanstack/react-query";
 // Pink used for the selection ring / label — matches the spec.
 const PINK = "#ec4899";
 
-type Phase = "processing" | "compare" | "error";
-
 interface Props {
   open:         boolean;
   onOpenChange: (open: boolean) => void;
@@ -40,10 +38,12 @@ interface Props {
 }
 
 export function CleanUpPhotoSheet({ open, onOpenChange, itemId, sourceUrl, onSaved }: Props) {
-  const [phase,      setPhase]      = useState<Phase>("processing");
-  const [cleanedUrl, setCleanedUrl] = useState<string | null>(null);
-  const [selected,   setSelected]   = useState<"original" | "cleaned">("cleaned");
-  const [errorMsg,   setErrorMsg]   = useState<string | null>(null);
+  // Show the compare UI immediately — Original is selectable before cleaning finishes.
+  const [cleanedUrl,   setCleanedUrl]   = useState<string | null>(null);
+  const [bgProcessing, setBgProcessing] = useState(false);
+  const [bgFailed,     setBgFailed]     = useState(false);
+  // Start on "original" so the user can confirm right away without waiting.
+  const [selected,     setSelected]     = useState<"original" | "cleaned">("original");
 
   const updateItem  = useUpdateClothingItem();
   const queryClient = useQueryClient();
@@ -52,23 +52,25 @@ export function CleanUpPhotoSheet({ open, onOpenChange, itemId, sourceUrl, onSav
   useEffect(() => {
     if (!open) return;
 
-    setPhase("processing");
     setCleanedUrl(null);
-    setSelected("cleaned");
-    setErrorMsg(null);
+    setBgFailed(false);
+    setSelected("original");
+    setBgProcessing(true);
 
     let cancelled = false;
     removeBackground(sourceUrl)
       .then((url) => {
         if (cancelled) return;
         setCleanedUrl(url);
-        setPhase("compare");
+        setSelected("cleaned");   // auto-select cleaned once it's ready
       })
       .catch((err) => {
         if (cancelled) return;
         console.warn("[CleanUpPhoto] bg removal failed:", err);
-        setErrorMsg(err instanceof Error ? err.message : String(err));
-        setPhase("error");
+        setBgFailed(true);
+      })
+      .finally(() => {
+        if (!cancelled) setBgProcessing(false);
       });
 
     return () => { cancelled = true; };
@@ -106,7 +108,7 @@ export function CleanUpPhotoSheet({ open, onOpenChange, itemId, sourceUrl, onSav
       transition={{ type: "spring", damping: 28, stiffness: 240 }}
       className="fixed inset-0 z-[75] flex flex-col max-w-md mx-auto bg-[#f9f4ee]"
     >
-      {/* Header */}
+      {/* Header — X always visible so user can bail at any point */}
       <div
         className="flex items-center justify-between px-4 bg-white border-b-2 border-black flex-shrink-0"
         style={{ paddingTop: "max(0.75rem, env(safe-area-inset-top))", paddingBottom: "0.75rem" }}
@@ -114,128 +116,81 @@ export function CleanUpPhotoSheet({ open, onOpenChange, itemId, sourceUrl, onSav
         <h2 className="font-display font-bold text-xl uppercase tracking-tight">
           Clean Up Photo
         </h2>
-        {phase !== "processing" && (
-          <button
-            onClick={() => onOpenChange(false)}
-            className="w-9 h-9 border-2 border-black rounded-full flex items-center justify-center
-                       bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]
-                       active:translate-y-0.5 active:translate-x-0.5 active:shadow-none transition-all"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        )}
+        <button
+          onClick={() => onOpenChange(false)}
+          className="w-9 h-9 border-2 border-black rounded-full flex items-center justify-center
+                     bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]
+                     active:translate-y-0.5 active:translate-x-0.5 active:shadow-none transition-all"
+        >
+          <X className="w-4 h-4" />
+        </button>
       </div>
 
-      {/* Body */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+      {/* Body — always the compare layout; Original is selectable immediately */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 16, padding: 20, flex: 1 }}>
 
-        {/* ── PROCESSING ── */}
-        {phase === "processing" && (
-          <div style={{ flex: 1, display: "flex", flexDirection: "column",
-                        alignItems: "center", justifyContent: "center", gap: 20, padding: 24 }}>
-            <div className="w-28 h-28 border-4 border-black rounded-3xl bg-white flex items-center justify-center shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-              <Loader2 className="w-12 h-12 animate-spin" strokeWidth={1.5} />
-            </div>
-            <div className="text-center">
-              <p className="font-display font-bold text-2xl uppercase tracking-tight">
-                Removing Background…
-              </p>
-              <p className="text-sm text-muted-foreground mt-1">
-                Running on-device. This may take a moment.
-              </p>
-            </div>
-          </div>
-        )}
+        <p style={{ textAlign: "center", fontWeight: "bold", fontSize: 11,
+                    textTransform: "uppercase", letterSpacing: 2, opacity: 0.45, margin: 0 }}>
+          {bgProcessing ? "Cleaning up… tap Original to skip" : bgFailed ? "Background removal unavailable" : "Tap to choose"}
+        </p>
 
-        {/* ── ERROR ── */}
-        {phase === "error" && (
-          <div style={{ flex: 1, display: "flex", flexDirection: "column",
-                        alignItems: "center", justifyContent: "center", gap: 16, padding: 24 }}>
-            <p className="text-5xl">😔</p>
-            <div className="text-center">
-              <p className="font-display font-bold text-xl uppercase tracking-tight">
-                Couldn't Remove Background
-              </p>
-              <p className="text-sm text-black/50 mt-1 max-w-xs">
-                {errorMsg ?? "An unknown error occurred."}
-              </p>
-            </div>
-            <button
-              onClick={() => onOpenChange(false)}
-              className="mt-2 px-6 py-3 border-2 border-black rounded-xl bg-white font-bold uppercase text-sm
-                         shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]
-                         active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all"
-            >
-              Close
-            </button>
-          </div>
-        )}
-
-        {/* ── COMPARE ── */}
-        {phase === "compare" && cleanedUrl && (
-          <div style={{ display: "flex", flexDirection: "column", gap: 16, padding: 20, flex: 1 }}>
-            <p style={{ textAlign: "center", fontWeight: "bold", fontSize: 11,
-                        textTransform: "uppercase", letterSpacing: 2, opacity: 0.45, margin: 0 }}>
-              Tap to choose
-            </p>
-
-            <div style={{ display: "flex", gap: 12 }}>
-              {/* Original card */}
-              <button
-                onClick={() => setSelected("original")}
-                style={{
-                  flex: 1, padding: 0, background: "none", border: "none",
-                  cursor: "pointer", borderRadius: 16, overflow: "hidden",
-                  outline: selected === "original"
-                    ? `4px solid ${PINK}` : "4px solid rgba(0,0,0,0.15)",
-                  outlineOffset: -4,
-                  transition: "outline 0.15s",
-                }}
-              >
-                <div style={{ background: "#111", minHeight: 200, position: "relative" }}>
-                  <img
-                    src={sourceUrl}
-                    alt="Original"
-                    style={{ width: "100%", objectFit: "contain", maxHeight: 200, display: "block" }}
-                  />
-                  {selected === "original" && (
-                    <div style={{
-                      position: "absolute", top: 8, right: 8, width: 22, height: 22,
-                      borderRadius: "50%", background: PINK,
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      boxShadow: "0 0 0 2px white",
-                    }}>
-                      <Check size={13} color="white" strokeWidth={3} />
-                    </div>
-                  )}
-                </div>
-                <p style={{
-                  textAlign: "center", fontWeight: 800, fontSize: 11,
-                  textTransform: "uppercase", padding: "7px 0", margin: 0,
-                  background: "#f9f4ee", letterSpacing: "0.05em",
-                  color: selected === "original" ? PINK : "black",
-                }}>
-                  Original
-                </p>
-              </button>
-
-              {/* Cleaned card */}
-              <button
-                onClick={() => setSelected("cleaned")}
-                style={{
-                  flex: 1, padding: 0, background: "none", border: "none",
-                  cursor: "pointer", borderRadius: 16, overflow: "hidden",
-                  outline: selected === "cleaned"
-                    ? `4px solid ${PINK}` : "4px solid rgba(0,0,0,0.15)",
-                  outlineOffset: -4,
-                  transition: "outline 0.15s",
-                }}
-              >
-                {/* Checkerboard reveals transparency */}
+        <div style={{ display: "flex", gap: 12 }}>
+          {/* Original card — always ready */}
+          <button
+            onClick={() => setSelected("original")}
+            style={{
+              flex: 1, padding: 0, background: "none", border: "none",
+              cursor: "pointer", borderRadius: 16, overflow: "hidden",
+              outline: selected === "original" ? `4px solid ${PINK}` : "4px solid rgba(0,0,0,0.15)",
+              outlineOffset: -4, transition: "outline 0.15s",
+            }}
+          >
+            <div style={{ background: "#111", minHeight: 200, position: "relative" }}>
+              <img
+                src={sourceUrl}
+                alt="Original"
+                style={{ width: "100%", objectFit: "contain", maxHeight: 200, display: "block" }}
+              />
+              {selected === "original" && (
                 <div style={{
-                  background: "repeating-conic-gradient(#d1d5db 0% 25%, white 0% 50%) 0 0 / 12px 12px",
-                  minHeight: 200, position: "relative",
+                  position: "absolute", top: 8, right: 8, width: 22, height: 22,
+                  borderRadius: "50%", background: PINK,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  boxShadow: "0 0 0 2px white",
                 }}>
+                  <Check size={13} color="white" strokeWidth={3} />
+                </div>
+              )}
+            </div>
+            <p style={{
+              textAlign: "center", fontWeight: 800, fontSize: 11,
+              textTransform: "uppercase", padding: "7px 0", margin: 0,
+              background: "#f9f4ee", letterSpacing: "0.05em",
+              color: selected === "original" ? PINK : "black",
+            }}>
+              Original
+            </p>
+          </button>
+
+          {/* Cleaned card — shows spinner until ready */}
+          <button
+            onClick={() => cleanedUrl && setSelected("cleaned")}
+            disabled={!cleanedUrl}
+            style={{
+              flex: 1, padding: 0, background: "none", border: "none",
+              cursor: cleanedUrl ? "pointer" : "default",
+              borderRadius: 16, overflow: "hidden",
+              outline: selected === "cleaned" && cleanedUrl ? `4px solid ${PINK}` : "4px solid rgba(0,0,0,0.15)",
+              outlineOffset: -4, transition: "outline 0.15s",
+            }}
+          >
+            <div style={{
+              background: "repeating-conic-gradient(#d1d5db 0% 25%, white 0% 50%) 0 0 / 12px 12px",
+              minHeight: 200, position: "relative",
+              display: "flex", alignItems: "center", justifyContent: "center",
+            }}>
+              {cleanedUrl ? (
+                <>
                   <img
                     src={cleanedUrl}
                     alt="Background removed"
@@ -251,33 +206,46 @@ export function CleanUpPhotoSheet({ open, onOpenChange, itemId, sourceUrl, onSav
                       <Check size={13} color="white" strokeWidth={3} />
                     </div>
                   )}
-                </div>
-                <p style={{
-                  textAlign: "center", fontWeight: 800, fontSize: 11,
-                  textTransform: "uppercase", padding: "7px 0", margin: 0,
-                  background: "#f9f4ee", letterSpacing: "0.05em",
-                  color: selected === "cleaned" ? PINK : "black",
-                }}>
-                  Cleaned ✨
+                </>
+              ) : bgFailed ? (
+                <p style={{ fontSize: 12, fontWeight: 700, textTransform: "uppercase",
+                            opacity: 0.4, textAlign: "center", padding: "0 12px", margin: 0 }}>
+                  Could not remove<br />background
                 </p>
-              </button>
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
+                  <Loader2 size={32} style={{ opacity: 0.5 }} className="animate-spin" />
+                  <p style={{ fontSize: 13, fontWeight: 700, textTransform: "uppercase",
+                              opacity: 0.5, margin: 0 }}>
+                    Processing
+                  </p>
+                </div>
+              )}
             </div>
+            <p style={{
+              textAlign: "center", fontWeight: 800, fontSize: 11,
+              textTransform: "uppercase", padding: "7px 0", margin: 0,
+              background: "#f9f4ee", letterSpacing: "0.05em",
+              color: selected === "cleaned" && cleanedUrl ? PINK : "black",
+            }}>
+              Cleaned ✨
+            </p>
+          </button>
+        </div>
 
-            {/* Confirm */}
-            <button
-              onClick={handleConfirm}
-              style={{
-                width: "100%", padding: "14px 16px", borderRadius: 14,
-                border: "3px solid black", background: "#000",
-                color: "white", fontWeight: 800, fontSize: 14,
-                cursor: "pointer", letterSpacing: "0.03em",
-                boxShadow: "3px 3px 0 rgba(0,0,0,0.35)",
-              }}
-            >
-              {selected === "cleaned" ? "✓ Save Cleaned Version" : "✓ Save Original"}
-            </button>
-          </div>
-        )}
+        {/* Confirm — always enabled since Original is always an option */}
+        <button
+          onClick={handleConfirm}
+          style={{
+            width: "100%", padding: "14px 16px", borderRadius: 14,
+            border: "3px solid black", background: "#000",
+            color: "white", fontWeight: 800, fontSize: 14,
+            cursor: "pointer", letterSpacing: "0.03em",
+            boxShadow: "3px 3px 0 rgba(0,0,0,0.35)",
+          }}
+        >
+          {selected === "cleaned" ? "✓ Save Cleaned Version" : "✓ Save Original"}
+        </button>
 
       </div>
     </motion.div>
