@@ -290,8 +290,8 @@ export function ItemDetailsSheet({ item, onClose, onDeleted }: ItemDetailsSheetP
             alt={item.name}
             className="w-full h-full object-contain"
           />
-          {/* Clean Up Photo button — overlaid bottom-center of the photo */}
-          <button
+          {/* Clean Up Photo button — hidden once the image is already a cleaned PNG */}
+          {!(localImageUrl ?? item.imageObjectPath)?.startsWith("data:image/png") && <button
             onClick={() => setCleanUpOpen(true)}
             className="absolute bottom-3 left-1/2 -translate-x-1/2
                        flex items-center gap-1.5 px-3 py-1.5
