@@ -291,19 +291,21 @@ export function ItemDetailsSheet({ item, onClose, onDeleted }: ItemDetailsSheetP
             className="w-full h-full object-contain"
           />
           {/* Clean Up Photo button — hidden once the image is already a cleaned PNG */}
-          {!(localImageUrl ?? item.imageObjectPath)?.startsWith("data:image/png") && <button
-            onClick={() => setCleanUpOpen(true)}
-            className="absolute bottom-3 left-1/2 -translate-x-1/2
-                       flex items-center gap-1.5 px-3 py-1.5
-                       bg-white border-2 border-black rounded-full
-                       text-[11px] font-bold uppercase tracking-wide
-                       shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]
-                       active:translate-y-0.5 active:translate-x-[-47%] active:shadow-none
-                       transition-all whitespace-nowrap"
-          >
-            <Sparkles className="w-3 h-3" />
-            Clean Up Photo
-          </button>
+          {!(localImageUrl ?? item.imageObjectPath)?.startsWith("data:image/png") && (
+            <button
+              onClick={() => setCleanUpOpen(true)}
+              className="absolute bottom-3 left-1/2 -translate-x-1/2
+                         flex items-center gap-1.5 px-3 py-1.5
+                         bg-white border-2 border-black rounded-full
+                         text-[11px] font-bold uppercase tracking-wide
+                         shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]
+                         active:translate-y-0.5 active:translate-x-[-47%] active:shadow-none
+                         transition-all whitespace-nowrap"
+            >
+              <Sparkles className="w-3 h-3" />
+              Clean Up Photo
+            </button>
+          )}
         </div>
       )}
 

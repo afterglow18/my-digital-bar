@@ -55,23 +55,21 @@ const IMG_H = 1536;
 // NAV_H is computed at runtime so it adapts to iPad (taller nav bar)
 const getNavH = () => (window.innerWidth >= 768 ? 100 : 90);
 
-// ── Landmark fractions (calibrated for suitcase-open-bg.jpg 989×1536) ─────────
-// Real-photo suitcase, shot from above.
-// Lid interior:  y ≈ 0.05 → 0.38   (rows 1 & 2)
-// Main body:     y ≈ 0.42 → 0.80   (rows 3 & 4)
-// doorL/doorR:   left/right inner walls of the suitcase interior
+// ── Landmark fractions (calibrated for bar-shelves-bg.png) ────────────────────
+// Bar cabinet with 4 back-lit shelves. "My Digital Bar" is baked into the arch.
+// doorL/doorR: inner edges of the shelf opening between the two columns.
 const LM = {
-  doorL: 0.182,  // inner left wall
-  doorR: 0.776,  // inner right wall
+  doorL: 0.115,  // inner left column edge
+  doorR: 0.880,  // inner right column edge
 
   rows: [
-    { sectionTop: 0.170, shelfY: 0.265, btnCY: 0.150 },  // OUTFITS  (lid, upper)
-    { sectionTop: 0.305, shelfY: 0.400, btnCY: 0.285 },  // BEAUTY   (lid, lower)
-    { sectionTop: 0.505, shelfY: 0.618, btnCY: 0.485 },  // TOILETRIES (body, upper)
-    { sectionTop: 0.660, shelfY: 0.770, btnCY: 0.640 },  // ESSENTIALS (body, lower)
+    { sectionTop: 0.175, shelfY: 0.305, btnCY: 0.225 },  // Cocktails  (shelf 1)
+    { sectionTop: 0.305, shelfY: 0.445, btnCY: 0.360 },  // Spirits    (shelf 2)
+    { sectionTop: 0.445, shelfY: 0.580, btnCY: 0.498 },  // Mixers     (shelf 3)
+    { sectionTop: 0.580, shelfY: 0.710, btnCY: 0.630 },  // Tools      (shelf 4)
   ],
 
-  saveAreaY: 0.84,
+  saveAreaY: 0.880,
 } as const;
 
 // ── useImageRect ─────────────────────────────────────────────────────────────
@@ -210,12 +208,12 @@ export default function WardrobePage() {
         width: "100%",
         height: `calc(100dvh - ${getNavH()}px)`,
         overflow: "hidden",
-        background: "#C8B9A2",
+        background: "#1a0804",
       }}
     >
       {/* ── Background image — object-fit:cover avoids WebKit negative-left clipping bug ── */}
       <img
-        src="/suitcase-open-bg.jpg"
+        src="/bar-shelves-bg.png"
         alt="My Digital Bar"
         style={{
           position: "absolute",
@@ -232,30 +230,7 @@ export default function WardrobePage() {
 
       {ready && (
         <>
-          {/* ── Page title ── */}
-          <div style={{
-            position: "absolute",
-            top: pY(ir, 0.090),
-            left: 8,
-            right: 8,
-            zIndex: 25,
-            textAlign: "center",
-            pointerEvents: "none",
-            overflow: "hidden",
-          }}>
-            <div style={{
-              fontFamily: "var(--font-display, serif)",
-              fontWeight: 900,
-              fontSize: Math.max(8, Math.min(pW(ir, 0.030), ir.containerW * 0.040)),
-              letterSpacing: "0.08em",
-              whiteSpace: "nowrap",
-              textTransform: "uppercase",
-              color: "#1a0800",
-              lineHeight: 1.1,
-            }}>
-              MY DIGITAL BAR
-            </div>
-          </div>
+          {/* ── Page title omitted — "My Digital Bar" is baked into bar-shelves-bg.png ── */}
 
           {/* ── Item-count badge (free tier) ── */}
           {itemsLeft !== null && (
@@ -384,17 +359,17 @@ export default function WardrobePage() {
           })}
 
 
-          {/* ── Person icon tap zone ── */}
+          {/* ── Shaker icon tap zone (left circle in save-bar) → saved looks ── */}
           <button
             onClick={() => navigate("/favorites")}
             data-testid="button-person-icon"
             aria-label="View saved looks"
             style={{
               position: "absolute",
-              top:    pY(ir, 0.895),
-              left:   pX(ir, 0.115),
-              width:  pW(ir, 0.170),
-              height: pH(ir, 0.080),
+              top:    pY(ir, 0.878),
+              left:   pX(ir, 0.025),
+              width:  pW(ir, 0.210),
+              height: pH(ir, 0.095),
               zIndex: 25,
               background: "transparent",
               border: "none",
@@ -402,16 +377,16 @@ export default function WardrobePage() {
             }}
           />
 
-          {/* ── Lipstick icon tap zone — opens premium upgrade sheet ── */}
+          {/* ── Cocktail icon tap zone (right circle in save-bar) → upgrade ── */}
           <button
             onClick={() => setUpgradeReason("items")}
             aria-label="Upgrade to premium"
             style={{
               position: "absolute",
-              top:    pY(ir, 0.905),
-              left:   pX(ir, 0.755),
-              width:  pW(ir, 0.110),
-              height: pH(ir, 0.065),
+              top:    pY(ir, 0.878),
+              left:   pX(ir, 0.765),
+              width:  pW(ir, 0.210),
+              height: pH(ir, 0.095),
               zIndex: 25,
               background: "transparent",
               border: "none",
@@ -419,34 +394,23 @@ export default function WardrobePage() {
             }}
           />
 
-          {/* ── SAVE circular button — covers the baked-in circle ── */}
+          {/* ── SAVE BAR button — transparent overlay on the baked-in centre pill ── */}
           <button
             onClick={() => { setSaveName(""); setIsSaveOpen(true); }}
-            aria-label="Save current case"
+            aria-label="Save current bar"
             style={{
               position: "absolute",
-              top:    pY(ir, 0.9466) - pW(ir, 0.074),
-              left:   pX(ir, 0.500)  - pW(ir, 0.074),
-              width:  pW(ir, 0.148),
-              height: pW(ir, 0.148),
-              borderRadius: "50%",
+              top:    pY(ir, 0.878),
+              left:   pX(ir, 0.235),
+              width:  pW(ir, 0.530),
+              height: pH(ir, 0.095),
+              borderRadius: 100,
               zIndex: 26,
-              background: "linear-gradient(160deg, #E8D4B0 0%, #B8894E 100%)",
-              border: "2px solid #B8894E",
-              boxShadow: "0 2px 8px rgba(120,80,40,0.25)",
+              background: "transparent",
+              border: "none",
               cursor: "pointer",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 0,
-              lineHeight: 1.15,
-              padding: 0,
             }}
-          >
-            <span style={{ fontSize: pW(ir, 0.022), fontWeight: 900, color: "#3A2210", letterSpacing: "0.06em", fontFamily: "var(--font-display)" }}>SAVE</span>
-            <span style={{ fontSize: pW(ir, 0.019), fontWeight: 800, color: "#3A2210", letterSpacing: "0.04em", fontFamily: "var(--font-display)" }}>CASE 🤎</span>
-          </button>
+          />
         </>
       )}
 

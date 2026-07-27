@@ -29,17 +29,18 @@ const IMG_H = 1536;
 const getNavH = () => (window.innerWidth >= 768 ? 100 : 90);
 const PINK  = "#E8D4B0";
 
+// ── Landmark fractions (calibrated for bar-shelves-bg.png) ────────────────────
 const LM = {
-  doorL: 0.182,
-  doorR: 0.776,
+  doorL: 0.115,
+  doorR: 0.880,
   rows: [
-    { sectionTop: 0.170, shelfY: 0.265, btnCY: 0.150 },  // OUTFITS  (lid, upper)
-    { sectionTop: 0.305, shelfY: 0.400, btnCY: 0.285 },  // BEAUTY   (lid, lower)
-    { sectionTop: 0.505, shelfY: 0.618, btnCY: 0.485 },  // TOILETRIES (body, upper)
-    { sectionTop: 0.660, shelfY: 0.770, btnCY: 0.640 },  // ESSENTIALS (body, lower)
+    { sectionTop: 0.175, shelfY: 0.305, btnCY: 0.225 },  // Cocktails  (shelf 1)
+    { sectionTop: 0.305, shelfY: 0.445, btnCY: 0.360 },  // Spirits    (shelf 2)
+    { sectionTop: 0.445, shelfY: 0.580, btnCY: 0.498 },  // Mixers     (shelf 3)
+    { sectionTop: 0.580, shelfY: 0.710, btnCY: 0.630 },  // Tools      (shelf 4)
   ],
-  // Action bar: from just below FRAGRANCES through the full bottom
-  barY:   0.848,
+  // Action bar: marble counter + bottom drawer area
+  barY:   0.845,
   barBot: 1.000,
 } as const;
 
@@ -241,12 +242,12 @@ export default function GeneratePage() {
         width: "100%",
         height: `calc(100dvh - ${getNavH()}px)`,
         overflow: "hidden",
-        background: "#C8B9A2",
+        background: "#1a0804",
       }}
     >
       {/* ── Background image — object-fit:cover avoids WebKit negative-left clipping bug ── */}
       <img
-        src="/suitcase-open-bg.jpg"
+        src="/bar-shelves-bg.png"
         alt="My Digital Bar"
         style={{
           position: "absolute",
@@ -267,37 +268,24 @@ export default function GeneratePage() {
 
         return (
           <>
-            {/* ── Page title ── */}
+            {/* ── "My Digital Bar" omitted — baked into bar-shelves-bg.png arch ── */}
+            {/* MATCHMAKER subtitle — sits just below the arch header */}
             <div style={{
               position: "absolute",
-              top: pY(ir, 0.095),
-              left: 8,
-              right: 8,
+              top: pY(ir, 0.155),
+              left: 8, right: 8,
               zIndex: 25,
               textAlign: "center",
               pointerEvents: "none",
-              overflow: "hidden",
             }}>
               <div style={{
                 fontFamily: "var(--font-display, serif)",
                 fontWeight: 900,
-                fontSize: Math.max(8, Math.min(pW(ir, 0.030), ir.containerH * 0.025)),
+                fontSize: Math.max(10, Math.min(pW(ir, 0.040), ir.containerH * 0.030)),
                 letterSpacing: "0.08em",
                 whiteSpace: "nowrap",
                 textTransform: "uppercase",
-                color: "#1a0800",
-                lineHeight: 1.1,
-              }}>
-                MY DIGITAL BAR
-              </div>
-              <div style={{
-                fontFamily: "var(--font-display, serif)",
-                fontWeight: 900,
-                fontSize: Math.max(10, Math.min(pW(ir, 0.040), ir.containerH * 0.032)),
-                letterSpacing: "0.06em",
-                whiteSpace: "nowrap",
-                textTransform: "uppercase",
-                color: "#1a0800",
+                color: "rgba(232,212,176,0.80)",
                 lineHeight: 1.1,
               }}>
                 MATCHMAKER
