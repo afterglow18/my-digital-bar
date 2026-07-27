@@ -238,13 +238,17 @@ export function CleanUpPhotoSheet({ open, onOpenChange, itemId, sourceUrl, onSav
           onClick={handleConfirm}
           style={{
             width: "100%", padding: "14px 16px", borderRadius: 14,
-            border: "3px solid black", background: "#000",
+            border: "3px solid black",
+            background: (selected === "cleaned" && !cleanedUrl) ? "#999" : "#000",
             color: "white", fontWeight: 800, fontSize: 14,
-            cursor: "pointer", letterSpacing: "0.03em",
-            boxShadow: "3px 3px 0 rgba(0,0,0,0.35)",
+            cursor: (selected === "cleaned" && !cleanedUrl) ? "not-allowed" : "pointer",
+            opacity: (selected === "cleaned" && !cleanedUrl) ? 0.6 : 1,
+            letterSpacing: "0.03em",
+            boxShadow: (selected === "cleaned" && !cleanedUrl) ? "none" : "3px 3px 0 rgba(0,0,0,0.35)",
           }}
+          disabled={selected === "cleaned" && !cleanedUrl}
         >
-          {selected === "cleaned" ? "✓ Save Cleaned Version" : "✓ Save Original"}
+          {selected === "cleaned" && !cleanedUrl ? "Processing…" : selected === "cleaned" ? "✓ Save Cleaned Version" : "✓ Save Original"}
         </button>
 
       </div>

@@ -498,19 +498,19 @@ export function QuickAddSheet({ open, onOpenChange, category, existingCount, onC
               </button>
               <button
                 onClick={handleSave}
-                disabled={bgProcessing}
+                disabled={selected === "original" ? !originalBlob : !cleanedUrl}
                 style={{
                   flex: 1, padding: "12px 16px", borderRadius: 12,
                   border: "3px solid black",
-                  background: bgProcessing ? "#999" : "#000",
+                  background: (selected === "original" ? !originalBlob : !cleanedUrl) ? "#999" : "#000",
                   color: "white", fontWeight: 800, fontSize: 14,
-                  cursor: bgProcessing ? "not-allowed" : "pointer",
-                  opacity: bgProcessing ? 0.6 : 1,
-                  boxShadow: bgProcessing ? "none" : "3px 3px 0 rgba(0,0,0,0.35)",
+                  cursor: (selected === "original" ? !originalBlob : !cleanedUrl) ? "not-allowed" : "pointer",
+                  opacity: (selected === "original" ? !originalBlob : !cleanedUrl) ? 0.6 : 1,
+                  boxShadow: (selected === "original" ? !originalBlob : !cleanedUrl) ? "none" : "3px 3px 0 rgba(0,0,0,0.35)",
                   transition: "all 0.15s",
                 }}
               >
-                {bgProcessing ? "Processing…" : "✓ Save to Bar"}
+                {selected === "cleaned" && !cleanedUrl ? "Processing…" : "✓ Save to Bar"}
               </button>
             </div>
           </div>
