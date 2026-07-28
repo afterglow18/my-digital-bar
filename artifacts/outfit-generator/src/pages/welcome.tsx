@@ -17,13 +17,9 @@ interface Props { onEnter: () => void; }
 // Bowl: left rim (8,24) → right rim (92,24) → point (50,120)
 // Stem: (50,120) → (50,162)   Base: ellipse cx=50 cy=162 rx=22 ry=4
 function MartiniGlass({ pouring }: { pouring: boolean }) {
-  // At 80% fill: liquid height from point = 77 px, level y = 43
-  // Half-width at level = 77/96 * 42 ≈ 33.7  (bowl half-width at rim = 42)
-  const BOWL_TOP   = 24;   // y of rim
-  const BOWL_BOT   = 120;  // y of bowl point (stem junction)
-  const BOWL_H     = BOWL_BOT - BOWL_TOP;  // 96
-  const FILL_H     = 100;  // overshoots the rim — clipPath cuts it flush at the top
-  const FILL_Y     = BOWL_BOT - FILL_H;   // 20 — above rim so liquid reads as completely full
+  // Bowl geometry
+  const BOWL_TOP = 24;   // y of rim
+  const BOWL_BOT = 120;  // y of bowl point / stem top
 
   return (
     <svg
@@ -88,47 +84,44 @@ function MartiniGlass({ pouring }: { pouring: boolean }) {
         transition={{ duration: 0.52, ease: "easeIn", times: [0, 0.06, 0.80, 1] }}
       />
 
-      {/* ── Liquid fill (grows upward from the tip of the cone) ── */}
-      {/*    rect clipped to the triangle; y moves from BOWL_BOT→FILL_Y  */}
-      <motion.rect
-        x={0} width={100}
-        clipPath="url(#wc-clip)"
-        fill="url(#wc-liquid)"
-        initial={{ y: BOWL_BOT, height: 0 }}
-        animate={pouring
-          ? { y: FILL_Y, height: FILL_H }
-          : { y: BOWL_BOT, height: 0 }}
+      {/* ── Liquid fill — CSS scale from bowl point (iOS-safe, no SVG attr animation) ──
+           Uniform scale from (50, BOWL_BOT) means scale=1 fills to the rim exactly,
+           scale=0 collapses to the point. Geometrically correct for a V-shaped bowl. */}
+      <motion.g
+        style={{ transformOrigin: `50px ${BOWL_BOT}px` }}
+        initial={{ scale: 0 }}
+        animate={{ scale: pouring ? 1 : 0 }}
         transition={{ duration: 1.40, ease: [0.18, 0.05, 0.28, 1.0], delay: 0.28 }}
-        style={{ opacity: 0.90 }}
-      />
+      >
+        {/* Filled bowl triangle */}
+        <path
+          d={`M 8 ${BOWL_TOP} L 92 ${BOWL_TOP} L 50 ${BOWL_BOT} Z`}
+          fill="url(#wc-liquid)"
+          opacity={0.90}
+        />
+        {/* Surface shimmer ellipse — sits at the liquid top (rim level when full) */}
+        <ellipse
+          cx={50} cy={BOWL_TOP} rx={40} ry={3.5}
+          fill="rgba(255,215,120,0.70)"
+        />
+      </motion.g>
 
-      {/* ── Liquid surface shimmer band ── */}
-      <motion.rect
-        x={0} width={100} height={7}
-        clipPath="url(#wc-clip)"
-        fill="url(#wc-surface)"
-        initial={{ y: BOWL_BOT }}
-        animate={pouring ? { y: FILL_Y } : { y: BOWL_BOT }}
-        transition={{ duration: 1.40, ease: [0.18, 0.05, 0.28, 1.0], delay: 0.28 }}
-        style={{ opacity: 0.80 }}
-      />
-
-      {/* ── Rising bubbles ── */}
+      {/* ── Rising bubbles — CSS y transform (iOS-safe) ── */}
       {([
-        { cx: 40, delay: 0.55, size: 2.4 },
-        { cx: 55, delay: 0.82, size: 1.9 },
-        { cx: 47, delay: 1.08, size: 1.6 },
-        { cx: 60, delay: 1.22, size: 1.4 },
-      ] as const).map(({ cx, delay, size }, i) => (
+        { cx: 40, startCy: 112, dy: -72, delay: 0.55, size: 2.4 },
+        { cx: 55, startCy: 105, dy: -65, delay: 0.82, size: 1.9 },
+        { cx: 47, startCy: 110, dy: -68, delay: 1.08, size: 1.6 },
+        { cx: 60, startCy: 108, dy: -66, delay: 1.22, size: 1.4 },
+      ] as const).map(({ cx, startCy, dy, delay, size }, i) => (
         <motion.circle
           key={i}
-          cx={cx} r={size}
+          cx={cx} cy={startCy} r={size}
           fill="rgba(255,215,130,0.60)"
           clipPath="url(#wc-clip)"
-          initial={{ cy: BOWL_BOT - 2, opacity: 0 }}
+          initial={{ y: 0, opacity: 0 }}
           animate={pouring
-            ? { cy: [BOWL_BOT - 8, FILL_Y + 14], opacity: [0, 0.75, 0] }
-            : { cy: BOWL_BOT - 2, opacity: 0 }}
+            ? { y: [0, dy], opacity: [0, 0.75, 0] }
+            : { y: 0, opacity: 0 }}
           transition={{ duration: 1.0, delay, ease: "easeOut", times: [0, 0.68, 1] }}
         />
       ))}
