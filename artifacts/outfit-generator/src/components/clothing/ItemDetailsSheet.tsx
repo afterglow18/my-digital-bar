@@ -23,9 +23,14 @@ import { getImageUrl } from "@/lib/utils";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-const SEASON_OPTIONS    = ["", "Spring", "Summer", "Fall", "Winter", "All Season"];
-const OCCASION_OPTIONS  = ["", "Casual", "Work", "Formal", "Sport", "Special Event"];
-const CATEGORY_OPTIONS  = ["outfits", "beauty", "toiletries", "essentials"];
+const SEASON_OPTIONS    = ["", "Spring", "Summer", "Fall", "Winter", "Year-Round"];
+const OCCASION_OPTIONS  = ["", "Happy Hour", "Party", "Dinner", "Date Night", "Holiday", "Brunch"];
+const CATEGORY_OPTIONS: { value: string; label: string }[] = [
+  { value: "outfits",    label: "Cocktails" },
+  { value: "beauty",     label: "Spirits"   },
+  { value: "toiletries", label: "Mixers"    },
+  { value: "essentials", label: "Tools"     },
+];
 
 function Field({
   label,
@@ -67,8 +72,11 @@ function SelectField({
   label: string;
   value: string;
   onChange: (v: string) => void;
-  options: string[];
+  options: string[] | { value: string; label: string }[];
 }) {
+  const normalised = (options as (string | { value: string; label: string })[]).map((o) =>
+    typeof o === "string" ? { value: o, label: o } : o
+  );
   return (
     <div className="flex flex-col gap-1">
       <label className="text-[10px] font-bold uppercase tracking-widest text-black/40">
@@ -82,9 +90,9 @@ function SelectField({
                      text-sm font-medium bg-white focus:outline-none focus:ring-2 focus:ring-primary
                      cursor-pointer"
         >
-          {options.map((o) => (
-            <option key={o} value={o}>
-              {o || `— ${label} —`}
+          {normalised.map((o) => (
+            <option key={o.value} value={o.value}>
+              {o.value === "" ? `— ${label} —` : o.label}
             </option>
           ))}
         </select>
@@ -317,13 +325,13 @@ export function ItemDetailsSheet({ item, onClose, onDeleted }: ItemDetailsSheetP
           label="Item Name"
           value={form.name}
           onChange={patch("name") as (v: string) => void}
-          placeholder="e.g. White Linen Shirt"
+          placeholder="e.g. Aperol Spritz"
         />
 
         {/* Brand + Color */}
         <div className="grid grid-cols-2 gap-3">
-          <Field label="Brand"  value={form.brand} onChange={patch("brand") as (v: string) => void} placeholder="Nike, Zara…" />
-          <Field label="Color"  value={form.color} onChange={patch("color") as (v: string) => void} placeholder="Navy Blue" />
+          <Field label="Brand"  value={form.brand} onChange={patch("brand") as (v: string) => void} placeholder="Bacardi, Hendrick's…" />
+          <Field label="Color"  value={form.color} onChange={patch("color") as (v: string) => void} placeholder="Amber, Clear…" />
         </div>
 
         {/* Size */}
@@ -366,7 +374,7 @@ export function ItemDetailsSheet({ item, onClose, onDeleted }: ItemDetailsSheetP
             options={CATEGORY_OPTIONS}
           />
           <div className="flex flex-col gap-1 opacity-50 pointer-events-none">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-black/40">Times Worn</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-black/40">Times Made</span>
             <div className="border-2 border-black/20 rounded-lg px-3 py-2 text-sm font-medium bg-white/50">
               {item.timesWorn ?? 0}
             </div>
