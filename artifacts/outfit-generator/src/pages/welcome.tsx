@@ -22,8 +22,8 @@ function MartiniGlass({ pouring }: { pouring: boolean }) {
   const BOWL_TOP   = 24;   // y of rim
   const BOWL_BOT   = 120;  // y of bowl point (stem junction)
   const BOWL_H     = BOWL_BOT - BOWL_TOP;  // 96
-  const FILL_H     = 90;   // px of liquid (≈94 % full — nearly to the rim)
-  const FILL_Y     = BOWL_BOT - FILL_H;   // 30  — top of liquid when full
+  const FILL_H     = 100;  // overshoots the rim — clipPath cuts it flush at the top
+  const FILL_Y     = BOWL_BOT - FILL_H;   // 20 — above rim so liquid reads as completely full
 
   return (
     <svg
