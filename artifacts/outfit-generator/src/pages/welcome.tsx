@@ -259,7 +259,7 @@ export default function WelcomePage({ onEnter }: Props) {
     if (phase !== "idle") return;
     setPhase("pouring");
     setTimeout(() => setPhase("reveal"), 1800);
-    setTimeout(finish, 2800);
+    setTimeout(finish, 4000);
   };
 
   const pouring = phase !== "idle";
