@@ -12,167 +12,208 @@ import { motion } from "framer-motion";
 type Phase = "idle" | "pouring" | "reveal";
 interface Props { onEnter: () => void; }
 
-// ── Cocktail glass SVG ─────────────────────────────────────────────────────────
-// viewBox 0 0 100 185 — highball glass with pour stream + rising liquid
-function CocktailGlass({ pouring }: { pouring: boolean }) {
+// ── Martini glass SVG ─────────────────────────────────────────────────────────
+// viewBox 0 0 100 185 — inverted-cone bowl, thin stem, oval base
+// Bowl: left rim (8,24) → right rim (92,24) → point (50,120)
+// Stem: (50,120) → (50,162)   Base: ellipse cx=50 cy=162 rx=22 ry=4
+function MartiniGlass({ pouring }: { pouring: boolean }) {
+  // At 80% fill: liquid height from point = 77 px, level y = 43
+  // Half-width at level = 77/96 * 42 ≈ 33.7  (bowl half-width at rim = 42)
+  const BOWL_TOP   = 24;   // y of rim
+  const BOWL_BOT   = 120;  // y of bowl point (stem junction)
+  const BOWL_H     = BOWL_BOT - BOWL_TOP;  // 96
+  const FILL_H     = 77;   // px of liquid (≈80 % full)
+  const FILL_Y     = BOWL_BOT - FILL_H;   // 43  — top of liquid when full
+
   return (
     <svg
       viewBox="0 0 100 185"
-      width={165}
-      height={306}
+      width={170}
+      height={314}
       style={{ overflow: "visible" }}
       aria-hidden
     >
       <defs>
-        {/* Clip liquid to glass interior */}
+        {/* Clip liquid + surface to the martini bowl triangle */}
         <clipPath id="wc-clip">
-          <path d="M 17 20 L 83 20 L 78 158 L 22 158 Z" />
+          <path d={`M 8 ${BOWL_TOP} L 92 ${BOWL_TOP} L 50 ${BOWL_BOT} Z`} />
         </clipPath>
 
-        {/* Amber liquid (horizontal gradient for depth) */}
+        {/* Amber liquid — horizontal depth gradient */}
         <linearGradient id="wc-liquid" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%"   stopColor="#6B2E0A" />
-          <stop offset="28%"  stopColor="#C07030" />
-          <stop offset="60%"  stopColor="#E8A040" />
+          <stop offset="0%"   stopColor="#7A3010" />
+          <stop offset="30%"  stopColor="#C07030" />
+          <stop offset="60%"  stopColor="#F0B050" />
           <stop offset="100%" stopColor="#A85020" />
         </linearGradient>
 
-        {/* Glass wall (glass material look) */}
+        {/* Glass wall — subtle transparency gradient */}
         <linearGradient id="wc-wall" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%"   stopColor="rgba(255,255,255,0.28)" />
-          <stop offset="22%"  stopColor="rgba(255,255,255,0.06)" />
-          <stop offset="78%"  stopColor="rgba(255,255,255,0.08)" />
-          <stop offset="100%" stopColor="rgba(255,255,255,0.24)" />
+          <stop offset="0%"   stopColor="rgba(255,255,255,0.30)" />
+          <stop offset="20%"  stopColor="rgba(255,255,255,0.07)" />
+          <stop offset="80%"  stopColor="rgba(255,255,255,0.07)" />
+          <stop offset="100%" stopColor="rgba(255,255,255,0.26)" />
         </linearGradient>
 
-        {/* Ambient glow behind glass when full */}
-        <radialGradient id="wc-glow" cx="50%" cy="60%" r="50%">
-          <stop offset="0%"   stopColor="#C87030" stopOpacity="0.55" />
-          <stop offset="100%" stopColor="#C87030" stopOpacity="0"   />
+        {/* Ambient glow */}
+        <radialGradient id="wc-glow" cx="50%" cy="55%" r="50%">
+          <stop offset="0%"   stopColor="#D08030" stopOpacity="0.60" />
+          <stop offset="100%" stopColor="#D08030" stopOpacity="0"   />
         </radialGradient>
 
-        {/* Liquid surface highlight */}
+        {/* Surface shimmer */}
         <linearGradient id="wc-surface" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%"   stopColor="rgba(255,210,100,0.80)" />
-          <stop offset="100%" stopColor="rgba(200,120,50,0.10)"  />
+          <stop offset="0%"   stopColor="rgba(255,215,120,0.85)" />
+          <stop offset="100%" stopColor="rgba(220,140,60,0.05)"  />
         </linearGradient>
       </defs>
 
-      {/* ── Ambient glow (expands as glass fills) ── */}
+      {/* ── Ambient glow behind the bowl ── */}
       <motion.ellipse
-        cx={50} cy={110} rx={62} ry={68}
+        cx={50} cy={80} rx={58} ry={52}
         fill="url(#wc-glow)"
         initial={{ opacity: 0 }}
         animate={{ opacity: pouring ? 1 : 0 }}
-        transition={{ duration: 1.1, delay: 0.8, ease: "easeOut" }}
+        transition={{ duration: 1.0, delay: 0.9, ease: "easeOut" }}
       />
 
-      {/* ── Pour stream — thin amber line that falls into the glass ── */}
+      {/* ── Pour stream — falls from above into the wide opening ── */}
       <motion.rect
         x={47.5} width={5} rx={2.5}
         fill="#D08030"
-        initial={{ y: -22, height: 0, opacity: 0 }}
+        initial={{ y: -24, height: 0, opacity: 0 }}
         animate={pouring
-          ? { y: [-22, -22, 20, 20], height: [0, 42, 42, 0], opacity: [0, 0.95, 0.95, 0] }
-          : { y: -22, height: 0, opacity: 0 }}
-        transition={{ duration: 0.55, ease: "easeIn", times: [0, 0.06, 0.80, 1] }}
+          ? { y: [-24, -24, BOWL_TOP, BOWL_TOP], height: [0, 44, 44, 0], opacity: [0, 0.90, 0.90, 0] }
+          : { y: -24, height: 0, opacity: 0 }}
+        transition={{ duration: 0.52, ease: "easeIn", times: [0, 0.06, 0.80, 1] }}
       />
 
-      {/* ── Liquid fill (rises from bottom) ── */}
+      {/* ── Liquid fill (grows upward from the tip of the cone) ── */}
+      {/*    rect clipped to the triangle; y moves from BOWL_BOT→FILL_Y  */}
       <motion.rect
-        x={17} width={66}
+        x={0} width={100}
         clipPath="url(#wc-clip)"
         fill="url(#wc-liquid)"
-        initial={{ y: 158, height: 0 }}
-        animate={pouring ? { y: 38, height: 120 } : { y: 158, height: 0 }}
+        initial={{ y: BOWL_BOT, height: 0 }}
+        animate={pouring
+          ? { y: FILL_Y, height: FILL_H }
+          : { y: BOWL_BOT, height: 0 }}
         transition={{ duration: 1.40, ease: [0.18, 0.05, 0.28, 1.0], delay: 0.28 }}
-        style={{ opacity: 0.92 }}
+        style={{ opacity: 0.90 }}
       />
 
-      {/* ── Liquid surface — thin bright band at the top of the liquid ── */}
+      {/* ── Liquid surface shimmer band ── */}
       <motion.rect
-        x={17} width={66} height={6}
+        x={0} width={100} height={7}
         clipPath="url(#wc-clip)"
         fill="url(#wc-surface)"
-        initial={{ y: 158 }}
-        animate={pouring ? { y: 38 } : { y: 158 }}
+        initial={{ y: BOWL_BOT }}
+        animate={pouring ? { y: FILL_Y } : { y: BOWL_BOT }}
         transition={{ duration: 1.40, ease: [0.18, 0.05, 0.28, 1.0], delay: 0.28 }}
-        style={{ opacity: 0.75 }}
+        style={{ opacity: 0.80 }}
       />
 
-      {/* ── Bubbles (rise through liquid while pouring) ── */}
+      {/* ── Rising bubbles ── */}
       {([
-        { cx: 36, delay: 0.55, size: 2.8 },
-        { cx: 56, delay: 0.80, size: 2.2 },
-        { cx: 45, delay: 1.05, size: 2.0 },
-        { cx: 63, delay: 1.20, size: 1.6 },
+        { cx: 40, delay: 0.55, size: 2.4 },
+        { cx: 55, delay: 0.82, size: 1.9 },
+        { cx: 47, delay: 1.08, size: 1.6 },
+        { cx: 60, delay: 1.22, size: 1.4 },
       ] as const).map(({ cx, delay, size }, i) => (
         <motion.circle
           key={i}
           cx={cx} r={size}
-          fill="rgba(255,210,130,0.60)"
+          fill="rgba(255,215,130,0.60)"
           clipPath="url(#wc-clip)"
-          initial={{ cy: 155, opacity: 0 }}
+          initial={{ cy: BOWL_BOT - 2, opacity: 0 }}
           animate={pouring
-            ? { cy: [148, 55], opacity: [0, 0.75, 0] }
-            : { cy: 155, opacity: 0 }}
-          transition={{
-            duration: 1.1, delay,
-            ease: "easeOut",
-            times: [0, 0.70, 1],
-          }}
+            ? { cy: [BOWL_BOT - 8, FILL_Y + 14], opacity: [0, 0.75, 0] }
+            : { cy: BOWL_BOT - 2, opacity: 0 }}
+          transition={{ duration: 1.0, delay, ease: "easeOut", times: [0, 0.68, 1] }}
         />
       ))}
 
-      {/* ── Glass body ── */}
+      {/* ── Glass bowl walls (inverted triangle, open at top) ── */}
       <path
-        d="M 13 19 L 87 19 L 81 160 Q 81 166 74 166 L 26 166 Q 19 166 19 160 Z"
+        d={`M 8 ${BOWL_TOP} L 50 ${BOWL_BOT} L 92 ${BOWL_TOP}`}
+        fill="none"
+        stroke="rgba(255,255,255,0.40)"
+        strokeWidth={1.4}
+        strokeLinejoin="round"
+      />
+      {/* Left wall inner highlight */}
+      <path
+        d={`M 11 ${BOWL_TOP + 4} L 50 ${BOWL_BOT - 4}`}
+        stroke="rgba(255,255,255,0.22)"
+        strokeWidth={1.6}
+        strokeLinecap="round"
+        fill="none"
+      />
+      {/* Right wall faint shadow */}
+      <path
+        d={`M 89 ${BOWL_TOP + 4} L 50 ${BOWL_BOT - 4}`}
+        stroke="rgba(255,255,255,0.08)"
+        strokeWidth={1.0}
+        strokeLinecap="round"
+        fill="none"
+      />
+      {/* Bowl interior — very subtle filled glass tint */}
+      <path
+        d={`M 8 ${BOWL_TOP} L 92 ${BOWL_TOP} L 50 ${BOWL_BOT} Z`}
         fill="url(#wc-wall)"
-        stroke="rgba(255,255,255,0.38)"
-        strokeWidth={1.2}
+        stroke="none"
       />
 
       {/* ── Rim ellipse ── */}
       <ellipse
-        cx={50} cy={19} rx={37} ry={4.5}
-        fill="rgba(255,255,255,0.10)"
-        stroke="rgba(255,255,255,0.42)"
+        cx={50} cy={BOWL_TOP} rx={42} ry={5}
+        fill="rgba(255,255,255,0.08)"
+        stroke="rgba(255,255,255,0.44)"
         strokeWidth={1.0}
       />
 
-      {/* ── Left wall highlight ── */}
-      <path
-        d="M 19 28 L 23 153"
-        stroke="rgba(255,255,255,0.24)"
-        strokeWidth={2}
-        strokeLinecap="round"
-      />
-      {/* ── Right wall faint shadow ── */}
-      <path
-        d="M 79 28 L 76 153"
-        stroke="rgba(255,255,255,0.08)"
-        strokeWidth={1.4}
+      {/* ── Stem ── */}
+      <line
+        x1={50} y1={BOWL_BOT}
+        x2={50} y2={162}
+        stroke="rgba(255,255,255,0.38)"
+        strokeWidth={1.5}
         strokeLinecap="round"
       />
 
-      {/* ── Ice cubes (visible only when glass is empty / idle) ── */}
+      {/* ── Base ── */}
+      <ellipse
+        cx={50} cy={162} rx={22} ry={4}
+        fill="rgba(255,255,255,0.08)"
+        stroke="rgba(255,255,255,0.40)"
+        strokeWidth={1.0}
+      />
+
+      {/* ── Olive garnish (idle only — fades out on pour) ── */}
       <motion.g
         animate={{ opacity: pouring ? 0 : 1 }}
-        transition={{ duration: 0.2 }}
+        transition={{ duration: 0.22 }}
       >
-        {/* cube 1 */}
-        <rect x={26} y={128} width={18} height={16} rx={2}
-          fill="rgba(200,235,255,0.22)" stroke="rgba(200,235,255,0.45)" strokeWidth={0.8} />
-        <line x1={26} y1={133} x2={44} y2={133}
-          stroke="rgba(255,255,255,0.22)" strokeWidth={0.6} />
-        {/* cube 2 */}
-        <rect x={48} y={132} width={16} height={14} rx={2}
-          fill="rgba(200,235,255,0.18)" stroke="rgba(200,235,255,0.38)" strokeWidth={0.8} />
-        <line x1={48} y1={136} x2={64} y2={136}
-          stroke="rgba(255,255,255,0.18)" strokeWidth={0.6} />
-        {/* cube 3 */}
-        <rect x={34} y={140} width={20} height={14} rx={2}
-          fill="rgba(200,235,255,0.20)" stroke="rgba(200,235,255,0.42)" strokeWidth={0.8} />
+        {/* Toothpick resting diagonally across the rim */}
+        <line
+          x1={28} y1={16} x2={72} y2={30}
+          stroke="rgba(210,180,120,0.80)"
+          strokeWidth={1.2}
+          strokeLinecap="round"
+        />
+        {/* Olive body */}
+        <ellipse
+          cx={50} cy={23} rx={5.5} ry={4.5}
+          fill="#4A8040"
+          stroke="rgba(100,180,80,0.60)"
+          strokeWidth={0.8}
+        />
+        {/* Olive pimento */}
+        <ellipse
+          cx={50} cy={23} rx={2.2} ry={1.8}
+          fill="#C03020"
+          opacity={0.85}
+        />
       </motion.g>
 
       {/* ── Sparkle burst when glass is full ── */}
@@ -181,20 +222,19 @@ function CocktailGlass({ pouring }: { pouring: boolean }) {
         animate={pouring
           ? { opacity: [0, 1, 1, 0], scale: [0.5, 1.3, 1.1, 0.9] }
           : { opacity: 0, scale: 0.5 }}
-        transition={{ duration: 0.55, delay: 1.62, times: [0, 0.25, 0.7, 1] }}
-        style={{ transformOrigin: "50px 80px" }}
+        transition={{ duration: 0.55, delay: 1.62, times: [0, 0.25, 0.70, 1] }}
+        style={{ transformOrigin: "50px 72px" }}
       >
-        {/* 8 radial lines */}
         {Array.from({ length: 8 }, (_, i) => {
-          const angle = (i * 45 * Math.PI) / 180;
-          const r1 = 20, r2 = 34;
+          const a = (i * 45 * Math.PI) / 180;
+          const r1 = 18, r2 = 30;
           return (
             <line
               key={i}
-              x1={50 + r1 * Math.cos(angle)} y1={80 + r1 * Math.sin(angle)}
-              x2={50 + r2 * Math.cos(angle)} y2={80 + r2 * Math.sin(angle)}
-              stroke="#E8C060"
-              strokeWidth={1.5}
+              x1={50 + r1 * Math.cos(a)} y1={72 + r1 * Math.sin(a)}
+              x2={50 + r2 * Math.cos(a)} y2={72 + r2 * Math.sin(a)}
+              stroke="#F0C060"
+              strokeWidth={1.6}
               strokeLinecap="round"
             />
           );
@@ -286,7 +326,7 @@ export default function WelcomePage({ onEnter }: Props) {
           MY DIGITAL BAR
         </motion.div>
 
-        <CocktailGlass pouring={pouring} />
+        <MartiniGlass pouring={pouring} />
 
         <motion.p
           animate={{ opacity: pouring ? 0 : 1, y: pouring ? 6 : 0 }}
