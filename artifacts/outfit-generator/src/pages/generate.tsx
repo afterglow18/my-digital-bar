@@ -1,7 +1,7 @@
 /**
  * GeneratePage — "Spin It" screen for My Digital Bar.
  *
- * Uses generate-bg.png (same 1024×1536 dimensions) with the 4-shelf layout.
+ * Uses bar-shelves-bg.png (same 1024×1536 dimensions) with the 4-shelf layout.
  * Phase machine:
  *   idle     → shelves display items; "✨ Spin It!" button at bottom
  *   spinning → carousels cycle randomly while API is in flight

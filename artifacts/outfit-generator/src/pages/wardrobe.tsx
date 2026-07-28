@@ -1,5 +1,5 @@
 /**
- * WardrobePage — briefcase-bg.png (1024×1536 PNG)
+ * WardrobePage — bar-shelves-bg.png (1024×1536 PNG)
  *
  * Layout: 4 shelf sections inside a Hollywood-mirror frame.
  * Items sit ON TOP of each shelf surface (bottom-anchored within each section).
