@@ -22,8 +22,8 @@ function MartiniGlass({ pouring }: { pouring: boolean }) {
   const BOWL_TOP   = 24;   // y of rim
   const BOWL_BOT   = 120;  // y of bowl point (stem junction)
   const BOWL_H     = BOWL_BOT - BOWL_TOP;  // 96
-  const FILL_H     = 77;   // px of liquid (≈80 % full)
-  const FILL_Y     = BOWL_BOT - FILL_H;   // 43  — top of liquid when full
+  const FILL_H     = 90;   // px of liquid (≈94 % full — nearly to the rim)
+  const FILL_Y     = BOWL_BOT - FILL_H;   // 30  — top of liquid when full
 
   return (
     <svg
@@ -259,7 +259,7 @@ export default function WelcomePage({ onEnter }: Props) {
     if (phase !== "idle") return;
     setPhase("pouring");
     setTimeout(() => setPhase("reveal"), 1800);
-    setTimeout(finish, 4000);
+    setTimeout(finish, 3800);
   };
 
   const pouring = phase !== "idle";
