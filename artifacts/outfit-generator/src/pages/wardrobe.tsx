@@ -366,6 +366,7 @@ export default function WardrobePage() {
                     background: "transparent",
                     border: "none",
                     cursor: "pointer",
+                    pointerEvents: items.length > 0 ? "none" : "auto",
                   }}
                 />
 
