@@ -261,7 +261,7 @@ export default function WardrobePage() {
 
           {/* ── 4 shelf rows ── */}
           {(() => {
-            const headingFracs = [0.35, 0.90, 1.35, 1.65];
+            const headingFracs = [0.45, 1.00, 1.45, 1.75];
             const headingYs = LM.rows.map((lm, i) => pY(ir, lm.btnCY + (lm.sectionTop - lm.btnCY) * headingFracs[i]));
             const headingH   = Math.max(9, pH(ir, 0.013)) * 1.4;
             const gap = 4;
