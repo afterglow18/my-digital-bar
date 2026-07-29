@@ -314,7 +314,7 @@ export default function GeneratePage() {
                 toiletries: "MIXERS", essentials: "TOOLS",
               };
               const label = SHELF_LABELS[key] ?? key.toUpperCase();
-              const labelFrac = rowIdx === 0 ? 0.80 : rowIdx === 1 ? 1.05 : rowIdx === 2 ? 1.35 : 1.50;
+              const labelFrac = rowIdx === 0 ? 0.85 : rowIdx === 1 ? 1.05 : rowIdx === 2 ? 1.35 : 1.55;
               const labelY = pY(ir, lm.btnCY + (lm.sectionTop - lm.btnCY) * labelFrac);
 
               return (

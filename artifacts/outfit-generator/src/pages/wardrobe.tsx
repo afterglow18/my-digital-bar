@@ -281,7 +281,7 @@ export default function WardrobePage() {
             const btnCY   = pY(ir, lm.btnCY);
             const btnH    = Math.max(32, pH(ir, 0.045));
 
-            const labelFrac = rowIdx === 0 ? 0.80 : rowIdx === 1 ? 1.05 : rowIdx === 2 ? 1.35 : 1.50;
+            const labelFrac = rowIdx === 0 ? 0.85 : rowIdx === 1 ? 1.05 : rowIdx === 2 ? 1.35 : 1.55;
             const labelY = pY(ir, lm.btnCY + (lm.sectionTop - lm.btnCY) * labelFrac);
 
             return (
