@@ -306,7 +306,7 @@ export default function GeneratePage() {
                 toiletries: "MIXERS", essentials: "TOOLS",
               };
               const label = SHELF_LABELS[key] ?? key.toUpperCase();
-              const labelFrac = rowIdx === 0 ? 0.08 : rowIdx === 1 ? 0.50 : rowIdx === 2 ? 0.85 : 1.05;
+              const labelFrac = rowIdx === 0 ? 0.20 : rowIdx === 1 ? 0.70 : rowIdx === 2 ? 1.10 : 1.40;
               const labelY = pY(ir, lm.btnCY + (lm.sectionTop - lm.btnCY) * labelFrac);
 
               return (
@@ -327,7 +327,7 @@ export default function GeneratePage() {
                       fontSize: Math.max(9, pH(ir, 0.013)),
                       fontWeight: 800,
                       letterSpacing: "0.12em",
-                      color: "#3A2210",
+                      color: "#E8C75A",
                       fontFamily: "var(--font-display)",
                       textTransform: "uppercase",
                     }}>
