@@ -75,9 +75,9 @@ async function encodeForUpload(input: File | Blob): Promise<Blob> {
 
 const CATEGORY_EXAMPLES: Record<string, { emoji: string; items: string[] }> = {
   outfits:    { emoji: "🍸", items: ["Classics", "Signatures", "Mocktails", "Shots", "Punches", "Coffee Drinks", "Hot Cocoa", "Smoothies", "Wine", "Beer"] },
-  beauty:     { emoji: "🥃", items: ["Vodka", "Gin", "Rum", "Whiskey", "Tequila", "Brandy", "Liqueurs"] },
-  toiletries: { emoji: "🍋", items: ["Juices", "Syrups", "Sodas", "Bitters", "Cream", "Spices", "Garnishes"] },
-  essentials: { emoji: "🍹", items: ["Shakers", "Strainers", "Jiggers", "Muddlers", "Glasses", "Ice Tools", "Bar Spoons"] },
+  beauty:     { emoji: "🥃", items: ["Vodka", "Gin", "Rum", "Whiskey", "Tequila", "Brandy", "Liqueurs", "Coffee Liqueurs"] },
+  toiletries: { emoji: "🍋", items: ["Juices", "Syrups", "Sodas", "Bitters", "Cream", "Spices", "Garnishes", "Fruit", "Marshmallows", "Sprinkles", "Chocolate", "Whipped Cream", "Milk"] },
+  essentials: { emoji: "🍹", items: ["Shakers", "Strainers", "Jiggers", "Muddlers", "Glasses", "Mugs", "Ice Tools", "Bar Spoons", "Espresso Machine", "Coffee Maker"] },
 };
 
 // ── Component ──────────────────────────────────────────────────────────────────
