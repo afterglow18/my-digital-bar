@@ -244,6 +244,7 @@ export default function GeneratePage() {
         return bottom - top;
       })
     : LM.rows.map(() => 0);
+  const uniformPhotoH = Math.max(0, Math.min(...sectionHeights) - 4);
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
@@ -368,7 +369,7 @@ export default function GeneratePage() {
                         ref={rowRefs[key]}
                         items={items}
                         onCenteredItem={setCentredHandlers[key]}
-                        maxPhotoH={Math.max(0, sectionHeights[rowIdx] - 4)}
+                        maxPhotoH={uniformPhotoH}
                         disableSwipe
                       />
                     </div>
