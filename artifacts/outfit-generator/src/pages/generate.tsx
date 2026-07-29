@@ -228,9 +228,21 @@ export default function GeneratePage() {
 
   const canSave = Object.keys(centred).length > 0;
 
-  // ── Section layout helpers — per-row, same as wardrobe.tsx ──────────────
+  // ── Section layout helpers (heading-bounded) — same as wardrobe.tsx ─────
+  const labelFracs_ = [0.85, 1.05, 1.35, 1.55];
+  const headingYs_ = ready
+    ? LM.rows.map((lm, i) => pY(ir, lm.btnCY + (lm.sectionTop - lm.btnCY) * labelFracs_[i]))
+    : LM.rows.map(() => 0);
+  const headingH_ = ready ? Math.max(9, pH(ir, 0.013)) * 1.4 : 0;
+  const gap_ = 4;
   const sectionHeights = ready
-    ? LM.rows.map(lm => pH(ir, lm.shelfY - lm.sectionTop))
+    ? LM.rows.map((lm, i) => {
+        const top = headingYs_[i] + headingH_ / 2 + gap_;
+        const bottom = i < LM.rows.length - 1
+          ? headingYs_[i + 1] - headingH_ / 2 - gap_
+          : pY(ir, lm.shelfY);
+        return bottom - top;
+      })
     : LM.rows.map(() => 0);
 
   // ── Render ────────────────────────────────────────────────────────────────
@@ -301,9 +313,9 @@ export default function GeneratePage() {
             {ROWS.map(({ key }, rowIdx) => {
               const lm    = LM.rows[rowIdx];
               const items = { outfits, beauty, toiletries, essentials }[key];
-              const secTopActual   = headingYs[rowIdx] + headingH / 2 + gap;
+              const secTopActual   = headingYs_[rowIdx] + headingH_ / 2 + gap_;
               const secBottomActual = rowIdx < ROWS.length - 1
-                ? headingYs[rowIdx + 1] - headingH / 2 - gap
+                ? headingYs_[rowIdx + 1] - headingH_ / 2 - gap_
                 : pY(ir, lm.shelfY);
               const secHActual = secBottomActual - secTopActual;
               const btnCY  = pY(ir, lm.btnCY);

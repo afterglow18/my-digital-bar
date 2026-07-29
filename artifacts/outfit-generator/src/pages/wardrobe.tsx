@@ -192,12 +192,22 @@ export default function WardrobePage() {
   const itemsLeft = isFree ? Math.max(0, FREE_ITEM_LIMIT - totalItems) : null;
   const ready     = ir.width > 0;
 
-  // ── Section layout helpers ────────────────────────────────────────────────
-  const sectionHeights = ready
-    ? LM.rows.map(lm => pH(ir, lm.shelfY - lm.sectionTop))
+  // ── Section layout helpers (heading-bounded) ────────────────────────────
+  const labelFracs_ = [0.85, 1.05, 1.35, 1.55];
+  const headingYs_ = ready
+    ? LM.rows.map((lm, i) => pY(ir, lm.btnCY + (lm.sectionTop - lm.btnCY) * labelFracs_[i]))
     : LM.rows.map(() => 0);
-
-  // Use the smallest row height so all carousels show photos at the same size
+  const headingH_ = ready ? Math.max(9, pH(ir, 0.013)) * 1.4 : 0;
+  const gap_ = 4;
+  const sectionHeights = ready
+    ? LM.rows.map((lm, i) => {
+        const top = headingYs_[i] + headingH_ / 2 + gap_;
+        const bottom = i < LM.rows.length - 1
+          ? headingYs_[i + 1] - headingH_ / 2 - gap_
+          : pY(ir, lm.shelfY);
+        return bottom - top;
+      })
+    : LM.rows.map(() => 0);
   const uniformPhotoH = Math.max(0, Math.min(...sectionHeights) - 4);
 
   return (
@@ -240,7 +250,7 @@ export default function WardrobePage() {
               aria-label={`${totalItems} of ${FREE_ITEM_LIMIT} items used — tap to upgrade`}
               style={{
                 position: "absolute",
-                top: pY(ir, 0.140), left: "50%", transform: "translateX(-50%)",
+                bottom: 20, left: "50%", transform: "translateX(-50%)",
                 zIndex: 25,
                 padding: "3px 14px", borderRadius: 20, border: "none",
                 background: totalItems >= FREE_ITEM_LIMIT
@@ -260,18 +270,13 @@ export default function WardrobePage() {
           )}
 
           {/* ── 4 shelf rows ── */}
-          {(() => {
-            const headingFracs = [0.75, 1.30, 1.75, 2.05];
-            const headingYs = LM.rows.map((lm, i) => pY(ir, lm.btnCY + (lm.sectionTop - lm.btnCY) * headingFracs[i]));
-            const headingH   = Math.max(9, pH(ir, 0.013)) * 1.4;
-            const gap = 4;
-            return ROWS.map(({ key, btnLabel }, rowIdx) => {
+          {ROWS.map(({ key, btnLabel }, rowIdx) => {
             const lm      = LM.rows[rowIdx];
             const items   = rowData[key];
 
-            const secTopActual   = headingYs[rowIdx] + headingH / 2 + gap;
+            const secTopActual   = headingYs_[rowIdx] + headingH_ / 2 + gap_;
             const secBottomActual = rowIdx < ROWS.length - 1
-              ? headingYs[rowIdx + 1] - headingH / 2 - gap
+              ? headingYs_[rowIdx + 1] - headingH_ / 2 - gap_
               : pY(ir, lm.shelfY);
             const secHActual = secBottomActual - secTopActual;
             const carLeft = pX(ir, LM.doorL);
@@ -365,7 +370,7 @@ export default function WardrobePage() {
 
               </React.Fragment>
             );
-          })})()}
+          })}
 
 
           {/* ── Shaker icon tap zone (left circle in save-bar) → saved looks ── */}
