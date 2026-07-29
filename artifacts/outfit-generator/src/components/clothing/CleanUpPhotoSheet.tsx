@@ -24,8 +24,8 @@ import {
 } from "@/hooks/useLocalDB";
 import { useQueryClient } from "@tanstack/react-query";
 
-// Pink used for the selection ring / label — matches the spec.
-const PINK = "#ec4899";
+// Amber used for the selection ring / label — bar theme accent
+const AMBER = "#E8C75A";
 
 interface Props {
   open:         boolean;
@@ -141,7 +141,7 @@ export function CleanUpPhotoSheet({ open, onOpenChange, itemId, sourceUrl, onSav
             style={{
               flex: 1, padding: 0, background: "none", border: "none",
               cursor: "pointer", borderRadius: 16, overflow: "hidden",
-              outline: selected === "original" ? `4px solid ${PINK}` : "4px solid rgba(0,0,0,0.15)",
+              outline: selected === "original" ? `4px solid ${AMBER}` : "4px solid rgba(0,0,0,0.15)",
               outlineOffset: -4, transition: "outline 0.15s",
             }}
           >
@@ -154,7 +154,7 @@ export function CleanUpPhotoSheet({ open, onOpenChange, itemId, sourceUrl, onSav
               {selected === "original" && (
                 <div style={{
                   position: "absolute", top: 8, right: 8, width: 22, height: 22,
-                  borderRadius: "50%", background: PINK,
+                  borderRadius: "50%", background: AMBER,
                   display: "flex", alignItems: "center", justifyContent: "center",
                   boxShadow: "0 0 0 2px white",
                 }}>
@@ -166,7 +166,7 @@ export function CleanUpPhotoSheet({ open, onOpenChange, itemId, sourceUrl, onSav
               textAlign: "center", fontWeight: 800, fontSize: 11,
               textTransform: "uppercase", padding: "7px 0", margin: 0,
               background: "#f9f4ee", letterSpacing: "0.05em",
-              color: selected === "original" ? PINK : "black",
+              color: selected === "original" ? AMBER : "black",
             }}>
               Original
             </p>
@@ -180,7 +180,7 @@ export function CleanUpPhotoSheet({ open, onOpenChange, itemId, sourceUrl, onSav
               flex: 1, padding: 0, background: "none", border: "none",
               cursor: cleanedUrl ? "pointer" : "default",
               borderRadius: 16, overflow: "hidden",
-              outline: selected === "cleaned" && cleanedUrl ? `4px solid ${PINK}` : "4px solid rgba(0,0,0,0.15)",
+              outline: selected === "cleaned" && cleanedUrl ? `4px solid ${AMBER}` : "4px solid rgba(0,0,0,0.15)",
               outlineOffset: -4, transition: "outline 0.15s",
             }}
           >
@@ -199,7 +199,7 @@ export function CleanUpPhotoSheet({ open, onOpenChange, itemId, sourceUrl, onSav
                   {selected === "cleaned" && (
                     <div style={{
                       position: "absolute", top: 8, right: 8, width: 22, height: 22,
-                      borderRadius: "50%", background: PINK,
+                      borderRadius: "50%", background: AMBER,
                       display: "flex", alignItems: "center", justifyContent: "center",
                       boxShadow: "0 0 0 2px white",
                     }}>
@@ -226,7 +226,7 @@ export function CleanUpPhotoSheet({ open, onOpenChange, itemId, sourceUrl, onSav
               textAlign: "center", fontWeight: 800, fontSize: 11,
               textTransform: "uppercase", padding: "7px 0", margin: 0,
               background: "#f9f4ee", letterSpacing: "0.05em",
-              color: selected === "cleaned" && cleanedUrl ? PINK : "black",
+              color: selected === "cleaned" && cleanedUrl ? AMBER : "black",
             }}>
               Cleaned ✨
             </p>
