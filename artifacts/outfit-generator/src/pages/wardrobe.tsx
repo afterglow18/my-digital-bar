@@ -487,7 +487,7 @@ export default function WardrobePage() {
                         fontFamily: "var(--font-display)",
                       }}
                     >
-                      {saveOutfit.isPending ? "…" : "Save ♡"}
+                      {saveOutfit.isPending ? "…" : "Save this mix"}
                     </button>
                   </div>
                 </>

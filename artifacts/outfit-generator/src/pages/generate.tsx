@@ -647,7 +647,7 @@ export default function GeneratePage() {
                         cursor: "pointer",
                       }}
                     >
-                      {saveOutfit.isPending ? "…" : "Save ♡"}
+                      {saveOutfit.isPending ? "…" : "Save this mix"}
                     </button>
                   </motion.div>
                 )}
