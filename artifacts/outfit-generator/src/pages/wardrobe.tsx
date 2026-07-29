@@ -278,7 +278,7 @@ export default function WardrobePage() {
             const secBottomActual = rowIdx < ROWS.length - 1
               ? headingYs_[rowIdx + 1] - headingH_ / 2 - gap_
               : pY(ir, lm.shelfY);
-            const secHActual = secBottomActual - secTopActual;
+            const secHActual = secBottomActual - secTopActual + 8;
             const carLeft = pX(ir, LM.doorL);
             const carW    = pW(ir, LM.doorR - LM.doorL);
 

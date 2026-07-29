@@ -317,7 +317,7 @@ export default function GeneratePage() {
               const secBottomActual = rowIdx < ROWS.length - 1
                 ? headingYs_[rowIdx + 1] - headingH_ / 2 - gap_
                 : pY(ir, lm.shelfY);
-              const secHActual = secBottomActual - secTopActual;
+              const secHActual = secBottomActual - secTopActual + 8;
               const btnCY  = pY(ir, lm.btnCY);
               const btnH   = Math.max(32, pH(ir, 0.045));
 
