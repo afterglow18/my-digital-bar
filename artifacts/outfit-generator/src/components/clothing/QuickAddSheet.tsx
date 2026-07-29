@@ -71,15 +71,10 @@ async function encodeForUpload(input: File | Blob): Promise<Blob> {
 
 // ── Static data ────────────────────────────────────────────────────────────────
 
-const PHOTO_TIPS = [
-  "Photograph individual products or bundle multiple items together.",
-  "Lay everything flat on a plain background.",
-  "Take the photo from directly above.",
-  "Keep all items fully in frame.",
-] as const;
+// ── Static data ────────────────────────────────────────────────────────────────
 
 const CATEGORY_EXAMPLES: Record<string, { emoji: string; items: string[] }> = {
-  outfits:    { emoji: "🍸", items: ["Classics", "Signatures", "Mocktails", "Shots", "Punches", "Wine", "Beer"] },
+  outfits:    { emoji: "🍸", items: ["Classics", "Signatures", "Mocktails", "Shots", "Punches", "Coffee Drinks", "Hot Cocoa", "Smoothies", "Wine", "Beer"] },
   beauty:     { emoji: "🥃", items: ["Vodka", "Gin", "Rum", "Whiskey", "Tequila", "Brandy", "Liqueurs"] },
   toiletries: { emoji: "🍋", items: ["Juices", "Syrups", "Sodas", "Bitters", "Cream", "Spices", "Garnishes"] },
   essentials: { emoji: "🍹", items: ["Shakers", "Strainers", "Jiggers", "Muddlers", "Glasses", "Ice Tools", "Bar Spoons"] },
@@ -337,22 +332,7 @@ export function QuickAddSheet({ open, onOpenChange, category, existingCount, onC
               </div>
             )}
 
-            <div className="border-2 border-black rounded-2xl bg-white p-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
-              <p className="font-display font-bold text-sm uppercase tracking-tight mb-3 flex items-center gap-2">
-                <span>📸</span> PHOTO TIPS
-              </p>
-              <ul className="flex flex-col gap-2">
-                {PHOTO_TIPS.map((tip) => (
-                  <li key={tip} className="flex items-start gap-2 text-sm text-black/70 leading-snug">
-                    <span className="mt-0.5 w-4 h-4 border-2 border-black rounded-sm bg-primary text-primary-foreground
-                                     flex items-center justify-center flex-shrink-0">
-                      <Check className="w-2.5 h-2.5" strokeWidth={3} />
-                    </span>
-                    {tip}
-                  </li>
-                ))}
-              </ul>
-            </div>
+            
           </div>
         )}
 

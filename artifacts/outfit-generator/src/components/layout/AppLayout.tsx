@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "wouter";
-import { Shirt, Sparkles, Bookmark, Settings } from "lucide-react";
+import { Coffee, Sparkles, Bookmark, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useGetWardrobeStats } from "@/hooks/useLocalDB";
 
@@ -21,7 +21,7 @@ export function AppLayout({ children }: AppLayoutProps) {
     : undefined;
 
   const navItems = [
-    { href: "/",         label: "Bar",      icon: Shirt,    badge: wardrobeCount },
+    { href: "/",         label: "Bar",      icon: Coffee,    badge: wardrobeCount },
     { href: "/generate", label: "Generate", icon: Sparkles  },
     { href: "/saved",    label: "Saved",    icon: Bookmark  },
     { href: "/account",  label: "Settings", icon: Settings  },

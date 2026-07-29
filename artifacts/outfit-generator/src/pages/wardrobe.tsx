@@ -273,7 +273,7 @@ export default function WardrobePage() {
             const btnCY   = pY(ir, lm.btnCY);
             const btnH    = Math.max(32, pH(ir, 0.045));
 
-            const labelFrac = rowIdx === 0 ? 0.08 : 0.50;
+            const labelFrac = rowIdx === 0 ? 0.08 : rowIdx === 1 ? 0.50 : rowIdx === 2 ? 0.85 : 1.05;
             const labelY = pY(ir, lm.btnCY + (lm.sectionTop - lm.btnCY) * labelFrac);
 
             return (
@@ -444,12 +444,12 @@ export default function WardrobePage() {
               {saveSuccess ? (
                 <div style={{ textAlign: "center", padding: "12px 0" }}>
                   <div style={{ fontSize: 32, marginBottom: 8 }}>💕</div>
-                  <p style={{ fontWeight: 800, fontSize: 16, fontFamily: "var(--font-display)" }}>Bar saved!</p>
+                  <p style={{ fontWeight: 800, fontSize: 16, fontFamily: "var(--font-display)" }}>Mix saved!</p>
                 </div>
               ) : (
                 <>
                   <p style={{ fontWeight: 800, fontSize: 15, fontFamily: "var(--font-display)", marginBottom: 12 }}>
-                    Name this bar
+                    Name this mix
                   </p>
                   <input
                     autoFocus
