@@ -266,7 +266,7 @@ export default function GeneratePage() {
         const carLeft = pX(ir, LM.doorL);
         const carW    = pW(ir, LM.doorR - LM.doorL);
         /* Precompute heading Ys so photo sections span between labels */
-        const headingFracs = [0.55, 1.10, 1.55, 1.85];
+        const headingFracs = [0.65, 1.20, 1.65, 1.95];
         const headingYs = LM.rows.map((lm, i) => pY(ir, lm.btnCY + (lm.sectionTop - lm.btnCY) * headingFracs[i]));
         const headingH   = Math.max(9, pH(ir, 0.013)) * 1.4;
         const gap = 4;
