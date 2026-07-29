@@ -265,6 +265,11 @@ export default function GeneratePage() {
       {ready && (() => {
         const carLeft = pX(ir, LM.doorL);
         const carW    = pW(ir, LM.doorR - LM.doorL);
+        /* Precompute heading Ys so photo sections span between labels */
+        const headingFracs = [0.30, 0.85, 1.30, 1.60];
+        const headingYs = LM.rows.map((lm, i) => pY(ir, lm.btnCY + (lm.sectionTop - lm.btnCY) * headingFracs[i]));
+        const headingH   = Math.max(9, pH(ir, 0.013)) * 1.4;
+        const gap = 4;
 
         return (
           <>
@@ -296,8 +301,11 @@ export default function GeneratePage() {
             {ROWS.map(({ key }, rowIdx) => {
               const lm    = LM.rows[rowIdx];
               const items = { outfits, beauty, toiletries, essentials }[key];
-              const secTop = pY(ir, lm.sectionTop);
-              const secH   = pH(ir, lm.shelfY - lm.sectionTop);
+              const secTopActual   = headingYs[rowIdx] + headingH / 2 + gap;
+              const secBottomActual = rowIdx < ROWS.length - 1
+                ? headingYs[rowIdx + 1] - headingH / 2 - gap
+                : pY(ir, lm.shelfY);
+              const secHActual = secBottomActual - secTopActual;
               const btnCY  = pY(ir, lm.btnCY);
               const btnH   = Math.max(32, pH(ir, 0.045));
 
@@ -327,7 +335,7 @@ export default function GeneratePage() {
                       fontSize: Math.max(9, pH(ir, 0.013)),
                       fontWeight: 800,
                       letterSpacing: "0.12em",
-                      color: "#E8C75A",
+                      color: "#D4B48C",
                       fontFamily: "var(--font-display)",
                       textTransform: "uppercase",
                     }}>
@@ -339,7 +347,7 @@ export default function GeneratePage() {
                     <div
                       style={{
                         position: "absolute",
-                        top: secTop, left: carLeft, width: carW, height: secH,
+                        top: secTopActual, left: carLeft, width: carW, height: secHActual,
                         zIndex: 10, overflow: "visible",
                       }}
                     >
@@ -354,7 +362,7 @@ export default function GeneratePage() {
                   ) : (
                     <div style={{
                       position: "absolute",
-                      top: secTop, left: carLeft, width: carW, height: secH,
+                      top: secTopActual, left: carLeft, width: carW, height: secHActual,
                       zIndex: 10,
                       display: "flex", alignItems: "center", justifyContent: "center",
                     }}>

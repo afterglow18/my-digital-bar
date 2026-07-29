@@ -260,12 +260,20 @@ export default function WardrobePage() {
           )}
 
           {/* ── 4 shelf rows ── */}
-          {ROWS.map(({ key, btnLabel }, rowIdx) => {
+          {(() => {
+            const headingFracs = [0.30, 0.85, 1.30, 1.60];
+            const headingYs = LM.rows.map((lm, i) => pY(ir, lm.btnCY + (lm.sectionTop - lm.btnCY) * headingFracs[i]));
+            const headingH   = Math.max(9, pH(ir, 0.013)) * 1.4;
+            const gap = 4;
+            return ROWS.map(({ key, btnLabel }, rowIdx) => {
             const lm      = LM.rows[rowIdx];
             const items   = rowData[key];
 
-            const secTop  = pY(ir, lm.sectionTop);
-            const secH    = pH(ir, lm.shelfY - lm.sectionTop);
+            const secTopActual   = headingYs[rowIdx] + headingH / 2 + gap;
+            const secBottomActual = rowIdx < ROWS.length - 1
+              ? headingYs[rowIdx + 1] - headingH / 2 - gap
+              : pY(ir, lm.shelfY);
+            const secHActual = secBottomActual - secTopActual;
             const carLeft = pX(ir, LM.doorL);
             const carW    = pW(ir, LM.doorR - LM.doorL);
 
@@ -301,7 +309,7 @@ export default function WardrobePage() {
                     fontSize: Math.max(9, pH(ir, 0.013)),
                     fontWeight: 800,
                     letterSpacing: "0.12em",
-                    color: "#E8C75A",
+                    color: "#D4B48C",
                     fontFamily: "var(--font-display)",
                     textTransform: "uppercase",
                   }}>
@@ -315,10 +323,10 @@ export default function WardrobePage() {
                     data-testid={`row-${key}`}
                     style={{
                       position: "absolute",
-                      top:    secTop,
+                      top:    secTopActual,
                       left:   carLeft,
                       width:  carW,
-                      height: secH,
+                      height: secHActual,
                       zIndex: 10,
                       overflow: "visible",
                     }}
@@ -357,7 +365,7 @@ export default function WardrobePage() {
 
               </React.Fragment>
             );
-          })}
+          })})()}
 
 
           {/* ── Shaker icon tap zone (left circle in save-bar) → saved looks ── */}
