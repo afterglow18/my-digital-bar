@@ -193,7 +193,7 @@ export default function WardrobePage() {
   const ready     = ir.width > 0;
 
   // ── Section layout helpers (heading-bounded) ────────────────────────────
-  const labelFracs_ = [0.85, 1.05, 1.35, 1.55];
+  const labelFracs_ = [0.85, 1.05, 1.35, 1.65];
   const headingYs_ = ready
     ? LM.rows.map((lm, i) => pY(ir, lm.btnCY + (lm.sectionTop - lm.btnCY) * labelFracs_[i]))
     : LM.rows.map(() => 0);
@@ -274,7 +274,8 @@ export default function WardrobePage() {
             const lm      = LM.rows[rowIdx];
             const items   = rowData[key];
 
-            const secTopActual   = headingYs_[rowIdx] + headingH_ / 2 + gap_;
+            const secTopActual   = headingYs_[rowIdx] + headingH_ / 2 + gap_
+              - (rowIdx === ROWS.length - 1 ? 64 : 0);
             const secBottomActual = rowIdx < ROWS.length - 1
               ? headingYs_[rowIdx + 1] - headingH_ / 2 - gap_
               : pY(ir, lm.shelfY);
@@ -286,7 +287,7 @@ export default function WardrobePage() {
             const btnCY   = pY(ir, lm.btnCY);
             const btnH    = Math.max(32, pH(ir, 0.045));
 
-            const labelFrac = rowIdx === 0 ? 0.85 : rowIdx === 1 ? 1.05 : rowIdx === 2 ? 1.35 : 1.55;
+            const labelFrac = rowIdx === 0 ? 0.85 : rowIdx === 1 ? 1.05 : rowIdx === 2 ? 1.35 : 1.65;
             const labelY = pY(ir, lm.btnCY + (lm.sectionTop - lm.btnCY) * labelFrac);
 
             return (
