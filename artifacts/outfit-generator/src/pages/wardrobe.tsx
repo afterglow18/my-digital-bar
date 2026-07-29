@@ -275,7 +275,7 @@ export default function WardrobePage() {
             const items   = rowData[key];
 
             const secTopActual   = headingYs_[rowIdx] + headingH_ / 2 + gap_
-              - (rowIdx === ROWS.length - 1 ? 64 : 0);
+              - (rowIdx === ROWS.length - 1 ? 54 : 0);
             const secBottomActual = rowIdx < ROWS.length - 1
               ? headingYs_[rowIdx + 1] - headingH_ / 2 - gap_
               : pY(ir, lm.shelfY);
