@@ -306,7 +306,8 @@ export default function GeneratePage() {
                 toiletries: "MIXERS", essentials: "TOOLS",
               };
               const label = SHELF_LABELS[key] ?? key.toUpperCase();
-              const labelY = pY(ir, lm.btnCY + (lm.sectionTop - lm.btnCY) * 0.08);
+              const labelFrac = rowIdx === 0 ? 0.08 : 0.50;
+              const labelY = pY(ir, lm.btnCY + (lm.sectionTop - lm.btnCY) * labelFrac);
 
               return (
                 <React.Fragment key={key}>
