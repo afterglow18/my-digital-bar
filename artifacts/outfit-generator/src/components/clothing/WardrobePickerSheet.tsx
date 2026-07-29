@@ -156,8 +156,8 @@ export function WardrobePickerSheet({ open, onOpenChange, category, onPick, exis
             <button
               onClick={() => setShowQuickAdd(true)}
               className="w-full flex items-center justify-center gap-2 py-3
-                         border-4 border-black rounded-2xl bg-primary font-display font-bold
-                         text-base uppercase tracking-tight
+                         border-4 border-black rounded-2xl bg-primary text-primary-foreground
+                         font-display font-bold text-base uppercase tracking-tight
                          shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
                          active:translate-x-1 active:translate-y-1 active:shadow-none transition-all"
             >
@@ -179,8 +179,8 @@ export function WardrobePickerSheet({ open, onOpenChange, category, onPick, exis
                       setShowQuickAdd(true);
                       setShowCategoryPicker(false);
                     }}
-                    className="py-2.5 border-2 border-black rounded-xl bg-primary font-display font-bold
-                               text-sm uppercase tracking-tight
+                    className="py-2.5 border-2 border-black rounded-xl bg-primary text-primary-foreground
+                               font-display font-bold text-sm uppercase tracking-tight
                                shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]
                                active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all"
                   >
@@ -194,8 +194,8 @@ export function WardrobePickerSheet({ open, onOpenChange, category, onPick, exis
             <button
               onClick={() => setShowCategoryPicker(true)}
               className="w-full flex items-center justify-center gap-2 py-3
-                         border-4 border-black rounded-2xl bg-primary font-display font-bold
-                         text-base uppercase tracking-tight
+                         border-4 border-black rounded-2xl bg-primary text-primary-foreground
+                         font-display font-bold text-base uppercase tracking-tight
                          shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
                          active:translate-x-1 active:translate-y-1 active:shadow-none transition-all"
             >

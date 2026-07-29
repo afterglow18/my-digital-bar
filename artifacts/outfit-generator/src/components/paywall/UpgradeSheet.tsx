@@ -2,7 +2,7 @@
  * UpgradeSheet — three-tier paywall (Monthly / Yearly / Lifetime).
  *
  * Single-screen, no scroll. Lifetime pre-selected as "Best Value".
- * All accent colour uses bg-primary (warm tan hsl(35 55% 82%)).
+ * All accent colour uses bg-primary (dark rich brown).
  *
  * RC package identifiers expected in the default offering:
  *   $rc_monthly   → Monthly  $1.99
@@ -23,14 +23,6 @@ interface Props {
 }
 
 // ── Copy ──────────────────────────────────────────────────────────────────────
-
-const FEATURES = [
-  "Unlimited bar items",
-  "Unlimited saved drinks",
-  "Stock your entire bar",
-  "One-time payment options",
-  "Choose monthly, yearly or lifetime!",
-] as const;
 
 const HEADLINES: Record<UpgradeReason, string> = {
   items:     "UNLOCK YOUR UNLIMITED DIGITAL BAR",
@@ -84,13 +76,18 @@ function TierCard({
   id: TierId; selected: boolean; onSelect: (id: TierId) => void;
   price: string; period: string; notes: [string, string]; label: string; best?: true;
 }) {
+  // Text colour tokens — cream on dark-brown selected, near-black on cream unselected
+  const c = selected
+    ? { hi: "rgba(240,228,210,0.93)", mid: "rgba(240,228,210,0.62)", lo: "rgba(240,228,210,0.46)" }
+    : { hi: "rgba(0,0,0,0.80)",       mid: "rgba(0,0,0,0.50)",       lo: "rgba(0,0,0,0.44)" };
+
   return (
     <button
       onClick={() => onSelect(id)}
       className="flex-1 flex flex-col rounded-xl border-[3px] transition-all relative overflow-hidden text-left"
       style={{
-        borderColor: selected ? "#000" : "#C9BAA5",
-        background:  selected ? "hsl(35 55% 82%)" : "hsl(35 30% 93%)",
+        borderColor: selected ? "rgba(240,228,210,0.42)" : "#C9BAA5",
+        background:  selected ? "hsl(25 62% 20%)" : "hsl(35 30% 93%)",
         boxShadow:   selected ? "3px 3px 0px 0px rgba(0,0,0,1)" : "none",
       }}
     >
@@ -103,14 +100,14 @@ function TierCard({
         </span>
       )}
       <div className="px-2.5 pt-3 pb-2.5 flex flex-col gap-1">
-        <p className="text-[9px] font-bold uppercase tracking-widest text-black/50">{label}</p>
-        <p className="font-display font-bold text-[1.3rem] leading-none text-black">{price}</p>
-        <p className="text-[9px] font-semibold text-black/45">{period}</p>
+        <p className="text-[9px] font-bold uppercase tracking-widest" style={{ color: c.mid }}>{label}</p>
+        <p className="font-display font-bold text-[1.3rem] leading-none" style={{ color: c.hi }}>{price}</p>
+        <p className="text-[9px] font-semibold" style={{ color: c.lo }}>{period}</p>
         <ul className="flex flex-col gap-0.5 mt-1.5">
           {notes.map((n) => (
             <li key={n} className="flex items-center gap-1">
-              <Check className="w-2.5 h-2.5 shrink-0 text-black/60" strokeWidth={3} />
-              <span className="text-[8.5px] font-semibold text-black/55 leading-tight">{n}</span>
+              <Check className="w-2.5 h-2.5 shrink-0" style={{ color: c.mid }} strokeWidth={3} />
+              <span className="text-[8.5px] font-semibold leading-tight" style={{ color: c.mid }}>{n}</span>
             </li>
           ))}
         </ul>
@@ -118,6 +115,24 @@ function TierCard({
     </button>
   );
 }
+
+// ── Plaid background for header band ─────────────────────────────────────────
+
+const PLAID_BG = [
+  "repeating-linear-gradient(0deg,",
+  "  transparent 0px, transparent 18px,",
+  "  rgba(60,22,4,0.70) 18px, rgba(60,22,4,0.70) 26px,",
+  "  transparent 26px, transparent 44px,",
+  "  rgba(175,85,15,0.18) 44px, rgba(175,85,15,0.18) 46px",
+  "),",
+  "repeating-linear-gradient(90deg,",
+  "  transparent 0px, transparent 18px,",
+  "  rgba(60,22,4,0.70) 18px, rgba(60,22,4,0.70) 26px,",
+  "  transparent 26px, transparent 44px,",
+  "  rgba(175,85,15,0.18) 44px, rgba(175,85,15,0.18) 46px",
+  "),",
+  "#2C1505",
+].join(" ");
 
 // ── Sheet ─────────────────────────────────────────────────────────────────────
 
@@ -162,17 +177,25 @@ export function UpgradeSheet({ reason, onClose }: Props) {
       className="fixed inset-0 z-[80] flex flex-col max-w-md mx-auto"
       style={{ background: "#F8F4ED" }}
     >
-      {/* Close button */}
-      <div className="flex justify-end px-4 pb-0 flex-shrink-0"
-        style={{ paddingTop: "max(1rem, env(safe-area-inset-top))" }}>
+      {/* ── Dark brown plaid header band ── */}
+      <div
+        className="flex justify-end flex-shrink-0 px-4 pb-4"
+        style={{
+          paddingTop: "max(1rem, env(safe-area-inset-top))",
+          background: PLAID_BG,
+        }}
+      >
         <button
           onClick={onClose}
           aria-label="Close"
-          className="w-9 h-9 rounded-full border-2 border-black flex items-center justify-center
-                     bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]
-                     active:translate-y-0.5 active:translate-x-0.5 active:shadow-none transition-all"
+          className="w-9 h-9 rounded-full flex items-center justify-center
+                     active:translate-y-0.5 active:translate-x-0.5 transition-all"
+          style={{
+            border:     "2px solid rgba(240,228,210,0.35)",
+            background: "rgba(255,255,255,0.10)",
+          }}
         >
-          <X className="w-4 h-4" />
+          <X className="w-4 h-4" style={{ color: "rgba(240,228,210,0.78)" }} />
         </button>
       </div>
 
@@ -193,11 +216,11 @@ export function UpgradeSheet({ reason, onClose }: Props) {
         <div className="rounded-2xl border-[3px] border-black overflow-hidden" style={{ background: "#111" }}>
           <div className="px-4 py-4 flex flex-col gap-2">
             <p className="font-display font-bold uppercase text-[1.45rem] leading-[0.92] tracking-tight"
-               style={{ color: "hsl(35 55% 82%)" }}>
+               style={{ color: "#F0E4D0" }}>
               Unlimited stocked bars
             </p>
             <p className="font-display font-bold uppercase text-[1.45rem] leading-[0.92] tracking-tight"
-               style={{ color: "hsl(35 55% 82%)" }}>
+               style={{ color: "#F0E4D0" }}>
               Unlimited saved drinks
             </p>
             <p className="text-white/60 text-xs font-medium mt-1 leading-snug">
@@ -242,7 +265,7 @@ export function UpgradeSheet({ reason, onClose }: Props) {
           onClick={handlePurchase}
           disabled={status === "pending"}
           className="w-full py-3.5 rounded-2xl font-display font-bold text-lg uppercase
-                     tracking-tight border-[3px] border-black text-black
+                     tracking-tight border-[3px] border-black text-primary-foreground
                      active:translate-x-0.5 active:translate-y-0.5 transition-all
                      disabled:opacity-60 disabled:cursor-not-allowed bg-primary"
           style={{

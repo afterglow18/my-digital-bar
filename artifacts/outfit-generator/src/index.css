@@ -64,7 +64,7 @@
   --app-font-sans: 'Outfit', sans-serif;
   --app-font-display: 'Syne', sans-serif;
   
-  /* Suitcase Palette: Warm Tan, Leather Brown, Cream, Black */
+  /* Bar Palette: Dark Rich Brown, Cream, Amber, Black */
   --background: 40 30% 97%; /* Cream */
   --foreground: 0 0% 9%; /* Almost Black */
   
@@ -80,8 +80,8 @@
   --popover-foreground: 0 0% 9%;
   --popover-border: 0 0% 9%;
   
-  --primary: 35 55% 82%; /* Warm Tan */
-  --primary-foreground: 28 50% 18%; /* Dark Brown */
+  --primary: 25 62% 20%; /* Dark Rich Brown */
+  --primary-foreground: 40 40% 91%; /* Cream */
   
   --secondary: 28 42% 55%; /* Medium Leather Brown */
   --secondary-foreground: 40 30% 97%; /* Cream */
@@ -89,7 +89,7 @@
   --muted: 0 0% 90%;
   --muted-foreground: 0 0% 40%;
   
-  --accent: 195 100% 80%; /* Baby Blue */
+  --accent: 35 65% 48%; /* Warm Amber */
   --accent-foreground: 0 0% 9%;
   
   --destructive: 0 100% 60%;

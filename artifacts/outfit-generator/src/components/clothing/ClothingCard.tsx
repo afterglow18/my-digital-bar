@@ -32,7 +32,7 @@ export function ClothingCard({ item, onClick }: ClothingCardProps) {
       </div>
       {item.isFavorite && (
         <div className="absolute top-2 right-2 w-6 h-6 bg-primary border-2 border-black rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center">
-          <span className="text-black text-[10px]">★</span>
+          <span className="text-primary-foreground text-[10px]">★</span>
         </div>
       )}
     </button>

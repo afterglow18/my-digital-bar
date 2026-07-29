@@ -174,7 +174,7 @@ export default function SavedPage() {
                           ${atLimit
                             ? "bg-black text-white border-black"
                             : outfitCount >= FREE_OUTFIT_LIMIT - 1
-                            ? "bg-primary border-black text-black"
+                            ? "bg-primary border-black text-primary-foreground"
                             : "bg-white border-black/20 text-black/40 hover:border-black/40"
                           }`}
             >
@@ -188,13 +188,13 @@ export default function SavedPage() {
         <motion.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-5 border-2 border-black rounded-xl bg-primary p-4
+          className="mb-5 border-2 border-black rounded-xl bg-primary text-primary-foreground p-4
                      shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
         >
           <p className="font-display font-bold text-sm uppercase tracking-tight">
             🔓 Lookbook is full
           </p>
-          <p className="text-xs text-black/60 mt-1 mb-3 leading-snug">
+          <p className="text-xs text-primary-foreground/60 mt-1 mb-3 leading-snug">
             You've saved {FREE_OUTFIT_LIMIT} drinks — the free limit.
             Unlock Forever to save unlimited drinks.
           </p>
@@ -243,7 +243,7 @@ export default function SavedPage() {
                 data-testid={`outfit-card-${outfit.id}`}
               >
                 {/* Card header */}
-                <div className="px-4 py-3 border-b-2 border-black flex justify-between items-center bg-primary gap-2">
+                <div className="px-4 py-3 border-b-2 border-black flex justify-between items-center bg-primary text-primary-foreground gap-2">
                   {renamingId === outfit.id ? (
                     <form
                       className="flex-1 flex items-center gap-1"

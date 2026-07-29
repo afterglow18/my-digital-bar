@@ -241,7 +241,7 @@ export function ItemDetailsSheet({ item, onClose, onDeleted }: ItemDetailsSheetP
                       bg-white border-b-2 border-black flex-shrink-0"
         style={{ paddingTop: "max(0.75rem, env(safe-area-inset-top))", paddingBottom: "0.75rem" }}>
         <h2 className="font-display font-bold text-xl uppercase tracking-tight">
-          Item Details
+          Bar Item
         </h2>
         <div className="flex items-center gap-2">
           {/* Favourite toggle — saves instantly */}
@@ -322,7 +322,7 @@ export function ItemDetailsSheet({ item, onClose, onDeleted }: ItemDetailsSheetP
 
         {/* Name */}
         <Field
-          label="Item Name"
+          label="Name"
           value={form.name}
           onChange={patch("name") as (v: string) => void}
           placeholder="e.g. Aperol Spritz"
