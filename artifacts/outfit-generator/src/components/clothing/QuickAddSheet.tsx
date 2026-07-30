@@ -534,12 +534,12 @@ export function QuickAddSheet({ open, onOpenChange, category, existingCount, onC
       </div>
 
       {/* Hidden file inputs */}
-      {/* Camera — opens native camera on mobile */}
+      {/* Camera — opens native camera / photo picker (no capture attr;
+          WKWebView in TestFlight crashes with capture="environment") */}
       <input
         ref={cameraInputRef}
         type="file"
         accept="image/*"
-        capture="environment"
         className="hidden"
         onChange={handleInputChange}
       />
