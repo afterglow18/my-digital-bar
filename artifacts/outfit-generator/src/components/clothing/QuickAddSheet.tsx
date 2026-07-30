@@ -321,6 +321,27 @@ export function QuickAddSheet({ open, onOpenChange, category, existingCount, onC
               </button>
             </div>
 
+            {/* ── PHOTO TIPS ── */}
+            <div className="border-2 border-black rounded-2xl bg-white p-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+              <p className="font-display font-bold text-sm uppercase tracking-tight mb-2 flex items-center gap-2">
+                📸 PHOTO TIPS
+              </p>
+              <ul className="text-sm text-black/70 leading-snug list-none space-y-1.5">
+                <li className="flex gap-2">
+                  <span className="shrink-0">🍸</span>
+                  <span>One bottle, tool, or accessory per photo.</span>
+                </li>
+                <li className="flex gap-2">
+                  <span className="shrink-0">💡</span>
+                  <span>Use bright lighting and a clean background.</span>
+                </li>
+                <li className="flex gap-2">
+                  <span className="shrink-0">📷</span>
+                  <span>Capture the front label or item clearly.</span>
+                </li>
+              </ul>
+            </div>
+
             {CATEGORY_EXAMPLES[category] && (
               <div className="border-2 border-black rounded-2xl bg-white p-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
                 <p className="font-display font-bold text-sm uppercase tracking-tight mb-2 flex items-center gap-2">
