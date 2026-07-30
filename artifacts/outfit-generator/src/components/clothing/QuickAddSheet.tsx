@@ -14,7 +14,6 @@
 import React, { useRef, useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import { X, Loader2, Check, RotateCcw } from "lucide-react";
-import { CameraViewfinder } from "./CameraViewfinder";
 import {
   useCreateClothingItem,
   getListClothingQueryKey,
@@ -111,7 +110,7 @@ export function QuickAddSheet({ open, onOpenChange, category, existingCount, onC
   const [queueIdx,   setQueueIdx]   = useState(0);   // 1-based index of current photo
   const [queueTotal, setQueueTotal] = useState(0);   // total photos selected this batch
 
-  const [showCamera,  setShowCamera]  = useState(false);
+  const cameraInputRef  = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
 
   const createItem  = useCreateClothingItem();
@@ -232,12 +231,46 @@ export function QuickAddSheet({ open, onOpenChange, category, existingCount, onC
     }
   }, [selected, cleanedBlob, originalBlob, category, existingCount, queueIdx, createItem, queryClient, onCreated, handleFile, handleClose]);
 
-  // ── handleCameraCapture ──────────────────────────────────────────
-  // Called from CameraViewfinder with the raw JPEG blob.
-  const handleCameraCapture = useCallback(async (blob: Blob) => {
-    setShowCamera(false);
-    // feed into the same encoding → preview flow
-    await handleFile(blob);
+  // ── handleTakePhoto ───────────────────────────────────────────────
+  // Uses @capacitor/camera when running natively (TestFlight) to avoid
+  // WKWebView <input type="file"> crash. Falls back to a hidden file
+  // input in the browser preview.
+  const handleTakePhoto = useCallback(async () => {
+    // Check if running inside Capacitor native WebView
+    const isNative = typeof window !== "undefined" &&
+      (window as any).Capacitor?.isNativePlatform();
+    if (isNative) {
+      try {
+        const { Camera, CameraSource } = await import("@capacitor/camera");
+        const photo = await Camera.getPhoto({
+          source: CameraSource.Camera,
+          quality: 85,
+          width: 2048,
+        });
+        // Convert the result to a Blob for handleFile
+        let blob: Blob;
+        if (photo.base64String) {
+          const byteChars = atob(photo.base64String);
+          const bytes = new Uint8Array(byteChars.length);
+          for (let i = 0; i < byteChars.length; i++) bytes[i] = byteChars.charCodeAt(i);
+          blob = new Blob([bytes], { type: `image/${photo.format}` });
+        } else if (photo.dataUrl) {
+          const res = await fetch(photo.dataUrl);
+          blob = await res.blob();
+        } else {
+          throw new Error("No photo data returned from camera");
+        }
+        await handleFile(blob);
+      } catch (err) {
+        if (err instanceof Error && err.message?.includes("User cancelled")) {
+          return; // user dismissed the camera — do nothing
+        }
+        setErrorMsg(`Camera error: ${err instanceof Error ? err.message : String(err)}`);
+      }
+    } else {
+      // Browser fallback — use hidden file input
+      cameraInputRef.current?.click();
+    }
   }, [handleFile]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -303,11 +336,11 @@ export function QuickAddSheet({ open, onOpenChange, category, existingCount, onC
             )}
 
             <div className="flex gap-3">
-              {/* ── Take Photo — opens CameraViewfinder (getUserMedia) instead of
-                  a file input, because WKWebView crashes on any <input type="file">
-                  interaction regardless of capture / opacity overlay.            */}
+              {/* ── Take Photo — uses @capacitor/camera in native context
+                  (no file input = no WKWebView crash), falls back to hidden
+                  file input in browser preview.                              */}
               <button
-                onClick={() => setShowCamera(true)}
+                onClick={handleTakePhoto}
                 className="flex-1 flex flex-col items-center justify-center gap-3 py-8
                            border-4 border-black rounded-2xl bg-primary text-primary-foreground
                            shadow-[5px_5px_0px_0px_rgba(0,0,0,1)]
@@ -546,6 +579,14 @@ export function QuickAddSheet({ open, onOpenChange, category, existingCount, onC
       </div>
 
       {/* Hidden file inputs */}
+      {/* Camera — fallback for browser preview (Capacitor native uses @capacitor/camera) */}
+      <input
+        ref={cameraInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={handleInputChange}
+      />
       {/* Gallery — opens photo library / file picker (multiple selection supported) */}
       <input
         ref={galleryInputRef}
@@ -556,13 +597,6 @@ export function QuickAddSheet({ open, onOpenChange, category, existingCount, onC
         onChange={handleInputChange}
       />
 
-      {/* Camera viewfinder — full-screen overlay (no file input, uses getUserMedia) */}
-      {showCamera && (
-        <CameraViewfinder
-          onCapture={handleCameraCapture}
-          onClose={() => setShowCamera(false)}
-        />
-      )}
     </motion.div>
   );
 }
