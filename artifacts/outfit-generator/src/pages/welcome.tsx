@@ -406,7 +406,7 @@ export default function WelcomePage({ onEnter }: Props) {
             pointerEvents: phase === "welcome" ? "auto" : "none",
           }}
         >
-          Enter Bar ✨
+          Enter ✨
         </motion.button>
 
         <motion.div
