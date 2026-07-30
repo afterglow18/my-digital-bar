@@ -1,15 +1,17 @@
 /**
- * WelcomePage — three-phase animated entry.
+ * WelcomePage — three-phase splash sequence.
  *
- * idle    : dark screen, empty cocktail glass, "Enter Bar" button
- * pouring : amber liquid fills the glass (~1.6 s); button fades out
- * reveal  : hero image fades in over the glass → calls onEnter()
+ * hero    : full-screen hero image with dark gradient + "Welcome to" / "MY DIGITAL BAR" (2.5s auto)
+ * welcome : martini glass + branding + "Enter Bar ✨" button + privacy/support links
+ * pouring : liquid fills glass (~750ms) → calls onEnter()
+ *
+ * Only shown on cold launch (sessionStorage gated in App.tsx).
  */
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { motion } from "framer-motion";
 
-type Phase = "idle" | "pouring" | "reveal";
+type Phase = "hero" | "welcome" | "pouring";
 interface Props { onEnter: () => void; }
 
 // ── Martini glass SVG ─────────────────────────────────────────────────────────
@@ -70,7 +72,7 @@ function MartiniGlass({ pouring }: { pouring: boolean }) {
         fill="url(#wc-glow)"
         initial={{ opacity: 0 }}
         animate={{ opacity: pouring ? 1 : 0 }}
-        transition={{ duration: 1.0, delay: 0.9, ease: "easeOut" }}
+        transition={{ duration: 0.35, delay: 0.30, ease: "easeOut" }}
       />
 
       {/* ── Pour stream — falls from above into the wide opening ── */}
@@ -79,27 +81,24 @@ function MartiniGlass({ pouring }: { pouring: boolean }) {
         fill="#D08030"
         initial={{ y: -24, height: 0, opacity: 0 }}
         animate={pouring
-          ? { y: [-24, -24, BOWL_TOP, BOWL_TOP], height: [0, 44, 44, 0], opacity: [0, 0.90, 0.90, 0] }
+          ? { y: [-24, -24, BOWL_TOP, BOWL_TOP], height: [0, 22, 22, 0], opacity: [0, 0.90, 0.90, 0] }
           : { y: -24, height: 0, opacity: 0 }}
-        transition={{ duration: 0.52, ease: "easeIn", times: [0, 0.06, 0.80, 1] }}
+        transition={{ duration: 0.18, ease: "easeIn", times: [0, 0.06, 0.80, 1] }}
       />
 
-      {/* ── Liquid fill — CSS scale from bowl point (iOS-safe, no SVG attr animation) ──
-           Uniform scale from (50, BOWL_BOT) means scale=1 fills to the rim exactly,
-           scale=0 collapses to the point. Geometrically correct for a V-shaped bowl. */}
+      {/* ── Liquid fill — CSS scale from bowl point (iOS-safe, no SVG attr animation) ── */}
       <motion.g
         style={{ transformOrigin: `50px ${BOWL_BOT}px` }}
         initial={{ scale: 0 }}
         animate={{ scale: pouring ? 1 : 0 }}
-        transition={{ duration: 1.40, ease: [0.18, 0.05, 0.28, 1.0], delay: 0.28 }}
+        transition={{ duration: 0.48, ease: [0.18, 0.05, 0.28, 1.0], delay: 0.10 }}
       >
-        {/* Filled bowl triangle */}
         <path
           d={`M 8 ${BOWL_TOP} L 92 ${BOWL_TOP} L 50 ${BOWL_BOT} Z`}
           fill="url(#wc-liquid)"
           opacity={0.90}
         />
-        {/* Surface shimmer ellipse — sits at the liquid top (rim level when full) */}
+        {/* Surface shimmer ellipse */}
         <ellipse
           cx={50} cy={BOWL_TOP} rx={40} ry={3.5}
           fill="rgba(255,215,120,0.70)"
@@ -108,10 +107,10 @@ function MartiniGlass({ pouring }: { pouring: boolean }) {
 
       {/* ── Rising bubbles — CSS y transform (iOS-safe) ── */}
       {([
-        { cx: 40, startCy: 112, dy: -72, delay: 0.55, size: 2.4 },
-        { cx: 55, startCy: 105, dy: -65, delay: 0.82, size: 1.9 },
-        { cx: 47, startCy: 110, dy: -68, delay: 1.08, size: 1.6 },
-        { cx: 60, startCy: 108, dy: -66, delay: 1.22, size: 1.4 },
+        { cx: 40, startCy: 112, dy: -72, delay: 0.19, size: 2.4 },
+        { cx: 55, startCy: 105, dy: -65, delay: 0.28, size: 1.9 },
+        { cx: 47, startCy: 110, dy: -68, delay: 0.37, size: 1.6 },
+        { cx: 60, startCy: 108, dy: -66, delay: 0.41, size: 1.4 },
       ] as const).map(({ cx, startCy, dy, delay, size }, i) => (
         <motion.circle
           key={i}
@@ -122,7 +121,7 @@ function MartiniGlass({ pouring }: { pouring: boolean }) {
           animate={pouring
             ? { y: [0, dy], opacity: [0, 0.75, 0] }
             : { y: 0, opacity: 0 }}
-          transition={{ duration: 1.0, delay, ease: "easeOut", times: [0, 0.68, 1] }}
+          transition={{ duration: 0.34, delay, ease: "easeOut", times: [0, 0.68, 1] }}
         />
       ))}
 
@@ -134,7 +133,6 @@ function MartiniGlass({ pouring }: { pouring: boolean }) {
         strokeWidth={1.4}
         strokeLinejoin="round"
       />
-      {/* Left wall inner highlight */}
       <path
         d={`M 11 ${BOWL_TOP + 4} L 50 ${BOWL_BOT - 4}`}
         stroke="rgba(255,255,255,0.22)"
@@ -142,7 +140,6 @@ function MartiniGlass({ pouring }: { pouring: boolean }) {
         strokeLinecap="round"
         fill="none"
       />
-      {/* Right wall faint shadow */}
       <path
         d={`M 89 ${BOWL_TOP + 4} L 50 ${BOWL_BOT - 4}`}
         stroke="rgba(255,255,255,0.08)"
@@ -150,7 +147,6 @@ function MartiniGlass({ pouring }: { pouring: boolean }) {
         strokeLinecap="round"
         fill="none"
       />
-      {/* Bowl interior — very subtle filled glass tint */}
       <path
         d={`M 8 ${BOWL_TOP} L 92 ${BOWL_TOP} L 50 ${BOWL_BOT} Z`}
         fill="url(#wc-wall)"
@@ -182,26 +178,23 @@ function MartiniGlass({ pouring }: { pouring: boolean }) {
         strokeWidth={1.0}
       />
 
-      {/* ── Olive garnish (idle only — fades out on pour) ── */}
+      {/* ── Olive garnish (idle / welcome — fades out on pour) ── */}
       <motion.g
         animate={{ opacity: pouring ? 0 : 1 }}
-        transition={{ duration: 0.22 }}
+        transition={{ duration: 0.12 }}
       >
-        {/* Toothpick resting diagonally across the rim */}
         <line
           x1={28} y1={16} x2={72} y2={30}
           stroke="rgba(210,180,120,0.80)"
           strokeWidth={1.2}
           strokeLinecap="round"
         />
-        {/* Olive body */}
         <ellipse
           cx={50} cy={23} rx={5.5} ry={4.5}
           fill="#4A8040"
           stroke="rgba(100,180,80,0.60)"
           strokeWidth={0.8}
         />
-        {/* Olive pimento */}
         <ellipse
           cx={50} cy={23} rx={2.2} ry={1.8}
           fill="#C03020"
@@ -215,7 +208,7 @@ function MartiniGlass({ pouring }: { pouring: boolean }) {
         animate={pouring
           ? { opacity: [0, 1, 1, 0], scale: [0.5, 1.3, 1.1, 0.9] }
           : { opacity: 0, scale: 0.5 }}
-        transition={{ duration: 0.55, delay: 1.62, times: [0, 0.25, 0.70, 1] }}
+        transition={{ duration: 0.20, delay: 0.55, times: [0, 0.25, 0.70, 1] }}
         style={{ transformOrigin: "50px 72px" }}
       >
         {Array.from({ length: 8 }, (_, i) => {
@@ -237,10 +230,49 @@ function MartiniGlass({ pouring }: { pouring: boolean }) {
   );
 }
 
+// ── Shared branding block ──────────────────────────────────────────────────────
+function Branding({ theme }: { theme: "hero" | "dark" }) {
+  const isHero = theme === "hero";
+  return (
+    <div style={{ textAlign: "center", userSelect: "none" }}>
+      <p style={{
+        margin: 0,
+        fontFamily: "var(--font-display, serif)",
+        fontWeight: 600,
+        fontSize: isHero ? 13 : 11,
+        letterSpacing: "0.28em",
+        textTransform: "uppercase",
+        color: isHero ? "rgba(255,255,255,0.70)" : "rgba(232,212,176,0.55)",
+        marginBottom: 4,
+      }}>
+        Welcome to
+      </p>
+      <h1 style={{
+        margin: 0,
+        fontFamily: "var(--font-display, serif)",
+        fontWeight: 900,
+        fontSize: isHero ? 32 : 24,
+        letterSpacing: "0.06em",
+        textTransform: "uppercase",
+        color: isHero ? "#FFFFFF" : "rgba(232,212,176,0.88)",
+      }}>
+        MY DIGITAL BAR
+      </h1>
+    </div>
+  );
+}
+
 // ── Main component ─────────────────────────────────────────────────────────────
 export default function WelcomePage({ onEnter }: Props) {
-  const [phase, setPhase] = useState<Phase>("idle");
+  const [phase, setPhase] = useState<Phase>("hero");
   const calledRef = useRef(false);
+
+  // Phase 1 → 2: auto-advance after 2.5s
+  useEffect(() => {
+    if (phase !== "hero") return;
+    const t = setTimeout(() => setPhase("welcome"), 2500);
+    return () => clearTimeout(t);
+  }, [phase]);
 
   const finish = useCallback(() => {
     if (calledRef.current) return;
@@ -249,13 +281,13 @@ export default function WelcomePage({ onEnter }: Props) {
   }, [onEnter]);
 
   const handleEnter = () => {
-    if (phase !== "idle") return;
+    if (phase !== "welcome") return;
     setPhase("pouring");
-    setTimeout(() => setPhase("reveal"), 1800);
-    setTimeout(finish, 3800);
+    setTimeout(finish, 750);
   };
 
-  const pouring = phase !== "idle";
+  const showWelcome = phase !== "hero";
+  const pouring   = phase === "pouring";
 
   return (
     <div
@@ -269,12 +301,14 @@ export default function WelcomePage({ onEnter }: Props) {
         paddingBottom: "env(safe-area-inset-bottom)",
       }}
     >
-      {/* ── Hero image — slides in as the glass fills ── */}
+      {/* ═════════════════════════════════════════════════════════════════════
+          PHASE 1 — Hero image
+          Always rendered; opacity 0 once we leave the hero phase.        */}
       <motion.div
-        style={{ position: "absolute", inset: 0, zIndex: 5, pointerEvents: "none" }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: phase === "reveal" ? 1 : 0 }}
-        transition={{ duration: 0.95, ease: "easeIn" }}
+        style={{ position: "absolute", inset: 0, zIndex: 10, pointerEvents: "none" }}
+        initial={{ opacity: 1 }}
+        animate={{ opacity: phase === "hero" ? 1 : 0 }}
+        transition={{ duration: 0.60, ease: "easeInOut" }}
       >
         <img
           src="/bar-hero.png"
@@ -286,44 +320,45 @@ export default function WelcomePage({ onEnter }: Props) {
             display: "block", userSelect: "none", pointerEvents: "none",
           }}
         />
-        {/* Bottom fade so the button bar below reads cleanly */}
+        {/* Dark gradient overlay */}
         <div style={{
-          position: "absolute", bottom: 0, left: 0, right: 0, height: "22%",
-          background: "linear-gradient(to bottom, transparent, #0B0704)",
+          position: "absolute", bottom: 0, left: 0, right: 0, height: "28%",
+          background: "linear-gradient(to bottom, transparent, rgba(11,7,4,0.85))",
         }} />
+
+        {/* Branding near the bottom */}
+        <div style={{
+          position: "absolute", bottom: "16%", left: 0, right: 0,
+          display: "flex", justifyContent: "center", alignItems: "center",
+        }}>
+          <Branding theme="hero" />
+        </div>
       </motion.div>
 
-      {/* ── Glass area ── */}
-      <div style={{
-        position: "relative", zIndex: 2,
-        flex: 1, width: "100%",
-        display: "flex", flexDirection: "column",
-        alignItems: "center", justifyContent: "center",
-        gap: 18,
-      }}>
-        {/* Title — fades out on click so the hero can take over cleanly */}
-        <motion.div
-          animate={{ opacity: pouring ? 0 : 1, y: pouring ? -6 : 0 }}
-          transition={{ duration: 0.35 }}
-          style={{
-            fontFamily: "var(--font-display, serif)",
-            fontWeight: 900,
-            fontSize: 22,
-            letterSpacing: "0.10em",
-            textTransform: "uppercase",
-            color: "rgba(232,212,176,0.82)",
-            textAlign: "center",
-            userSelect: "none",
-          }}
-        >
-          MY DIGITAL BAR
-        </motion.div>
+      {/* ═════════════════════════════════════════════════════════════════════
+          PHASE 2 & 3 — Welcome / Pouring
+          Branding + martini glass.  Fades in as hero fades out.          */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: showWelcome ? 1 : 0 }}
+        transition={{ duration: 0.50, ease: "easeInOut" }}
+        style={{
+          position: "relative", zIndex: 5,
+          flex: 1, width: "100%",
+          display: "flex", flexDirection: "column",
+          alignItems: "center", justifyContent: "center",
+          gap: 16,
+        }}
+      >
+        {/* Branding — appears above the glass in welcome/pouring phases */}
+        <Branding theme="dark" />
 
         <MartiniGlass pouring={pouring} />
 
+        {/* Tagline — only while the welcome phase is idle */}
         <motion.p
           animate={{ opacity: pouring ? 0 : 1, y: pouring ? 6 : 0 }}
-          transition={{ duration: 0.35 }}
+          transition={{ duration: 0.28 }}
           style={{
             fontSize: 11,
             fontWeight: 500,
@@ -336,9 +371,11 @@ export default function WelcomePage({ onEnter }: Props) {
         >
           your drink collection
         </motion.p>
-      </div>
+      </motion.div>
 
-      {/* ── Bottom bar — zIndex 6 so it sits above the hero overlay ── */}
+      {/* ═════════════════════════════════════════════════════════════════════
+          Bottom bar — Enter button + links
+          Visible only in the welcome (idle) phase.                      */}
       <div style={{
         position: "relative", zIndex: 6,
         width: "100%",
@@ -349,7 +386,10 @@ export default function WelcomePage({ onEnter }: Props) {
       }}>
         <motion.button
           onClick={handleEnter}
-          animate={{ opacity: phase === "idle" ? 1 : 0, y: phase === "idle" ? 0 : 8 }}
+          animate={{
+            opacity: phase === "welcome" ? 1 : 0,
+            y: phase === "welcome" ? 0 : 8,
+          }}
           transition={{ duration: 0.28 }}
           style={{
             width: "100%", maxWidth: 340,
@@ -361,16 +401,18 @@ export default function WelcomePage({ onEnter }: Props) {
             border: "1.5px solid #B8894E",
             borderRadius: 100,
             padding: "15px 40px",
-            cursor: phase === "idle" ? "pointer" : "default",
+            cursor: phase === "welcome" ? "pointer" : "default",
             boxShadow: "0 4px 20px rgba(120,80,40,0.45), 2px 2px 0 rgba(0,0,0,0.7)",
-            pointerEvents: phase === "idle" ? "auto" : "none",
+            pointerEvents: phase === "welcome" ? "auto" : "none",
           }}
         >
           Enter Bar ✨
         </motion.button>
 
         <motion.div
-          animate={{ opacity: phase === "idle" ? 1 : 0 }}
+          animate={{
+            opacity: phase === "welcome" ? 1 : 0,
+          }}
           transition={{ duration: 0.28 }}
           style={{ display: "flex", gap: 20, paddingBottom: 6 }}
         >
