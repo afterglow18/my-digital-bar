@@ -110,7 +110,6 @@ export function QuickAddSheet({ open, onOpenChange, category, existingCount, onC
   const [queueIdx,   setQueueIdx]   = useState(0);   // 1-based index of current photo
   const [queueTotal, setQueueTotal] = useState(0);   // total photos selected this batch
 
-  const cameraInputRef  = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
 
   const createItem  = useCreateClothingItem();
@@ -294,18 +293,30 @@ export function QuickAddSheet({ open, onOpenChange, category, existingCount, onC
             )}
 
             <div className="flex gap-3">
-              <button
-                onClick={() => cameraInputRef.current?.click()}
-                className="flex-1 flex flex-col items-center justify-center gap-3 py-8
-                           border-4 border-black rounded-2xl bg-primary text-primary-foreground
-                           shadow-[5px_5px_0px_0px_rgba(0,0,0,1)]
-                           active:translate-x-1 active:translate-y-1 active:shadow-none transition-all"
-              >
-                <span className="text-4xl leading-none">📷</span>
-                <span className="font-display font-bold text-base uppercase tracking-tight text-center leading-tight">
-                  Take<br />Photo
-                </span>
-              </button>
+              {/* ── Take Photo — overlay file input directly so WKWebView won't crash ──
+                  WKWebView crashes on synthetic .click() of a hidden file input.
+                  Instead, the actual input sits on top of the card with opacity 0
+                  so real taps go through the OS event system.                      */}
+              <div className="relative flex-1">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleInputChange}
+                  className="absolute inset-0 opacity-0 cursor-pointer z-10 w-full h-full"
+                  style={{ fontSize: 0 }}
+                />
+                <div className="flex flex-col items-center justify-center gap-3 py-8
+                               border-4 border-black rounded-2xl bg-primary text-primary-foreground
+                               shadow-[5px_5px_0px_0px_rgba(0,0,0,1)]
+                               active:translate-x-1 active:translate-y-1 active:shadow-none
+                               transition-all pointer-events-none"
+                >
+                  <span className="text-4xl leading-none">📷</span>
+                  <span className="font-display font-bold text-base uppercase tracking-tight text-center leading-tight">
+                    Take<br />Photo
+                  </span>
+                </div>
+              </div>
 
               <button
                 onClick={() => galleryInputRef.current?.click()}
@@ -534,15 +545,6 @@ export function QuickAddSheet({ open, onOpenChange, category, existingCount, onC
       </div>
 
       {/* Hidden file inputs */}
-      {/* Camera — opens native camera / photo picker (no capture attr;
-          WKWebView in TestFlight crashes with capture="environment") */}
-      <input
-        ref={cameraInputRef}
-        type="file"
-        accept="image/*"
-        className="hidden"
-        onChange={handleInputChange}
-      />
       {/* Gallery — opens photo library / file picker (multiple selection supported) */}
       <input
         ref={galleryInputRef}
