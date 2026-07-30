@@ -534,11 +534,12 @@ export function QuickAddSheet({ open, onOpenChange, category, existingCount, onC
       </div>
 
       {/* Hidden file inputs */}
-      {/* Camera — opens native camera / photo picker */}
+      {/* Camera — opens native camera on mobile */}
       <input
         ref={cameraInputRef}
         type="file"
         accept="image/*"
+        capture="environment"
         className="hidden"
         onChange={handleInputChange}
       />
