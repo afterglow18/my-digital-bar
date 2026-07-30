@@ -232,8 +232,10 @@ export function QuickAddSheet({ open, onOpenChange, category, existingCount, onC
   }, [selected, cleanedBlob, originalBlob, category, existingCount, queueIdx, createItem, queryClient, onCreated, handleFile, handleClose]);
 
   // ── handleTakePhoto ───────────────────────────────────────────────
-  // Uses @capacitor/camera when running natively (TestFlight) to avoid
-  // WKWebView <input type="file"> crash. Falls back to a hidden file
+  // Uses @capacitor/camera when running natively (TestFlight).
+  // CameraSource.Prompt shows a native iOS action sheet (Camera / Photo Library)
+  // instead of launching the camera directly — avoids the native crash caused by
+  // allocating camera GPU memory inside WKWebView. Falls back to a hidden file
   // input in the browser preview.
   const handleTakePhoto = useCallback(async () => {
     // Check if running inside Capacitor native WebView
@@ -243,7 +245,7 @@ export function QuickAddSheet({ open, onOpenChange, category, existingCount, onC
       try {
         const { Camera, CameraSource } = await import("@capacitor/camera");
         const photo = await Camera.getPhoto({
-          source: CameraSource.Camera,
+          source: CameraSource.Prompt,
           quality: 85,
           width: 2048,
         });
