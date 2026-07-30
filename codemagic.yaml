@@ -101,6 +101,14 @@ workflows:
           # Required for Face ID usage
           /usr/libexec/PlistBuddy -c "Add :NSFaceIDUsageDescription string 'My Digital Bar uses Face ID to protect your wardrobe.'" App/Info.plist 2>/dev/null || \
           /usr/libexec/PlistBuddy -c "Set :NSFaceIDUsageDescription 'My Digital Bar uses Face ID to protect your wardrobe.'" App/Info.plist
+          # Camera & photo library — @capacitor/camera references these APIs so Apple
+          # requires the purpose strings even if we only use CameraSource.Prompt.
+          /usr/libexec/PlistBuddy -c "Add :NSCameraUsageDescription string 'My Digital Bar uses the camera to take photos of your clothing items.'" App/Info.plist 2>/dev/null || \
+          /usr/libexec/PlistBuddy -c "Set :NSCameraUsageDescription 'My Digital Bar uses the camera to take photos of your clothing items.'" App/Info.plist
+          /usr/libexec/PlistBuddy -c "Add :NSPhotoLibraryUsageDescription string 'My Digital Bar accesses your photo library to add clothing item photos.'" App/Info.plist 2>/dev/null || \
+          /usr/libexec/PlistBuddy -c "Set :NSPhotoLibraryUsageDescription 'My Digital Bar accesses your photo library to add clothing item photos.'" App/Info.plist
+          /usr/libexec/PlistBuddy -c "Add :NSPhotoLibraryAddUsageDescription string 'My Digital Bar saves edited photos to your library.'" App/Info.plist 2>/dev/null || \
+          /usr/libexec/PlistBuddy -c "Set :NSPhotoLibraryAddUsageDescription 'My Digital Bar saves edited photos to your library.'" App/Info.plist
 
       - name: Re-apply provisioning profiles after cap sync
         script: |
