@@ -41,3 +41,5 @@ timeoutMs = 20000
 [userenv.shared]
 VITE_REVENUECAT_IOS_KEY = "appl_HTDsqIvbJDetiTofAyBoDwXOSuu"
 VITE_REVENUECAT_TEST_KEY = "test_EBhomWNbVwcCblrgTAkzVhrPeZC"
+VITE_REVENUECAT_PUBLIC_API_KEY = "appl_pZSvkuMsbaYKwCjTtUwRTSjvHgO"
+VITE_REVENUECAT_IOS_API_KEY = "appl_pZSvkuMsbaYKwCjTtUwRTSjvHgO"
