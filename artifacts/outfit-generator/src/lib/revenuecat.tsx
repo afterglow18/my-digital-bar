@@ -22,7 +22,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
-export const REVENUECAT_ENTITLEMENT_IDENTIFIER = "premium";
+// Must match the lookup key in the RevenueCat dashboard (currently "My Digital Bar Pro")
+export const REVENUECAT_ENTITLEMENT_IDENTIFIER = "My Digital Bar Pro";
 
 const RC_TEST_KEY = import.meta.env.VITE_REVENUECAT_TEST_KEY    as string | undefined;
 const RC_IOS_KEY  = import.meta.env.VITE_REVENUECAT_IOS_API_KEY as string | undefined;
