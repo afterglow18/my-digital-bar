@@ -101,8 +101,10 @@ function useSubscriptionContext() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return (result as any).offerings ?? result ?? null;
     },
-    staleTime: 300 * 1000,
-    retry: false,
+    staleTime: 0,
+    refetchOnMount: 'always',
+    retry: 2,
+    retryDelay: 2000,
   });
 
   // ── Foreground + server-push listeners ─────────────────────────────────────

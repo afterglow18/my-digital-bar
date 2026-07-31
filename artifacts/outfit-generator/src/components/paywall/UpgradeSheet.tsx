@@ -162,7 +162,8 @@ export function UpgradeSheet({ reason, onClose }: Props) {
     const pkg = getRcPackage(offerings, TIER_DEFAULTS[selected].pkgId);
     if (!pkg) {
       setStatus("idle");
-      if (!isNative) setError("Purchases are only available on the iOS app.");
+      if (isNative) setError("Unable to load pricing — please close and reopen the app.");
+      else setError("Purchases are only available on the iOS app.");
       return;
     }
     try {
