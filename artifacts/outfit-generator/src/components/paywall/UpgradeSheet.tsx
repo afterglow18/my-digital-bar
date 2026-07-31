@@ -11,8 +11,9 @@
  */
 import React, { useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import { X, Check } from "lucide-react";
+import { X, Check, AlertTriangle } from "lucide-react";
 import { useSubscription } from "@/lib/revenuecat";
+import { Capacitor } from "@capacitor/core";
 
 export type UpgradeReason = "items" | "outfits" | "mannequin";
 type TierId = "monthly" | "yearly" | "lifetime";
@@ -141,6 +142,8 @@ export function UpgradeSheet({ reason, onClose }: Props) {
   const [selected, setSelected] = useState<TierId>("lifetime");
   const [status,   setStatus]   = useState<"idle" | "pending">("idle");
 
+  const isNative = Capacitor.isNativePlatform();
+
   const prices: Record<TierId, string> = {
     monthly:  getLivePrice(offerings, "$rc_monthly",  "$1.99"),
     yearly:   getLivePrice(offerings, "$rc_annual",   "$19.99"),
@@ -157,16 +160,25 @@ export function UpgradeSheet({ reason, onClose }: Props) {
     if (status === "pending") return;
     setStatus("pending");
     const pkg = getRcPackage(offerings, TIER_DEFAULTS[selected].pkgId);
-    if (!pkg) { setStatus("idle"); return; }
+    if (!pkg) {
+      setStatus("idle");
+      if (!isNative) setError("Purchases are only available on the iOS app.");
+      return;
+    }
     try {
       await purchase(pkg);
       onClose();
     } catch (err: unknown) {
       setStatus("idle");
       const msg = err instanceof Error ? err.message.toLowerCase() : "";
-      if (!msg.includes("cancel") && !msg.includes("dismiss")) console.error("Purchase error:", err);
+      if (!msg.includes("cancel") && !msg.includes("dismiss")) {
+        console.error("Purchase error:", err);
+        setError(err instanceof Error ? err.message : "Purchase failed — try again.");
+      }
     }
-  }, [status, offerings, selected, purchase, onClose]);
+  }, [status, isNative, offerings, selected, purchase, onClose]);
+
+  const [error, setError] = useState<string | null>(null);
 
   return (
     <motion.div
@@ -261,6 +273,12 @@ export function UpgradeSheet({ reason, onClose }: Props) {
         className="px-5 pt-2 flex flex-col gap-2 flex-shrink-0"
         style={{ paddingBottom: "max(1.5rem, env(safe-area-inset-bottom))" }}
       >
+        {error && (
+          <div className="flex items-start gap-2 px-3 py-2 rounded-xl border-2 border-amber-600 bg-amber-50 text-amber-800 text-xs font-medium leading-snug">
+            <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+            {error}
+          </div>
+        )}
         <button
           onClick={handlePurchase}
           disabled={status === "pending"}
