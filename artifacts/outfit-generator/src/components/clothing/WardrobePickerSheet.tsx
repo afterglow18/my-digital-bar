@@ -22,9 +22,9 @@ type Category = "outfits" | "beauty" | "toiletries" | "essentials";
 
 const CATEGORY_LABELS: Record<Category, string> = {
   outfits:    "Drinks",
-  beauty:     "Garnishes",
+  beauty:     "Mixers & Garnishes",
   toiletries: "Glassware",
-  essentials: "Tools",
+  essentials: "Bar Tools",
 };
 
 interface Props {

@@ -26,10 +26,10 @@ import { getImageUrl } from "@/lib/utils";
 const SEASON_OPTIONS    = ["", "Spring", "Summer", "Fall", "Winter", "Year-Round"];
 const OCCASION_OPTIONS  = ["", "Happy Hour", "Party", "Dinner", "Date Night", "Holiday", "Brunch"];
 const CATEGORY_OPTIONS: { value: string; label: string }[] = [
-  { value: "outfits",    label: "Drinks"     },
-  { value: "beauty",     label: "Garnishes"  },
-  { value: "toiletries", label: "Glassware"  },
-  { value: "essentials", label: "Tools"      },
+  { value: "outfits",    label: "Drinks"              },
+  { value: "beauty",     label: "Mixers & Garnishes"  },
+  { value: "toiletries", label: "Glassware"           },
+  { value: "essentials", label: "Bar Tools"           },
 ];
 
 function Field({

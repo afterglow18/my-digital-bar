@@ -32,9 +32,9 @@ type Category = "outfits" | "beauty" | "toiletries" | "essentials";
 
 const CATEGORY_LABELS: Record<Category, string> = {
   outfits:    "Drinks",
-  beauty:     "Garnishes",
+  beauty:     "Mixers & Garnishes",
   toiletries: "Glassware",
-  essentials: "Tools",
+  essentials: "Bar Tools",
 };
 
 type Phase = "pick" | "encoding" | "preview" | "uploading";
@@ -75,7 +75,7 @@ async function encodeForUpload(input: File | Blob): Promise<Blob> {
 
 const CATEGORY_EXAMPLES: Record<string, { emoji: string; items: string[] }> = {
   outfits:    { emoji: "🍸", items: ["Classics", "Signatures", "Mocktails", "Shots", "Punches", "Coffee Drinks", "Hot Cocoa", "Smoothies", "Wine", "Beer"] },
-  beauty:     { emoji: "🌿", items: ["Citrus Wheels", "Cherries", "Herbs", "Edible Flowers", "Olives", "Salted Rims", "Sugar Rims", "Picks"] },
+  beauty:     { emoji: "🍋", items: ["Juices", "Syrups", "Sodas", "Bitters", "Cream", "Spices", "Fruit", "Citrus Wheels", "Cherries", "Herbs", "Edible Flowers", "Olives", "Salted Rims"] },
   toiletries: { emoji: "🥂", items: ["Highball", "Rocks", "Martini", "Coupe", "Shot", "Wine Glass", "Copper Mug", "Tiki Mug"] },
   essentials: { emoji: "🛠️", items: ["Shakers", "Strainers", "Jiggers", "Muddlers", "Ice Tools", "Bar Spoons", "Espresso Machine", "Coffee Maker"] },
 };
