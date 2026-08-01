@@ -35,10 +35,10 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 
 const CATEGORY_LABELS: Record<string, string> = {
-  outfits:    "Outfits",
-  beauty:     "Beauty",
-  toiletries: "Toiletries",
-  essentials: "Essentials",
+  outfits:    "Drinks",
+  beauty:     "Mixers & Garnishes",
+  toiletries: "Glassware",
+  essentials: "Bar Tools",
 };
 
 const ORDER_KEY = "closet-favorites-order";
@@ -106,10 +106,10 @@ function SortableTile({
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <span className="text-2xl opacity-30">
-              {item.category === "shoes" ? "👟"
-                : item.category === "dresses" ? "👗"
-                : item.category === "accessories" ? "👜"
-                : "👚"}
+              {item.category === "outfits" ? "🍸"
+                : item.category === "beauty" ? "🍋"
+                : item.category === "toiletries" ? "🥂"
+                : "🛠️"}
             </span>
           </div>
         )}
