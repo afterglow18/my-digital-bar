@@ -243,9 +243,10 @@ export function QuickAddSheet({ open, onOpenChange, category, existingCount, onC
       (window as any).Capacitor?.isNativePlatform();
     if (isNative) {
       try {
-        const { Camera, CameraSource } = await import("@capacitor/camera");
+        const { Camera, CameraSource, CameraResultType } = await import("@capacitor/camera");
         const photo = await Camera.getPhoto({
           source: CameraSource.Prompt,
+          resultType: CameraResultType.DataUrl,
           quality: 85,
           width: 2048,
         });

@@ -1,13 +1,13 @@
 /**
  * useEntitlements — maps RevenueCat subscription state to the app's tier/caps model.
  *
- * Keeps the same public API as the old Stripe-backed version so pages need no
- * changes.  Under the hood it reads from useSubscription() (RevenueCat) instead
- * of localStorage + Stripe Checkout.
+ * Source of truth: useSubscription() (RevenueCat).
+ * RC entitlement identifier: "My Digital Bar Pro"
+ * No localStorage, no Stripe, no hardcoded flags.
  *
  * Tier mapping:
- *   no active entitlement  → "free"  (up to 20 items, 5 outfits)
- *   "premium" entitlement  → "unlock" (unlimited items + outfits)
+ *   no active RC entitlement        → "free"   (up to 20 items, 5 drinks)
+ *   "My Digital Bar Pro" active     → "unlock"  (unlimited everything)
  *
  * PurchaseResult:
  *   "success"     — subscription activated

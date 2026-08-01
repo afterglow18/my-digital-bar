@@ -3,8 +3,11 @@
  *
  * Tiers:
  *   "free"    — default; up to FREE_ITEM_LIMIT items, FREE_OUTFIT_LIMIT saved outfits.
- *   "unlock"  — $4.99 one-time; unlimited items + outfits, no 3D mannequin.
- *   "premium" — optional upgrade; everything in unlock + 3D mannequin.
+ *   "unlock"  — any active RC subscription ("My Digital Bar Pro"); unlimited everything.
+ *   "premium" — reserved alias for "unlock"; maps to the same caps.
+ *
+ * RevenueCat entitlement identifier: "My Digital Bar Pro"
+ * Packages: $rc_monthly | $rc_annual | $rc_lifetime
  */
 
 export type Tier = "free" | "unlock" | "premium";
@@ -14,24 +17,17 @@ export const FREE_ITEM_LIMIT   = 20;
 export const FREE_OUTFIT_LIMIT = 5;
 
 export interface TierCapabilities {
-  /** Maximum clothing items, or null for unlimited. */
+  /** Maximum bar items, or null for unlimited. */
   maxItems:   number | null;
-  /** Maximum saved outfits, or null for unlimited. */
+  /** Maximum saved drinks, or null for unlimited. */
   maxOutfits: number | null;
-  /** Access to the interactive 3D mannequin view. */
-  mannequin:  boolean;
 }
 
 export const TIER_CAPS: Record<Tier, TierCapabilities> = {
-  free:    { maxItems: FREE_ITEM_LIMIT,  maxOutfits: FREE_OUTFIT_LIMIT, mannequin: false },
-  unlock:  { maxItems: null,             maxOutfits: null,              mannequin: false },
-  premium: { maxItems: null,             maxOutfits: null,              mannequin: true  },
+  free:    { maxItems: FREE_ITEM_LIMIT, maxOutfits: FREE_OUTFIT_LIMIT },
+  unlock:  { maxItems: null,            maxOutfits: null              },
+  premium: { maxItems: null,            maxOutfits: null              },
 };
 
-/** Products available for purchase. */
+/** @deprecated — RC manages purchase flow via UpgradeSheet directly. */
 export type PurchaseProduct = "unlock" | "premium";
-
-export const PRODUCT_PRICES: Record<PurchaseProduct, string> = {
-  unlock:  "$4.99",
-  premium: "$9.99",
-};
