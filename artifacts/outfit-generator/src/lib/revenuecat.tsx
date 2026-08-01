@@ -54,6 +54,16 @@ async function getPurchases(): Promise<PurchasesType | null> {
 
 // ── Initialization ────────────────────────────────────────────────────────────
 
+/** Wait for a promise or throw on timeout */
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error("timed out")), ms),
+    ),
+  ]);
+}
+
 export async function initializeRevenueCat(): Promise<void> {
   const Purchases = await getPurchases();
   if (!Purchases) return;
@@ -65,7 +75,18 @@ export async function initializeRevenueCat(): Promise<void> {
     await Purchases.setLogLevel({ level: LOG_LEVEL.DEBUG });
   } catch { /* non-fatal */ }
 
-  await Purchases.configure({ apiKey });
+  // configure() returns CustomerInfo (a network call).
+  // If RC servers are slow, don't block startup — the SDK is ready after
+  // the call is dispatched even if the CustomerInfo response lags.
+  try {
+    await withTimeout(Purchases.configure({ apiKey }), 5000);
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : String(e);
+    if (!msg.includes("timed out")) throw e;
+    // timeout just means the CustomerInfo fetch is slow; SDK is configured
+    console.warn("[RevenueCat] configure() timed out (CustomerInfo slow) — SDK is ready");
+  }
+
   console.log("[RevenueCat] Configured");
 }
 

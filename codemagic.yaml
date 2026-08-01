@@ -47,6 +47,17 @@ workflows:
           cd artifacts/outfit-generator
           VITE_API_BASE_URL=$VITE_API_BASE_URL pnpm vite build --config vite.capacitor.config.ts
 
+      - name: Resolve RevenueCat symlink (pnpm → real dir for Xcode)
+        script: |
+          cd artifacts/outfit-generator
+          RC_PATH="node_modules/@revenuecat/purchases-capacitor"
+          if [ -L "$RC_PATH" ]; then
+            echo "RevenueCat is a symlink — copying to real directory"
+            cp -rL "$RC_PATH" "${RC_PATH}-real"
+            rm "$RC_PATH"
+            mv "${RC_PATH}-real" "$RC_PATH"
+          fi
+
       - name: Capacitor add iOS and sync
         script: |
           cd artifacts/outfit-generator
