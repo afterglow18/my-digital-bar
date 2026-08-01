@@ -34,9 +34,9 @@ const LM = {
   doorL: 0.115,
   doorR: 0.880,
   rows: [
-    { sectionTop: 0.175, shelfY: 0.305, btnCY: 0.225 },  // Cocktails  (shelf 1)
-    { sectionTop: 0.305, shelfY: 0.445, btnCY: 0.360 },  // Spirits    (shelf 2)
-    { sectionTop: 0.445, shelfY: 0.580, btnCY: 0.498 },  // Mixers     (shelf 3)
+    { sectionTop: 0.175, shelfY: 0.305, btnCY: 0.225 },  // Drinks     (shelf 1)
+    { sectionTop: 0.305, shelfY: 0.445, btnCY: 0.360 },  // Garnishes  (shelf 2)
+    { sectionTop: 0.445, shelfY: 0.580, btnCY: 0.498 },  // Glassware  (shelf 3)
     { sectionTop: 0.580, shelfY: 0.710, btnCY: 0.630 },  // Tools      (shelf 4)
   ],
   // Action bar: marble counter + bottom drawer area
@@ -324,8 +324,8 @@ export default function GeneratePage() {
               const btnH   = Math.max(32, pH(ir, 0.045));
 
               const SHELF_LABELS: Record<string, string> = {
-                outfits: "COCKTAILS", beauty: "SPIRITS",
-                toiletries: "MIXERS", essentials: "TOOLS",
+                outfits: "DRINKS", beauty: "GARNISHES",
+                toiletries: "GLASSWARE", essentials: "TOOLS",
               };
               const label = SHELF_LABELS[key] ?? key.toUpperCase();
               const labelFrac = rowIdx === 0 ? 0.85 : rowIdx === 1 ? 1.05 : rowIdx === 2 ? 1.35 : 1.65;
@@ -457,7 +457,7 @@ export default function GeneratePage() {
                   fontSize: 11, color: "#9a5060",
                   marginTop: 5, lineHeight: 1.5,
                 }}>
-                  Add cocktails, spirits, mixers or tools in the Bar tab first.
+                  Add drinks, garnishes, glassware or tools in the Bar tab first.
                 </p>
               </div>
             )}

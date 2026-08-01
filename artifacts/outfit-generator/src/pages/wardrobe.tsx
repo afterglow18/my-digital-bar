@@ -43,10 +43,10 @@ type RowKey   = "outfits" | "beauty" | "toiletries" | "essentials";
 type Category = "outfits" | "beauty" | "toiletries" | "essentials";
 
 const ROWS: { key: RowKey; btnLabel: string }[] = [
-  { key: "outfits",    btnLabel: "+ ADD COCKTAILS" },
-  { key: "beauty",     btnLabel: "+ ADD SPIRITS"   },
-  { key: "toiletries", btnLabel: "+ ADD MIXERS"    },
-  { key: "essentials", btnLabel: "+ ADD TOOLS"     },
+  { key: "outfits",    btnLabel: "+ ADD DRINKS"     },
+  { key: "beauty",     btnLabel: "+ ADD GARNISHES"  },
+  { key: "toiletries", btnLabel: "+ ADD GLASSWARE"  },
+  { key: "essentials", btnLabel: "+ ADD TOOLS"      },
 ];
 
 // ── Image constants ───────────────────────────────────────────────────────────
@@ -63,9 +63,9 @@ const LM = {
   doorR: 0.880,  // inner right column edge
 
   rows: [
-    { sectionTop: 0.175, shelfY: 0.305, btnCY: 0.225 },  // Cocktails  (shelf 1)
-    { sectionTop: 0.305, shelfY: 0.445, btnCY: 0.360 },  // Spirits    (shelf 2)
-    { sectionTop: 0.445, shelfY: 0.580, btnCY: 0.498 },  // Mixers     (shelf 3)
+    { sectionTop: 0.175, shelfY: 0.305, btnCY: 0.225 },  // Drinks     (shelf 1)
+    { sectionTop: 0.305, shelfY: 0.445, btnCY: 0.360 },  // Garnishes  (shelf 2)
+    { sectionTop: 0.445, shelfY: 0.580, btnCY: 0.498 },  // Glassware  (shelf 3)
     { sectionTop: 0.580, shelfY: 0.710, btnCY: 0.630 },  // Tools      (shelf 4)
   ],
 

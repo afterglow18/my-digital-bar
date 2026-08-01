@@ -21,9 +21,9 @@ import { QuickAddSheet } from "./QuickAddSheet";
 type Category = "outfits" | "beauty" | "toiletries" | "essentials";
 
 const CATEGORY_LABELS: Record<Category, string> = {
-  outfits:    "Cocktails",
-  beauty:     "Spirits",
-  toiletries: "Mixers",
+  outfits:    "Drinks",
+  beauty:     "Garnishes",
+  toiletries: "Glassware",
   essentials: "Tools",
 };
 

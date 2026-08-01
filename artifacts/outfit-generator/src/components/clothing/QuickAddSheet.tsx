@@ -31,9 +31,9 @@ import {
 type Category = "outfits" | "beauty" | "toiletries" | "essentials";
 
 const CATEGORY_LABELS: Record<Category, string> = {
-  outfits:    "Cocktails",
-  beauty:     "Spirits",
-  toiletries: "Mixers",
+  outfits:    "Drinks",
+  beauty:     "Garnishes",
+  toiletries: "Glassware",
   essentials: "Tools",
 };
 
@@ -75,9 +75,9 @@ async function encodeForUpload(input: File | Blob): Promise<Blob> {
 
 const CATEGORY_EXAMPLES: Record<string, { emoji: string; items: string[] }> = {
   outfits:    { emoji: "🍸", items: ["Classics", "Signatures", "Mocktails", "Shots", "Punches", "Coffee Drinks", "Hot Cocoa", "Smoothies", "Wine", "Beer"] },
-  beauty:     { emoji: "🥃", items: ["Vodka", "Gin", "Rum", "Whiskey", "Tequila", "Brandy", "Liqueurs", "Coffee Liqueurs"] },
-  toiletries: { emoji: "🍋", items: ["Juices", "Syrups", "Sodas", "Bitters", "Cream", "Spices", "Garnishes", "Fruit", "Marshmallows", "Sprinkles", "Chocolate", "Whipped Cream", "Milk"] },
-  essentials: { emoji: "🍹", items: ["Shakers", "Strainers", "Jiggers", "Muddlers", "Glasses", "Mugs", "Ice Tools", "Bar Spoons", "Espresso Machine", "Coffee Maker"] },
+  beauty:     { emoji: "🌿", items: ["Citrus Wheels", "Cherries", "Herbs", "Edible Flowers", "Olives", "Salted Rims", "Sugar Rims", "Picks"] },
+  toiletries: { emoji: "🥂", items: ["Highball", "Rocks", "Martini", "Coupe", "Shot", "Wine Glass", "Copper Mug", "Tiki Mug"] },
+  essentials: { emoji: "🛠️", items: ["Shakers", "Strainers", "Jiggers", "Muddlers", "Ice Tools", "Bar Spoons", "Espresso Machine", "Coffee Maker"] },
 };
 
 // ── Component ──────────────────────────────────────────────────────────────────
