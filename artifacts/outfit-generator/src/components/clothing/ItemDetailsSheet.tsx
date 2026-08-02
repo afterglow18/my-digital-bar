@@ -298,19 +298,36 @@ export function ItemDetailsSheet({
 
       {/* ── Photo ── */}
       {item.imageObjectPath && (
-        <div
-          className="w-full h-52 flex-shrink-0 border-b-2 border-black relative"
-          style={{
-            backgroundImage: "repeating-conic-gradient(#e5e7eb 0% 25%, white 0% 50%)",
-            backgroundSize: "16px 16px",
-          }}
-        >
-          <img
-            src={getImageUrl(localImageUrl ?? item.imageObjectPath)!}
-            alt={item.name}
-            className="w-full h-full object-contain"
-          />
-        </div>
+        <>
+          <div
+            className="w-full h-52 flex-shrink-0 relative"
+            style={{
+              backgroundImage: "repeating-conic-gradient(#e5e7eb 0% 25%, white 0% 50%)",
+              backgroundSize: "16px 16px",
+            }}
+          >
+            <img
+              src={getImageUrl(localImageUrl ?? item.imageObjectPath)!}
+              alt={item.name}
+              className="w-full h-full object-contain"
+            />
+          </div>
+          {/* Clean Up Photo — only on bar page, sits right below the photo */}
+          {!showAddToLookbook && (
+            <div className="px-4 pt-3 pb-1 border-b-2 border-black">
+              <button
+                onClick={() => setCleanUpOpen(true)}
+                className="w-full py-2.5 rounded-xl flex items-center justify-center gap-1.5 text-sm
+                           font-bold uppercase tracking-wide border-2 border-black bg-white
+                           shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]
+                           active:translate-y-0.5 active:translate-x-0.5 active:shadow-none transition-all"
+              >
+                <Sparkles className="w-4 h-4" />
+                Clean Up Photo
+              </button>
+            </div>
+          )}
+        </>
       )}
 
       {/* ── Form ── */}
@@ -382,8 +399,8 @@ export function ItemDetailsSheet({
       {/* ── Footer actions ── */}
       <div className="sticky bottom-0 px-4 py-4 bg-white border-t-2 border-black flex-shrink-0 flex flex-col gap-2">
 
-        {/* Context-aware action button */}
-        {showAddToLookbook ? (
+        {/* Context-aware action button — only on favorites/search */}
+        {showAddToLookbook && (
           <button
             onClick={() => setAddToLookbookOpen(true)}
             className="w-full py-2.5 rounded-xl flex items-center justify-center gap-1.5 text-sm
@@ -395,19 +412,6 @@ export function ItemDetailsSheet({
             <span className="text-base leading-none">🍷</span>
             Add to Lookbook
           </button>
-        ) : (
-          item.imageObjectPath && (
-            <button
-              onClick={() => setCleanUpOpen(true)}
-              className="w-full py-2.5 rounded-xl flex items-center justify-center gap-1.5 text-sm
-                         font-bold uppercase tracking-wide border-2 border-black bg-white
-                         shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]
-                         active:translate-y-0.5 active:translate-x-0.5 active:shadow-none transition-all"
-            >
-              <Sparkles className="w-4 h-4" />
-              Clean Up Photo
-            </button>
-          )
         )}
 
         {/* Save (only when dirty) */}
