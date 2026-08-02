@@ -26,7 +26,7 @@ const VisionAnalyzer = registerPlugin<VisionAnalyzerPlugin>("VisionAnalyzer");
 // ── Version constants ─────────────────────────────────────────────────────────
 
 export const VERSION_UNANALYZED      = 0;
-export const VERSION_IOS             = 1;
+export const VERSION_IOS             = 2; // v2: native Vision labels + canvas colours merged
 export const VERSION_WEB             = 4;
 export const VERSION_WEB_NO_LABELS   = 5;
 
@@ -154,12 +154,28 @@ export function extractWebColors(dataUrl: string): Promise<string[]> {
 async function analyzeNative(
   dataUrl: string,
 ): Promise<{ labels: string[]; text: string[] }> {
-  try {
-    const base64 = dataUrl.includes(",") ? dataUrl.split(",")[1] : dataUrl;
-    return await VisionAnalyzer.analyze({ base64 });
-  } catch {
-    return { labels: [], text: [] };
+  // Run Apple Vision and canvas colour extraction in parallel.
+  // Vision gives object/scene labels; canvas gives the actual colour names
+  // that Vision never outputs (e.g. "red", "amber", "clear").
+  const [nativeResult, canvasColors] = await Promise.all([
+    (async () => {
+      try {
+        const base64 = dataUrl.includes(",") ? dataUrl.split(",")[1] : dataUrl;
+        return await VisionAnalyzer.analyze({ base64 });
+      } catch {
+        return { labels: [] as string[], text: [] as string[] };
+      }
+    })(),
+    extractWebColors(dataUrl).catch(() => [] as string[]),
+  ]);
+
+  // Merge: deduplicate colour names added from canvas into the Vision labels
+  const seen  = new Set(nativeResult.labels);
+  const merged = [...nativeResult.labels];
+  for (const colour of canvasColors) {
+    if (!seen.has(colour)) { seen.add(colour); merged.push(colour); }
   }
+  return { labels: merged, text: nativeResult.text };
 }
 
 // ── Background indexer ────────────────────────────────────────────────────────
@@ -186,11 +202,11 @@ export async function startBackgroundIndexer(): Promise<void> {
     const queue = all.filter((item) => {
       if (!item.imageObjectPath) return false;
       const v = item.visionVersion ?? VERSION_UNANALYZED;
-      // Re-run anything below the current target version
-      // (also re-runs web items at version 4 if targetVersion is 1 — that's fine,
-      //  iOS items won't be in this queue on iOS since they'd already be v1)
-      if (isNative) return v !== VERSION_IOS;
-      return v < VERSION_WEB; // re-run 0,1 on web; skip 4 and 5
+      // Re-run anything below the current target version.
+      // On iOS: v<2 catches unanalyzed (0) and old v1 items missing colour labels.
+      // On web:  v<4 catches unanalyzed (0) and old iOS-indexed items (1, 2); skip 4 and 5.
+      if (isNative) return v < VERSION_IOS;
+      return v < VERSION_WEB;
     });
 
     if (queue.length === 0) return;

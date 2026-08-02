@@ -6,7 +6,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  X, Heart, Trash2, Save, ChevronDown, Sparkles, Zap, BookmarkPlus,
+  X, Heart, Trash2, Save, ChevronDown, Sparkles,
 } from "lucide-react";
 import { CleanUpPhotoSheet } from "./CleanUpPhotoSheet";
 import { AddToLookbookSheet } from "./AddToLookbookSheet";
@@ -171,8 +171,6 @@ export function ItemDetailsSheet({
   const [localImageUrl,      setLocalImageUrl]     = useState<string | null>(null);
   const [cleanUpOpen,        setCleanUpOpen]       = useState(false);
   const [addToLookbookOpen,  setAddToLookbookOpen] = useState(false);
-  // Optimistic timesWorn counter
-  const [localTimesWorn, setLocalTimesWorn] = useState(0);
 
   const updateItem  = useUpdateClothingItem();
   const deleteItem  = useDeleteClothingItem();
@@ -182,7 +180,6 @@ export function ItemDetailsSheet({
   useEffect(() => {
     if (item) {
       setForm(toForm(item));
-      setLocalTimesWorn(item.timesWorn ?? 0);
     }
     setShowDeleteConfirm(false);
     setLocalImageUrl(null);
@@ -223,19 +220,6 @@ export function ItemDetailsSheet({
           queryClient.invalidateQueries({ queryKey: getListOutfitsQueryKey() });
           queryClient.invalidateQueries({ queryKey: getWardrobeStatsQueryKey() });
           onClose();
-        },
-      }
-    );
-  };
-
-  const handleMadeToday = () => {
-    const next = localTimesWorn + 1;
-    setLocalTimesWorn(next);
-    updateItem.mutate(
-      { id: item.id, data: { timesWorn: next } },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: getListClothingQueryKey() });
         },
       }
     );
@@ -404,7 +388,7 @@ export function ItemDetailsSheet({
           <div className="flex flex-col gap-1 opacity-50 pointer-events-none">
             <span className="text-[10px] font-bold uppercase tracking-widest text-black/40">Times Made</span>
             <div className="border-2 border-black/20 rounded-lg px-3 py-2 text-sm font-medium bg-white/50">
-              {localTimesWorn}
+              {item.timesWorn ?? 0}
             </div>
           </div>
         </div>
@@ -414,50 +398,33 @@ export function ItemDetailsSheet({
       {/* ── Footer actions ── */}
       <div className="sticky bottom-0 px-4 py-4 bg-white border-t-2 border-black flex-shrink-0 flex flex-col gap-2">
 
-        {/* Context-aware 2-button row */}
-        <div className="grid grid-cols-2 gap-2">
-          {/* Made Today — always visible */}
+        {/* Context-aware action button */}
+        {showAddToLookbook ? (
           <button
-            onClick={handleMadeToday}
-            disabled={updateItem.isPending}
-            className="py-2.5 rounded-xl flex items-center justify-center gap-1.5 text-xs
-                       font-bold uppercase tracking-wide border-2 border-black bg-white
+            onClick={() => setAddToLookbookOpen(true)}
+            className="w-full py-2.5 rounded-xl flex items-center justify-center gap-1.5 text-sm
+                       font-bold uppercase tracking-wide border-2 border-black bg-primary
+                       text-primary-foreground
                        shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]
-                       active:translate-y-0.5 active:translate-x-0.5 active:shadow-none transition-all
-                       disabled:opacity-50"
+                       active:translate-y-0.5 active:translate-x-0.5 active:shadow-none transition-all"
           >
-            <Zap className="w-3.5 h-3.5" />
-            Made Today
+            <span className="text-base leading-none">🍷</span>
+            Add to Lookbook
           </button>
-
-          {/* Add to Lookbook — OR — Clean Up Photo */}
-          {showAddToLookbook ? (
+        ) : (
+          item.imageObjectPath && (
             <button
-              onClick={() => setAddToLookbookOpen(true)}
-              className="py-2.5 rounded-xl flex items-center justify-center gap-1.5 text-xs
-                         font-bold uppercase tracking-wide border-2 border-black bg-primary
-                         text-primary-foreground
+              onClick={() => setCleanUpOpen(true)}
+              className="w-full py-2.5 rounded-xl flex items-center justify-center gap-1.5 text-sm
+                         font-bold uppercase tracking-wide border-2 border-black bg-white
                          shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]
                          active:translate-y-0.5 active:translate-x-0.5 active:shadow-none transition-all"
             >
-              <BookmarkPlus className="w-3.5 h-3.5" />
-              Add to Lookbook
+              <Sparkles className="w-4 h-4" />
+              Clean Up Photo
             </button>
-          ) : (
-            item.imageObjectPath && (
-              <button
-                onClick={() => setCleanUpOpen(true)}
-                className="py-2.5 rounded-xl flex items-center justify-center gap-1.5 text-xs
-                           font-bold uppercase tracking-wide border-2 border-black bg-white
-                           shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]
-                           active:translate-y-0.5 active:translate-x-0.5 active:shadow-none transition-all"
-              >
-                <Sparkles className="w-3.5 h-3.5" />
-                Clean Up Photo
-              </button>
-            )
-          )}
-        </div>
+          )
+        )}
 
         {/* Save (only when dirty) */}
         <AnimatePresence>
