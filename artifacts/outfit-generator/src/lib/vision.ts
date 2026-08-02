@@ -12,7 +12,6 @@
  */
 
 import { registerPlugin, Capacitor } from "@capacitor/core";
-import { toast } from "sonner";
 import { listClothing, updateItemVision } from "./localDB";
 
 // ── Native plugin contract ────────────────────────────────────────────────────
@@ -211,11 +210,7 @@ export async function startBackgroundIndexer(): Promise<void> {
 
     if (queue.length === 0) return;
 
-    const toastId = `vision-indexer`;
-    toast.loading(`Preparing photo search… (0 / ${queue.length})`, { id: toastId });
-
-    for (let i = 0; i < queue.length; i++) {
-      const item = queue[i];
+    for (const item of queue) {
       try {
         let labels: string[] = [];
         let text:   string[] = [];
@@ -240,14 +235,8 @@ export async function startBackgroundIndexer(): Promise<void> {
         // Non-fatal — skip this item
       }
 
-      toast.loading(
-        `Preparing photo search… (${i + 1} / ${queue.length})`,
-        { id: toastId },
-      );
       await new Promise<void>((r) => setTimeout(r, 350));
     }
-
-    toast.dismiss(toastId);
   } catch {
     // Silent fail — text search still works without vision
   }
