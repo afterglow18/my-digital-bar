@@ -15,7 +15,7 @@
 import { openDB, type IDBPDatabase } from "idb";
 
 export const DB_NAME    = "my-digital-suitcase";
-export const DB_VERSION = 1;
+export const DB_VERSION = 2;
 
 // ── Stored types (IndexedDB records) ─────────────────────────────────────────
 
@@ -36,6 +36,10 @@ export interface StoredClothingItem {
   notes?:         string | null;
   createdAt:      string;
   updatedAt:      string;
+  // v2 — vision indexing fields (safe defaults: undefined = unanalyzed)
+  visionLabels?:  string[];      // color/object labels from photo
+  visionText?:    string[];      // text detected inside photo
+  visionVersion?: number;        // 0=unanalyzed,1=iOS,4=web,5=web-no-labels
 }
 
 export interface StoredOutfit {
@@ -58,8 +62,13 @@ export interface StoredSetting {
 
 // ── Public types (consumed by hooks and pages) ────────────────────────────────
 
-export interface ClothingItem extends Required<StoredClothingItem> {
+export interface ClothingItem
+  extends Required<Omit<StoredClothingItem, "visionLabels" | "visionText" | "visionVersion">> {
   id: number;
+  // Vision fields remain optional — may be absent on items not yet indexed
+  visionLabels?: string[];
+  visionText?:   string[];
+  visionVersion?: number;
 }
 
 export interface SavedOutfit {
@@ -78,7 +87,8 @@ export async function getDB(): Promise<IDBPDatabase> {
   if (_db) return _db;
 
   _db = await openDB(DB_NAME, DB_VERSION, {
-    upgrade(db) {
+    upgrade(db, oldVersion) {
+      // ── v1: create all stores ──────────────────────────────────────────────
       // clothing_items
       if (!db.objectStoreNames.contains("clothing_items")) {
         const store = db.createObjectStore("clothing_items", {

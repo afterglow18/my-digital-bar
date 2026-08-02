@@ -11,6 +11,7 @@ import WelcomePage from './pages/welcome';
 import { SubscriptionProvider } from '@/lib/revenuecat';
 import { queryClient } from '@/lib/queryClient';
 import { BiometricLockProvider } from '@/context/BiometricLockContext';
+import { Toaster } from '@/components/ui/sonner';
 
 // RevenueCat is initialised in main.tsx before React mounts.
 
@@ -75,6 +76,7 @@ function App() {
       <SubscriptionProvider>
         <BiometricLockProvider>
           <AppShell />
+          <Toaster position="bottom-center" />
         </BiometricLockProvider>
       </SubscriptionProvider>
     </QueryClientProvider>

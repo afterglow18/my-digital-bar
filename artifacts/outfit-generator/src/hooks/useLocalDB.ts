@@ -13,6 +13,7 @@ import {
   createClothingItem,
   updateClothingItem,
   deleteClothingItem,
+  updateItemVision,
   getWardrobeStats,
   generateOutfit,
   listOutfits,
@@ -22,6 +23,8 @@ import {
   addItemToOutfit,
   removeItemFromOutfit,
 } from "@/lib/localDB";
+
+export { updateItemVision } from "@/lib/localDB";
 
 export type { ClothingItem, SavedOutfit } from "@/lib/db";
 import type { ClothingItem, SavedOutfit } from "@/lib/db";

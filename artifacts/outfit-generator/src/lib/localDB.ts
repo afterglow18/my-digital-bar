@@ -222,6 +222,25 @@ export async function removeItemFromOutfit(outfitId: number, itemId: number): Pr
   if (match?.id != null) await db.delete("outfit_items", match.id);
 }
 
+// ── Vision indexing ───────────────────────────────────────────────────────────
+
+export async function updateItemVision(
+  id: number,
+  vision: { visionLabels: string[]; visionText: string[]; visionVersion: number },
+): Promise<void> {
+  const db       = await getDB();
+  const existing = await db.get("clothing_items", id) as StoredClothingItem | undefined;
+  if (!existing) return; // item may have been deleted — silently skip
+
+  await db.put("clothing_items", {
+    ...existing,
+    id,
+    visionLabels:  vision.visionLabels,
+    visionText:    vision.visionText,
+    visionVersion: vision.visionVersion,
+  });
+}
+
 // ── Settings ──────────────────────────────────────────────────────────────────
 
 export async function getSetting(key: string): Promise<string | null> {
